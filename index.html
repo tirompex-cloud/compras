@@ -89,6 +89,9 @@ td{padding:9px 12px;border-top:1px solid var(--border);vertical-align:middle}tr:
 .step p{color:var(--text2);line-height:1.5}.step strong{color:var(--text)}
 code{background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-family:monospace;font-size:12px;color:var(--info)}
 .info-box{background:var(--amber-bg);border:1px solid #FDE68A;border-radius:var(--rs);padding:10px 14px;font-size:12px;color:var(--amber);line-height:1.6;margin-top:8px}
+
+.upload-zone .paste-hint{font-size:11px;color:var(--green-dark);background:var(--green-light);border:1px solid #86efac;border-radius:20px;padding:3px 10px;margin-top:2px;display:inline-block}
+.upload-zone.paste-active{border-color:var(--green);background:var(--green-light);box-shadow:0 0 0 3px rgba(29,158,117,.2)}
 .empty{text-align:center;padding:2.5rem;color:var(--text3);font-size:13px}
 @media(max-width:640px){.g2,.g3{grid-template-columns:1fr}.metrics{grid-template-columns:1fr}}
 </style>
@@ -122,7 +125,7 @@ code{background:var(--bg);border:1px solid var(--border);border-radius:4px;paddi
   <div class="upload-zone" onclick="triggerUpload('online')">
     <div class="upload-icon">&#128247;</div>
     <h3>Enviar comprovante &mdash; IA l&ecirc; e preenche automaticamente</h3>
-    <p>Foto, print, nota fiscal ou PDF &middot; M&uacute;ltiplos produtos detectados<br>JPG, PNG, WebP, PDF</p>
+    <p>Foto, print, nota fiscal ou PDF &middot; M&uacute;ltiplos produtos detectados<br>JPG, PNG, WebP, PDF &middot; <strong>Ctrl+V para colar print</strong></p>
     <input type="file" id="file-online" accept="image/*,application/pdf" style="display:none" onchange="handleImage('online',this)">
   </div>
   <div id="status-online" class="status-box"></div>
@@ -156,7 +159,7 @@ code{background:var(--bg);border:1px solid var(--border);border-radius:4px;paddi
   <div id="banner-obras" class="banner warn">&#9888; <span>Configure o <a onclick="openSettings()">Google Sheets</a>.</span></div>
   <div class="upload-zone" onclick="triggerUpload('obras')">
     <div class="upload-icon">&#127959;</div><h3>Obras &mdash; Enviar nota/comprovante</h3>
-    <p>A IA extrai material, fornecedor e valores &middot; JPG, PNG, PDF</p>
+    <p>A IA extrai material, fornecedor e valores &middot; JPG, PNG, PDF &middot; <strong>Ctrl+V</strong></p>
     <input type="file" id="file-obras" accept="image/*,application/pdf" style="display:none" onchange="handleImage('obras',this)">
   </div>
   <div id="status-obras" class="status-box"></div>
@@ -193,7 +196,7 @@ code{background:var(--bg);border:1px solid var(--border);border-radius:4px;paddi
   <div id="banner-geral" class="banner warn">&#9888; <span>Configure o <a onclick="openSettings()">Google Sheets</a>.</span></div>
   <div class="upload-zone" onclick="triggerUpload('geral')">
     <div class="upload-icon">&#128230;</div><h3>Geral &mdash; Enviar comprovante</h3>
-    <p>Uniformes, c&acirc;meras, equipamentos &middot; JPG, PNG, PDF</p>
+    <p>Uniformes, c&acirc;meras, equipamentos &middot; JPG, PNG, PDF &middot; <strong>Ctrl+V</strong></p>
     <input type="file" id="file-geral" accept="image/*,application/pdf" style="display:none" onchange="handleImage('geral',this)">
   </div>
   <div id="status-geral" class="status-box"></div>
@@ -230,7 +233,7 @@ code{background:var(--bg);border:1px solid var(--border);border-radius:4px;paddi
   <div id="banner-passagens" class="banner warn">&#9888; <span>Configure o <a onclick="openSettings()">Google Sheets</a>.</span></div>
   <div class="upload-zone" onclick="triggerUpload('passagens')">
     <div class="upload-icon">&#9992;</div><h3>Passagens &mdash; Enviar comprovante</h3>
-    <p>A IA identifica rota, passageiros e valores &middot; JPG, PNG, PDF</p>
+    <p>A IA identifica rota, passageiros e valores &middot; JPG, PNG, PDF &middot; <strong>Ctrl+V</strong></p>
     <input type="file" id="file-passagens" accept="image/*,application/pdf" style="display:none" onchange="handleImage('passagens',this)">
   </div>
   <div id="status-passagens" class="status-box"></div>
@@ -267,7 +270,7 @@ code{background:var(--bg);border:1px solid var(--border);border-radius:4px;paddi
   <div id="banner-hospedagens" class="banner warn">&#9888; <span>Configure o <a onclick="openSettings()">Google Sheets</a>.</span></div>
   <div class="upload-zone" onclick="triggerUpload('hospedagens')">
     <div class="upload-icon">&#127976;</div><h3>Hospedagens &mdash; Enviar comprovante</h3>
-    <p>A IA identifica local, datas e valores &middot; JPG, PNG, PDF</p>
+    <p>A IA identifica local, datas e valores &middot; JPG, PNG, PDF &middot; <strong>Ctrl+V</strong></p>
     <input type="file" id="file-hospedagens" accept="image/*,application/pdf" style="display:none" onchange="handleImage('hospedagens',this)">
   </div>
   <div id="status-hospedagens" class="status-box"></div>
@@ -302,7 +305,7 @@ code{background:var(--bg);border:1px solid var(--border);border-radius:4px;paddi
   <div id="banner-seguro" class="banner warn">&#9888; <span>Configure o <a onclick="openSettings()">Google Sheets</a>.</span></div>
   <div class="upload-zone" onclick="triggerUpload('seguro')">
     <div class="upload-icon">&#128737;</div><h3>Seguro de Viagem &mdash; Enviar comprovante</h3>
-    <p>A IA extrai informa&ccedil;&otilde;es do seguro &middot; JPG, PNG, PDF</p>
+    <p>A IA extrai informa&ccedil;&otilde;es do seguro &middot; JPG, PNG, PDF &middot; <strong>Ctrl+V</strong></p>
     <input type="file" id="file-seguro" accept="image/*,application/pdf" style="display:none" onchange="handleImage('seguro',this)">
   </div>
   <div id="status-seguro" class="status-box"></div>
@@ -797,6 +800,36 @@ async function saveSettings(){
   if(fu){var lnk=document.getElementById('sheets-link');if(lnk){lnk.href=fu;lnk.style.pointerEvents='';lnk.style.opacity='1';}}
   if(url)updateSheetsCount(); if(gh)await saveToGist(db);
 }
+
+// ── PASTE SUPPORT (Ctrl+V) ────────────────────────────────────────────────
+function getActiveCat() {
+  var tabs = ['online','obras','geral','passagens','hospedagens','seguro'];
+  for (var i = 0; i < tabs.length; i++) {
+    var p = document.getElementById('panel-' + tabs[i]);
+    if (p && p.classList.contains('active')) return tabs[i];
+  }
+  return null;
+}
+
+document.addEventListener('paste', function(e) {
+  var items = (e.clipboardData || e.originalEvent && e.originalEvent.clipboardData || {}).items;
+  if (!items) return;
+  var imageItem = null;
+  for (var i = 0; i < items.length; i++) {
+    if (items[i].type.indexOf('image') !== -1) { imageItem = items[i]; break; }
+  }
+  if (!imageItem) return;
+  var cat = getActiveCat(); if (!cat) return;
+  var file = imageItem.getAsFile(); if (!file) return;
+  e.preventDefault();
+  // Flash the upload zone
+  var zone = document.querySelector('#panel-' + cat + ' .upload-zone');
+  if (zone) { zone.classList.add('paste-active'); setTimeout(function() { zone.classList.remove('paste-active'); }, 1000); }
+  // Process like a normal file upload
+  var fakeInput = {files: [file]};
+  handleImage(cat, fakeInput);
+});
+
 async function init(){
   loadDB(); renderAllTables(); renderRelatorio(); updateBanners(); updateSheetsCount();
   if(getGistToken()&&getGistId()){try{var gd=await loadFromGist();if(gd&&gd.length>db.length){db=gd;localStorage.setItem('compras_v3',JSON.stringify(db));renderAllTables();renderRelatorio();}}catch(e){}}
