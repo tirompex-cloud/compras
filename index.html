@@ -431,6 +431,11 @@ code{background:var(--bg);border:1px solid var(--border);border-radius:4px;paddi
       <label>URL do Apps Script</label>
       <input type="text" id="settings-sheets" placeholder="https://script.google.com/macros/s/AKfyc.../exec">
     </div>
+    <div class="field" style="margin-top:8px">
+      <label>URL da Planilha Google Sheets</label>
+      <input type="text" id="settings-sheets-file" placeholder="https://docs.google.com/spreadsheets/d/...">
+    </div>
+    <div class="info-box" style="margin-top:6px">Abra sua planilha no Google Drive e copie a URL da barra de endereço do navegador.</div>
     <div class="info-box">A planilha é criada automaticamente na primeira vez que você salvar um lançamento. Ela ficará no seu Google Drive com o nome "📋 Lançamento de Compras".</div>
   </div>
 
@@ -920,6 +925,7 @@ function dl(content,filename,type){
 // ── SETTINGS ──────────────────────────────────────────
 function openSettings(){
   document.getElementById('settings-sheets').value=getSheetsURL();
+  document.getElementById('settings-sheets-file').value=getSheetsFileURL();
   document.getElementById('settings-apikey').value=getKey();
   document.getElementById('settings-github').value=getGistToken();
   const gistEl = document.getElementById('gist-status');
@@ -929,24 +935,26 @@ function openSettings(){
 function closeSettings(){ document.getElementById('settings-overlay').classList.remove('open'); }
 function maybeClose(e){ if(e.target===document.getElementById('settings-overlay')) closeSettings(); }
 async function saveSettings(){
-  const url    = document.getElementById('settings-sheets').value.trim();
-  const key    = document.getElementById('settings-apikey').value.trim();
-  const github = document.getElementById('settings-github').value.trim();
+  const url       = document.getElementById('settings-sheets').value.trim();
+  const fileUrl   = document.getElementById('settings-sheets-file').value.trim();
+  const key       = document.getElementById('settings-apikey').value.trim();
+  const github    = document.getElementById('settings-github').value.trim();
   localStorage.setItem('sheets_url', url);
   localStorage.setItem('anthropic_key', key);
+  if(fileUrl) localStorage.setItem('sheets_file_url', fileUrl);
   if(github) localStorage.setItem('github_token', github);
   else localStorage.removeItem('github_token');
-  // If new GitHub token, reset gist ID so a new one is created
   const oldToken = getGistToken();
   if(github && github !== oldToken) localStorage.removeItem('gist_id');
   closeSettings();
   updateBanners();
-  if(url) updateSheetsCount();
-  // Test gist connection if token provided
-  if(github){
-    const saved = await saveToGist(db);
-    console.log('[Gist] Token saved and backup tested');
+  // Apply spreadsheet link immediately if URL was provided
+  if(fileUrl){
+    const link = document.getElementById('sheets-link');
+    if(link){ link.href=fileUrl; link.style.pointerEvents=''; link.style.opacity='1'; }
   }
+  if(url) updateSheetsCount();
+  if(github){ await saveToGist(db); console.log('[Gist] Backup tested'); }
 }
 
 // ── INIT ──────────────────────────────────────────────
