@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compras / Suprimentos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #F9FAFB;
+      padding: 20px;
+    }
+
+    .info-box {
+      background: linear-gradient(135deg, #208C4F 0%, #186A3B 100%);
+      color: white;
+      padding: 32px;
+      border-radius: 12px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .info-box h1 {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+
+    .info-box p {
+      font-size: 16px;
+      opacity: 0.9;
+      line-height: 1.6;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 32px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      margin-bottom: 24px;
+    }
+
+    .card h2 {
+      font-size: 24px;
+      margin-bottom: 16px;
+      color: #1F2937;
+    }
+
+    .card p {
+      color: #6B7280;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .card ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .card ul li {
+      padding: 12px 0;
+      border-bottom: 1px solid #E5E7EB;
+      color: #374151;
+    }
+
+    .card ul li:last-child {
+      border-bottom: none;
+    }
+
+    .card ul li::before {
+      content: "✓ ";
+      color: #208C4F;
+      font-weight: bold;
+      margin-right: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #208C4F 0%, #186A3B 100%);
+      color: white;
+      padding: 14px 28px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+    }
+
+    .integration-notice {
+      background: #FEF3C7;
+      border-left: 4px solid #F59E0B;
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 24px;
+    }
+
+    .integration-notice strong {
+      display: block;
+      color: #92400E;
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+
+    .integration-notice p {
+      color: #78350F;
+      line-height: 1.6;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="info-box">
+    <h1>🛒 Módulo de Compras / Suprimentos</h1>
+    <p>Sistema completo de lançamento e gestão de compras empresariais</p>
+  </div>
+
+  <div class="card">
+    <h2>📦 Status do Módulo</h2>
+    <p><strong>Este é um placeholder.</strong> Aqui será integrado o seu sistema completo de lançamentos de compras que já está funcionando.</p>
+    
+    <div class="integration-notice">
+      <strong>⚙️ Próximo Passo: Integração</strong>
+      <p>Vamos migrar todo o conteúdo do arquivo <code>index.html</code> atual (sistema de compras completo) para este módulo, mantendo todas as funcionalidades: leitura de IA, salvamento no Google Sheets, backup no GitHub Gist, relatórios, etc.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>✨ Funcionalidades Disponíveis (após integração)</h2>
+    <ul>
+      <li>Lançamento em 6 categorias (Online, Obras, Geral, Passagens, Hospedagens, Seguro)</li>
+      <li>Leitura automática de comprovantes por IA (Claude)</li>
+      <li>Upload de imagens e PDFs ou colar com Ctrl+V</li>
+      <li>Detecção de múltiplos produtos</li>
+      <li>Salvamento automático no Google Sheets</li>
+      <li>Upload de comprovantes no Google Drive</li>
+      <li>Backup automático no GitHub Gist</li>
+      <li>Relatórios com filtros e exportação (PDF, CSV, TXT)</li>
+      <li>Cálculo automático de economia</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>🔧 Como Integrar</h2>
+    <p>Para integrar o sistema completo:</p>
+    <ol style="padding-left: 20px; color: #374151; line-height: 1.8;">
+      <li>Copiar todo o conteúdo do <code>&lt;body&gt;</code> do index.html atual</li>
+      <li>Copiar todos os <code>&lt;style&gt;</code> e <code>&lt;script&gt;</code></li>
+      <li>Ajustar os caminhos dos arquivos (se necessário)</li>
+      <li>Testar todas as funcionalidades</li>
+    </ol>
+  </div>
+
+  <div style="text-align: center; margin-top: 32px;">
+    <button class="btn-primary" onclick="alert('Este módulo será integrado com o sistema completo de compras')">
+      🚀 Integrar Sistema Completo
+    </button>
+  </div>
+</body>
+</html>
