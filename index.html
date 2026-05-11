@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lançamento de Compras</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#1D9E75;--green-dark:#0F6E56;--green-light:#E1F5EE;
+  --bg:#F4F6F9;--surface:#FFFFFF;--border:#E5E7EB;--border2:#D1D5DB;
+  --text:#111827;--text2:#6B7280;--text3:#9CA3AF;
+  --danger:#DC2626;--danger-bg:#FEF2F2;
+  --info:#185FA5;--info-bg:#EFF6FF;
+  --amber:#92400E;--amber-bg:#FFFBEB;
+  --r:10px;--rs:7px;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
+/* TOPBAR */
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;gap:1rem;position:sticky;top:0;z-index:100;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;padding:14px 0;font-weight:600;font-size:15px;white-space:nowrap}
+.logo-icon{width:34px;height:34px;background:var(--green);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.nav-tabs{display:flex;overflow-x:auto;margin-left:auto}
+.nav-tab{padding:18px 13px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:none;color:var(--text2);border-bottom:2px solid transparent;white-space:nowrap;transition:.15s}
+.nav-tab:hover{color:var(--text)}.nav-tab.active{color:var(--green);border-bottom-color:var(--green)}
+.topbar-actions{display:flex;gap:8px;align-items:center;padding:8px 0}
+.icon-btn{padding:7px 12px;border:1px solid var(--border2);border-radius:var(--rs);background:none;cursor:pointer;font-size:13px;color:var(--text2);display:flex;align-items:center;gap:5px;white-space:nowrap;transition:.15s}
+.icon-btn:hover{background:var(--bg);color:var(--text)}
+.icon-btn.connected{border-color:var(--green);color:var(--green-dark);background:var(--green-light)}
+/* SHEETS STATUS */
+.sheets-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:8px 1.5rem;display:flex;align-items:center;gap:10px;font-size:12px;display:none}
+.sheets-bar.show{display:flex}
+.sheets-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0}
+.sheets-bar a{color:var(--green-dark);font-weight:600;text-decoration:none}
+.sheets-bar a:hover{text-decoration:underline}
+/* MAIN */
+main{max-width:980px;margin:0 auto;padding:1.5rem}
+.panel{display:none;flex-direction:column;gap:1.25rem}.panel.active{display:flex}
+/* BANNERS */
+.banner{border-radius:var(--r);padding:12px 16px;display:flex;align-items:center;gap:10px;font-size:13px;display:none}
+.banner.show{display:flex}
+.banner.warn{background:var(--amber-bg);border:1px solid #FDE68A;color:var(--amber)}
+.banner.ok{background:var(--green-light);border:1px solid #6EE7B7;color:var(--green-dark)}
+.banner a{color:inherit;font-weight:600;cursor:pointer;text-decoration:underline}
+/* UPLOAD */
+.upload-zone{background:var(--surface);border:2px dashed var(--border2);border-radius:var(--r);padding:1.5rem;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:.2s;text-align:center}
+.upload-zone:hover{border-color:var(--green);background:var(--green-light)}
+.upload-icon{width:50px;height:50px;background:var(--green-light);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;transition:.2s}
+.upload-zone:hover .upload-icon{background:#A7F3D0}
+.upload-zone h3{font-size:14px;font-weight:600;color:var(--text)}
+.upload-zone p{font-size:12px;color:var(--text2);line-height:1.5}
+/* STATUS */
+.status-box{padding:10px 14px;border-radius:var(--rs);font-size:13px;align-items:center;gap:8px;display:none;line-height:1.4}
+.status-box.show{display:flex}
+.status-box.loading{background:var(--info-bg);color:var(--info)}
+.status-box.success{background:var(--green-light);color:var(--green-dark)}
+.status-box.error{background:var(--danger-bg);color:var(--danger)}
+.status-box.saving{background:#F5F3FF;color:#5B21B6}
+.spin{display:inline-block;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem;display:flex;flex-direction:column;gap:1rem}
+.card-title{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;padding-bottom:2px;border-bottom:1px solid var(--border);margin-bottom:2px}
+/* FORM */
+.grid{display:grid;gap:12px}
+.g1{grid-template-columns:1fr}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr 1fr}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:12px;font-weight:500;color:var(--text2)}
+.field input,.field select,.field textarea{font-size:13px;font-family:'Inter',sans-serif;padding:9px 12px;border-radius:var(--rs);border:1px solid var(--border2);background:var(--surface);color:var(--text);width:100%;transition:.15s}
+.field input:focus,.field select:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(29,158,117,.1)}
+.field input.auto{background:var(--bg);color:var(--text2);cursor:default}
+/* BUTTONS */
+.btn{padding:9px 18px;border-radius:var(--rs);font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border2);background:var(--surface);color:var(--text);transition:.15s}
+.btn:hover{background:var(--bg)}.btn:active{transform:scale(.98)}
+.btn.primary{background:var(--green);color:#fff;border-color:var(--green)}.btn.primary:hover{background:var(--green-dark)}
+.btn.dark{background:#111827;color:#fff;border-color:#111827}.btn.dark:hover{background:#374151}
+.btn.sm{padding:6px 12px;font-size:12px}
+.btn.del{background:none;border:none;color:var(--text3);padding:3px 8px;font-size:18px;cursor:pointer;border-radius:4px;line-height:1}
+.btn.del:hover{color:var(--danger);background:var(--danger-bg)}
+.actions{display:flex;gap:8px;justify-content:flex-end;padding-top:4px}
+/* TABLE */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--r);background:var(--surface)}
+table{width:100%;border-collapse:collapse;min-width:580px;font-size:12px}
+thead{background:var(--bg)}th{padding:10px 12px;text-align:left;font-weight:600;color:var(--text2);font-size:11px;white-space:nowrap;border-bottom:1px solid var(--border)}
+td{padding:9px 12px;border-top:1px solid var(--border);vertical-align:middle}
+tr:hover td{background:#FAFFF9}
+.sync-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);margin-right:4px;vertical-align:middle}
+.sync-dot.pending{background:#F59E0B}
+/* METRICS */
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.metric{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem}
+.metric .lbl{font-size:11px;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.metric .val{font-size:22px;font-weight:600;line-height:1}
+.metric .sub{font-size:12px;color:var(--text2);margin-top:4px}
+/* BADGE */
+.badge{display:inline-flex;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.b-online{background:#E1F5EE;color:#0F6E56}.b-obras{background:#FFFBEB;color:#854F0B}
+.b-geral{background:#EFF6FF;color:#185FA5}.b-passagens{background:#F5F3FF;color:#5B21B6}
+.b-hospedagens{background:#FDF4FF;color:#7E22CE}.b-seguro{background:#FEF2F2;color:#991B1B}
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:none;align-items:center;justify-content:center;padding:1rem}
+.overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:14px;padding:2rem;width:100%;max-width:520px;box-shadow:0 24px 60px rgba(0,0,0,.18)}
+.modal h2{font-size:17px;font-weight:600;margin-bottom:8px}
+.modal-section{margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--border)}
+.modal-section h3{font-size:13px;font-weight:600;margin-bottom:8px}
+.modal p.desc{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:.75rem}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:1.5rem}
+.step{display:flex;gap:10px;margin-bottom:8px;font-size:13px;align-items:flex-start}
+.step-num{background:var(--green);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0;margin-top:1px}
+.step p{color:var(--text2);line-height:1.5}
+.step strong{color:var(--text)}
+code{background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-family:monospace;font-size:12px;color:var(--info)}
+.info-box{background:var(--amber-bg);border:1px solid #FDE68A;border-radius:var(--rs);padding:10px 14px;font-size:12px;color:var(--amber);line-height:1.6;margin-top:8px}
+/* EMPTY */
+.empty{text-align:center;padding:2.5rem;color:var(--text3);font-size:13px}
+@media(max-width:640px){.g2,.g3{grid-template-columns:1fr}.metrics{grid-template-columns:1fr}.nav-tab{padding:14px 10px;font-size:12px}}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="logo"><div class="logo-icon">📋</div> Lançamento de Compras</div>
+  <nav class="nav-tabs">
+    <button class="nav-tab active" onclick="switchTab('online')">Online</button>
+    <button class="nav-tab" onclick="switchTab('obras')">Obras</button>
+    <button class="nav-tab" onclick="switchTab('geral')">Geral</button>
+    <button class="nav-tab" onclick="switchTab('passagens')">Passagens</button>
+    <button class="nav-tab" onclick="switchTab('hospedagens')">Hospedagens</button>
+    <button class="nav-tab" onclick="switchTab('seguro')">Seguro de Viagem</button>
+    <button class="nav-tab" onclick="switchTab('relatorio')">📊 Relatório</button>
+  </nav>
+  <div class="topbar-actions">
+    <button class="icon-btn" id="sheets-btn" onclick="openSettings()">📄 Google Sheets</button>
+    <button class="icon-btn" onclick="openSettings()">⚙️</button>
+  </div>
+</header>
+
+<div class="sheets-bar" id="sheets-bar">
+  <span class="sheets-dot"></span>
+  <span>Conectado ao Google Sheets — </span>
+  <a id="sheets-link" href="#" target="_blank" rel="noopener noreferrer" style="pointer-events:none;opacity:0.5" title="Carregando URL da planilha...">Abrir planilha ↗</a>
+  <span style="color:var(--text3);margin-left:auto" id="sheets-count"></span>
+</div>
+
+<main>
+
+<!-- ONLINE -->
+<div id="panel-online" class="panel active">
+  <div id="banner-online" class="banner warn">⚠️ <span>Configure o <a onclick="openSettings()">Google Sheets</a> para salvar os dados na planilha. Sem isso os dados ficam só no navegador.</span></div>
+  <div class="upload-zone" onclick="triggerUpload('online')">
+    <div class="upload-icon">📷</div>
+    <h3>Enviar comprovante — IA lê e preenche automaticamente</h3>
+    <p>Clique para fazer upload da foto, print, nota fiscal ou <strong>PDF</strong><br>Aceita: JPG, PNG, WebP, PDF</p>
+    <input type="file" id="file-online" accept="image/*,application/pdf" style="display:none" onchange="handleImage('online',this)">
+  </div>
+  <div id="status-online" class="status-box"></div>
+  <div class="card">
+    <div class="card-title">Dados do lançamento — Online</div>
+    <div class="grid g3">
+      <div class="field"><label>Mês</label><select id="online-mes">MESES</select></div>
+      <div class="field"><label>Item / Produto</label><input type="text" id="online-item" placeholder="Ex: Notebook Lenovo"></div>
+      <div class="field"><label>Solicitante</label><input type="text" id="online-solicitante" placeholder="Nome"></div>
+    </div>
+    <div class="grid g1"><div class="field"><label>Descrição / Uso</label><input type="text" id="online-descricao" placeholder="Para que será usado..."></div></div>
+    <div class="grid g3">
+      <div class="field"><label>Quantidade</label><input type="number" id="online-qtd" value="1" min="1"></div>
+      <div class="field"><label>Valor Médio R$</label><input type="number" id="online-vmedio" placeholder="0,00" step="0.01" oninput="calcOnline()"></div>
+      <div class="field"><label>Valor Pago R$</label><input type="number" id="online-vpago" placeholder="0,00" step="0.01" oninput="calcOnline()"></div>
+    </div>
+    <div class="grid g3">
+      <div class="field"><label>Valor Total R$</label><input type="number" id="online-vtotal" placeholder="0,00" step="0.01" oninput="calcOnline()"></div>
+      <div class="field"><label>Economia R$ (auto)</label><input type="number" id="online-economia" class="auto" readonly></div>
+      <div class="field"><label>Fornecedor</label><input type="text" id="online-fornecedor" placeholder="Ex: Mercado Livre"></div>
+    </div>
+    <div class="actions">
+      <button class="btn" onclick="clearForm('online')">Limpar</button>
+      <button class="btn primary" onclick="saveEntry('online')">+ Salvar e enviar para planilha</button>
+    </div>
+  </div>
+  <div id="table-online"></div>
+</div>
+
+<!-- OBRAS -->
+<div id="panel-obras" class="panel">
+  <div id="banner-obras" class="banner warn">⚠️ <span>Configure o <a onclick="openSettings()">Google Sheets</a> para salvar os dados na planilha.</span></div>
+  <div class="upload-zone" onclick="triggerUpload('obras')">
+    <div class="upload-icon">🏗️</div>
+    <h3>Enviar nota / comprovante de obras</h3>
+    <p>A IA extrai material, fornecedor e valores automaticamente</p>
+    <input type="file" id="file-obras" accept="image/*,application/pdf" style="display:none" onchange="handleImage('obras',this)">
+  </div>
+  <div id="status-obras" class="status-box"></div>
+  <div class="card">
+    <div class="card-title">Dados do lançamento — Obras</div>
+    <div class="grid g3">
+      <div class="field"><label>Mês</label><select id="obras-mes">MESES</select></div>
+      <div class="field"><label>Material</label><input type="text" id="obras-material" placeholder="Nome do material"></div>
+      <div class="field"><label>Quantidade</label><input type="number" id="obras-qtd" value="1" min="1"></div>
+    </div>
+    <div class="grid g3">
+      <div class="field"><label>Fornecedor</label><input type="text" id="obras-fornecedor" placeholder="Nome do fornecedor"></div>
+      <div class="field"><label>Preço Adquirido R$</label><input type="number" id="obras-preco" placeholder="0,00" step="0.01" oninput="calcObras()"></div>
+      <div class="field"><label>Frete R$</label><input type="number" id="obras-frete" value="0" step="0.01" oninput="calcObras()"></div>
+    </div>
+    <div class="grid g3">
+      <div class="field"><label>Total Pago R$ (auto)</label><input type="number" id="obras-total" class="auto" readonly></div>
+      <div class="field"><label>Preço Concorrente R$</label><input type="number" id="obras-concorrente" placeholder="0,00" step="0.01" oninput="calcObras()"></div>
+      <div class="field"><label>Frete Concorrente R$</label><input type="number" id="obras-fconcorrente" value="0" step="0.01" oninput="calcObras()"></div>
+    </div>
+    <div class="grid g3">
+      <div class="field"><label>Sem Desconto R$ (auto)</label><input type="number" id="obras-semdesconto" class="auto" readonly></div>
+      <div class="field"><label>Economia R$ (auto)</label><input type="number" id="obras-economia" class="auto" readonly></div>
+      <div class="field"><label>Observações</label><input type="text" id="obras-obs" placeholder="Ex: Concorrente não tinha areia"></div>
+    </div>
+    <div class="actions">
+      <button class="btn" onclick="clearForm('obras')">Limpar</button>
+      <button class="btn primary" onclick="saveEntry('obras')">+ Salvar e enviar para planilha</button>
+    </div>
+  </div>
+  <div id="table-obras"></div>
+</div>
+
+<!-- GERAL -->
+<div id="panel-geral" class="panel">
+  <div id="banner-geral" class="banner warn">⚠️ <span>Configure o <a onclick="openSettings()">Google Sheets</a>.</span></div>
+  <div class="upload-zone" onclick="triggerUpload('geral')">
+    <div class="upload-icon">📦</div>
+    <h3>Compras Gerais — Enviar comprovante</h3>
+    <p>Uniformes, câmeras, equipamentos, material de escritório</p>
+    <input type="file" id="file-geral" accept="image/*,application/pdf" style="display:none" onchange="handleImage('geral',this)">
+  </div>
+  <div id="status-geral" class="status-box"></div>
+  <div class="card">
+    <div class="card-title">Dados do lançamento — Geral</div>
+    <div class="grid g3">
+      <div class="field"><label>Mês</label><select id="geral-mes">MESES</select></div>
+      <div class="field"><label>Item</label><input type="text" id="geral-item" placeholder="Nome do item"></div>
+      <div class="field"><label>Solicitante</label><input type="text" id="geral-solicitante" placeholder="Nome"></div>
+    </div>
+    <div class="grid g1"><div class="field"><label>Descrição / Uso</label><input type="text" id="geral-descricao" placeholder="Para que será usado..."></div></div>
+    <div class="grid g3">
+      <div class="field"><label>Quantidade</label><input type="number" id="geral-qtd" value="1" min="1" oninput="calcGeral()"></div>
+      <div class="field"><label>Preço Unitário R$</label><input type="number" id="geral-preco" placeholder="0,00" step="0.01" oninput="calcGeral()"></div>
+      <div class="field"><label>Preço Adquirido R$</label><input type="number" id="geral-padquirido" placeholder="0,00" step="0.01" oninput="calcGeral()"></div>
+    </div>
+    <div class="grid g3">
+      <div class="field"><label>Economia R$ (auto)</label><input type="number" id="geral-economia" class="auto" readonly></div>
+      <div class="field"><label>Valor Total R$ (auto)</label><input type="number" id="geral-vtotal" class="auto" readonly></div>
+      <div class="field"><label>Sem Desconto R$ (auto)</label><input type="number" id="geral-semdesconto" class="auto" readonly></div>
+    </div>
+    <div class="grid g2">
+      <div class="field"><label>Data</label><input type="date" id="geral-data"></div>
+      <div class="field"><label>Observação</label><input type="text" id="geral-obs" placeholder=""></div>
+    </div>
+    <div class="actions">
+      <button class="btn" onclick="clearForm('geral')">Limpar</button>
+      <button class="btn primary" onclick="saveEntry('geral')">+ Salvar e enviar para planilha</button>
+    </div>
+  </div>
+  <div id="table-geral"></div>
+</div>
+
+<!-- PASSAGENS -->
+<div id="panel-passagens" class="panel">
+  <div id="banner-passagens" class="banner warn">⚠️ <span>Configure o <a onclick="openSettings()">Google Sheets</a>.</span></div>
+  <div class="upload-zone" onclick="triggerUpload('passagens')">
+    <div class="upload-icon">✈️</div>
+    <h3>Passagens — Enviar comprovante</h3>
+    <p>A IA identifica origem, destino, passageiros e valores</p>
+    <input type="file" id="file-passagens" accept="image/*,application/pdf" style="display:none" onchange="handleImage('passagens',this)">
+  </div>
+  <div id="status-passagens" class="status-box"></div>
+  <div class="card">
+    <div class="card-title">Dados da passagem</div>
+    <div class="grid g3">
+      <div class="field"><label>Mês</label><select id="passagens-mes">MESES</select></div>
+      <div class="field"><label>Origem × Destino</label><input type="text" id="passagens-rota" placeholder="Ex: CNF - Recife"></div>
+      <div class="field"><label>Solicitante</label><input type="text" id="passagens-solicitante" placeholder="Nome"></div>
+    </div>
+    <div class="grid g2">
+      <div class="field"><label>Passageiros</label><input type="text" id="passagens-passageiros" placeholder="Ex: Eduardo, Lucas e Allan"></div>
+      <div class="field"><label>Descrição / Evento</label><input type="text" id="passagens-descricao" placeholder="Ex: Workshop Rompex"></div>
+    </div>
+    <div class="grid g3">
+      <div class="field"><label>Tipo</label><select id="passagens-tipo"><option>Ida e Volta</option><option>Somente Ida</option><option>Somente Volta</option></select></div>
+      <div class="field"><label>Preço R$</label><input type="number" id="passagens-preco" placeholder="0,00" step="0.01" oninput="calcPassagens()"></div>
+      <div class="field"><label>Preço Adquirido R$</label><input type="number" id="passagens-padquirido" placeholder="0,00" step="0.01" oninput="calcPassagens()"></div>
+    </div>
+    <div class="grid g3">
+      <div class="field"><label>Economia R$ (auto)</label><input type="number" id="passagens-economia" class="auto" readonly></div>
+      <div class="field"><label>Valor Total R$ (auto)</label><input type="number" id="passagens-vtotal" class="auto" readonly></div>
+      <div class="field"><label>Empresa / Agência</label><input type="text" id="passagens-empresa" placeholder="Ex: TZ Viagens, Azul..."></div>
+    </div>
+    <div class="grid g1"><div class="field"><label>Data</label><input type="date" id="passagens-data"></div></div>
+    <div class="actions">
+      <button class="btn" onclick="clearForm('passagens')">Limpar</button>
+      <button class="btn primary" onclick="saveEntry('passagens')">+ Salvar e enviar para planilha</button>
+    </div>
+  </div>
+  <div id="table-passagens"></div>
+</div>
+
+<!-- HOSPEDAGENS -->
+<div id="panel-hospedagens" class="panel">
+  <div id="banner-hospedagens" class="banner warn">⚠️ <span>Configure o <a onclick="openSettings()">Google Sheets</a>.</span></div>
+  <div class="upload-zone" onclick="triggerUpload('hospedagens')">
+    <div class="upload-icon">🏨</div>
+    <h3>Hospedagens — Enviar comprovante</h3>
+    <p>A IA identifica local, datas e valores automaticamente</p>
+    <input type="file" id="file-hospedagens" accept="image/*,application/pdf" style="display:none" onchange="handleImage('hospedagens',this)">
+  </div>
+  <div id="status-hospedagens" class="status-box"></div>
+  <div class="card">
+    <div class="card-title">Dados da hospedagem</div>
+    <div class="grid g3">
+      <div class="field"><label>Mês</label><select id="hospedagens-mes">MESES</select></div>
+      <div class="field"><label>Local / Cidade</label><input type="text" id="hospedagens-local" placeholder="Ex: Belo Horizonte"></div>
+      <div class="field"><label>Solicitante</label><input type="text" id="hospedagens-solicitante" placeholder="Nome"></div>
+    </div>
+    <div class="grid g2">
+      <div class="field"><label>Nº de Pessoas</label><input type="number" id="hospedagens-pessoas" value="1" min="1"></div>
+      <div class="field"><label>Descrição</label><input type="text" id="hospedagens-descricao" placeholder="Ex: Hospedagem para evento em Lajes"></div>
+    </div>
+    <div class="grid g3">
+      <div class="field"><label>Preço R$</label><input type="number" id="hospedagens-preco" placeholder="0,00" step="0.01" oninput="calcHospedagens()"></div>
+      <div class="field"><label>Preço Adquirido R$</label><input type="number" id="hospedagens-padquirido" placeholder="0,00" step="0.01" oninput="calcHospedagens()"></div>
+      <div class="field"><label>Economia R$ (auto)</label><input type="number" id="hospedagens-economia" class="auto" readonly></div>
+    </div>
+    <div class="grid g2">
+      <div class="field"><label>Valor Total R$ (auto)</label><input type="number" id="hospedagens-vtotal" class="auto" readonly></div>
+      <div class="field"><label>Data</label><input type="date" id="hospedagens-data"></div>
+    </div>
+    <div class="actions">
+      <button class="btn" onclick="clearForm('hospedagens')">Limpar</button>
+      <button class="btn primary" onclick="saveEntry('hospedagens')">+ Salvar e enviar para planilha</button>
+    </div>
+  </div>
+  <div id="table-hospedagens"></div>
+</div>
+
+<!-- SEGURO -->
+<div id="panel-seguro" class="panel">
+  <div id="banner-seguro" class="banner warn">⚠️ <span>Configure o <a onclick="openSettings()">Google Sheets</a>.</span></div>
+  <div class="upload-zone" onclick="triggerUpload('seguro')">
+    <div class="upload-icon">🛡️</div>
+    <h3>Seguro de Viagem — Enviar comprovante</h3>
+    <p>A IA extrai informações do seguro de viagem</p>
+    <input type="file" id="file-seguro" accept="image/*,application/pdf" style="display:none" onchange="handleImage('seguro',this)">
+  </div>
+  <div id="status-seguro" class="status-box"></div>
+  <div class="card">
+    <div class="card-title">Dados do seguro</div>
+    <div class="grid g3">
+      <div class="field"><label>Mês</label><select id="seguro-mes">MESES</select></div>
+      <div class="field"><label>Local / Destino</label><input type="text" id="seguro-local" placeholder="Ex: Bolivia"></div>
+      <div class="field"><label>Solicitante</label><input type="text" id="seguro-solicitante" placeholder="Nome"></div>
+    </div>
+    <div class="grid g2">
+      <div class="field"><label>Nº de Pessoas</label><input type="number" id="seguro-pessoas" value="1" min="1"></div>
+      <div class="field"><label>Descrição</label><input type="text" id="seguro-descricao" placeholder="Ex: Viagem Bolivia"></div>
+    </div>
+    <div class="grid g3">
+      <div class="field"><label>Preço R$</label><input type="number" id="seguro-preco" placeholder="0,00" step="0.01" oninput="calcSeguro()"></div>
+      <div class="field"><label>Preço Adquirido R$</label><input type="number" id="seguro-padquirido" placeholder="0,00" step="0.01" oninput="calcSeguro()"></div>
+      <div class="field"><label>Economia R$ (auto)</label><input type="number" id="seguro-economia" class="auto" readonly></div>
+    </div>
+    <div class="grid g1"><div class="field"><label>Valor Total R$ (auto)</label><input type="number" id="seguro-vtotal" class="auto" readonly></div></div>
+    <div class="actions">
+      <button class="btn" onclick="clearForm('seguro')">Limpar</button>
+      <button class="btn primary" onclick="saveEntry('seguro')">+ Salvar e enviar para planilha</button>
+    </div>
+  </div>
+  <div id="table-seguro"></div>
+</div>
+
+<!-- RELATÓRIO -->
+<div id="panel-relatorio" class="panel">
+  <div class="card">
+    <div class="card-title">Filtros e exportação</div>
+    <div style="display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap">
+      <div class="field"><label>Mês</label><select id="rel-mes" onchange="renderRelatorio()"><option value="">Todos</option>MESES</select></div>
+      <div class="field"><label>Categoria</label>
+        <select id="rel-cat" onchange="renderRelatorio()">
+          <option value="">Todas</option><option value="online">Online</option><option value="obras">Obras</option>
+          <option value="geral">Geral</option><option value="passagens">Passagens</option>
+          <option value="hospedagens">Hospedagens</option><option value="seguro">Seguro de Viagem</option>
+        </select>
+      </div>
+      <button class="btn primary" id="pdf-btn" onclick="gerarPDF()" style="background:#0F6E56;border-color:#0F6E56">📄 Gerar PDF</button>
+      <button class="btn dark" onclick="exportCSV()">⬇ CSV para Excel</button>
+      <button class="btn" onclick="exportTXT()">📄 Resumo TXT</button>
+    </div>
+  </div>
+  <div class="metrics" id="rel-metrics"></div>
+  <div id="rel-table"></div>
+</div>
+
+</main>
+
+<!-- SETTINGS MODAL -->
+<div class="overlay" id="settings-overlay" onclick="maybeClose(event)">
+<div class="modal" onclick="event.stopPropagation()">
+  <h2>⚙️ Configurações</h2>
+
+  <div class="modal-section">
+    <h3>☁️ GitHub Gist (backup automático dos dados)</h3>
+    <p class="desc">Cole seu <strong>GitHub Personal Access Token</strong> para ativar o backup automático. Cada lançamento e exclusão será sincronizado com um Gist privado na sua conta GitHub — seus dados ficam seguros mesmo se trocar de navegador.</p>
+    <div class="step"><div class="step-num">1</div><p>Acesse <strong>github.com → Settings → Developer settings → Personal access tokens → Tokens (classic)</strong></p></div>
+    <div class="step"><div class="step-num">2</div><p>Clique em <strong>Generate new token</strong>, marque apenas o escopo <strong>gist</strong> e clique em Generate</p></div>
+    <div class="step"><div class="step-num">3</div><p>Copie o token e cole abaixo. Na primeira vez, um Gist privado é criado automaticamente.</p></div>
+    <div class="field" style="margin-top:10px">
+      <label>GitHub Personal Access Token (ghp_...)</label>
+      <input type="password" id="settings-github" placeholder="ghp_xxxxxxxxxxxxxxxx">
+    </div>
+    <div id="gist-status" style="margin-top:8px;font-size:12px;color:var(--green-dark)"></div>
+    <div class="info-box">O Gist é <strong>privado</strong> e acessível apenas pela sua conta. Nenhum dado fica exposto no repositório público.</div>
+  </div>
+
+  <div class="modal-section">
+    <h3>📄 Google Sheets (planilha na nuvem)</h3>
+    <p class="desc">Cole aqui a URL do seu <strong>Google Apps Script</strong> implantado. Cada lançamento será enviado automaticamente para a planilha Google Sheets.</p>
+    <div class="step"><div class="step-num">1</div><p>Acesse <strong>script.google.com</strong> e crie um novo projeto</p></div>
+    <div class="step"><div class="step-num">2</div><p>Cole o conteúdo do arquivo <code>Code.gs</code> (incluído no pacote baixado)</p></div>
+    <div class="step"><div class="step-num">3</div><p>Clique em <strong>Implantar → Nova implantação</strong>, tipo <strong>App da Web</strong>, acesso <strong>"Qualquer pessoa"</strong></p></div>
+    <div class="step"><div class="step-num">4</div><p>Copie a URL gerada e cole abaixo</p></div>
+    <div class="field" style="margin-top:10px">
+      <label>URL do Apps Script</label>
+      <input type="text" id="settings-sheets" placeholder="https://script.google.com/macros/s/AKfyc.../exec">
+    </div>
+    <div class="field" style="margin-top:8px">
+      <label>URL da Planilha Google Sheets</label>
+      <input type="text" id="settings-sheets-file" placeholder="https://docs.google.com/spreadsheets/d/...">
+    </div>
+    <div class="info-box" style="margin-top:6px">Abra sua planilha no Google Drive e copie a URL da barra de endereço do navegador.</div>
+    <div class="info-box">A planilha é criada automaticamente na primeira vez que você salvar um lançamento. Ela ficará no seu Google Drive com o nome "📋 Lançamento de Compras".</div>
+  </div>
+
+  <div class="modal-section">
+    <h3>🤖 API Anthropic (leitura de comprovantes)</h3>
+    <p class="desc">Para que a IA leia imagens de comprovantes automaticamente, informe sua chave da API Anthropic. Obtenha em <strong>console.anthropic.com → API Keys</strong>.</p>
+    <div class="field">
+      <label>Chave da API (sk-ant-...)</label>
+      <input type="password" id="settings-apikey" placeholder="sk-ant-api03-...">
+    </div>
+    <div class="info-box">Custo médio por comprovante: ~R$ 0,05. A chave fica salva apenas no seu navegador.</div>
+  </div>
+
+  <div class="modal-actions">
+    <button class="btn" onclick="closeSettings()">Cancelar</button>
+    <button class="btn primary" onclick="saveSettings()">💾 Salvar configurações</button>
+  </div>
+</div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────
+const MESES_LIST=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const MES_ATUAL=MESES_LIST[new Date().getMonth()];
+const CAT_LABEL={online:'Online',obras:'Obras',geral:'Geral',passagens:'Passagens',hospedagens:'Hospedagens',seguro:'Seguro de Viagem'};
+const CAT_ICON={online:'🛒',obras:'🏗️',geral:'📦',passagens:'✈️',hospedagens:'🏨',seguro:'🛡️'};
+let db=[];
+
+function getGistToken(){ return localStorage.getItem('github_token')||''; }
+function getGistId()   { return localStorage.getItem('gist_id')||''; }
+
+async function saveToGist(data){
+  const token = getGistToken();
+  if(!token) return;
+  try{
+    const gistId = getGistId();
+    const body = {
+      description:'📋 Lançamento de Compras — Backup automático',
+      public: false,
+      files:{ 'compras_db.json':{ content: JSON.stringify(data, null, 2) } }
+    };
+    const url = gistId ? `https://api.github.com/gists/${gistId}` : 'https://api.github.com/gists';
+    const res = await fetch(url, {
+      method: gistId ? 'PATCH' : 'POST',
+      headers:{ 'Authorization':`token ${token}`, 'Content-Type':'application/json' },
+      body: JSON.stringify(body)
+    });
+    const result = await res.json();
+    if(result.id && !gistId) localStorage.setItem('gist_id', result.id);
+    console.log('[Gist] Backup salvo:', result.html_url||result.id);
+  }catch(err){ console.warn('[Gist] Falha no backup:', err); }
+}
+
+async function loadFromGist(){
+  const token = getGistToken();
+  const gistId = getGistId();
+  if(!token || !gistId) return null;
+  try{
+    const res = await fetch(`https://api.github.com/gists/${gistId}`, {
+      headers:{ 'Authorization':`token ${token}` }
+    });
+    const result = await res.json();
+    const content = result.files?.['compras_db.json']?.content;
+    return content ? JSON.parse(content) : null;
+  }catch(err){ console.warn('[Gist] Falha ao carregar backup:', err); return null; }
+}
+
+function loadDB(){ try{ db=JSON.parse(localStorage.getItem('compras_v3')||'[]'); }catch(e){ db=[]; } }
+function saveDB(){
+  localStorage.setItem('compras_v3',JSON.stringify(db));
+  saveToGist(db); // async fire-and-forget
+}
+
+function getKey(){ return localStorage.getItem('anthropic_key')||''; }
+function getSheetsURL(){ return localStorage.getItem('sheets_url')||''; }
+
+// Inject MESES into all selects
+document.querySelectorAll('select').forEach(sel=>{
+  if(sel.innerHTML.trim()==='MESES')
+    sel.innerHTML=MESES_LIST.map(m=>`<option${m===MES_ATUAL?' selected':''}>${m}</option>`).join('');
+});
+
+// ── UI ────────────────────────────────────────────────
+function switchTab(t){
+  document.querySelectorAll('.nav-tab').forEach((b,i)=>{
+    b.classList.toggle('active',['online','obras','geral','passagens','hospedagens','seguro','relatorio'][i]===t);
+  });
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+t).classList.add('active');
+  if(t==='relatorio') renderRelatorio();
+  updateBanners();
+}
+
+function updateBanners(){
+  const hasSheets=!!getSheetsURL();
+  ['online','obras','geral','passagens','hospedagens','seguro'].forEach(c=>{
+    const b=document.getElementById('banner-'+c);
+    if(b){ b.className='banner'+(hasSheets?'':' show warn'); }
+  });
+  const sheetsBar=document.getElementById('sheets-bar');
+  sheetsBar.className='sheets-bar'+(hasSheets?' show':'');
+  document.getElementById('sheets-btn').className='icon-btn'+(hasSheets?' connected':'');
+  document.getElementById('sheets-btn').textContent=hasSheets?'✅ Google Sheets':'📄 Google Sheets';
+}
+
+// ── UPLOAD & AI ───────────────────────────────────────
+function triggerUpload(cat){ document.getElementById('file-'+cat).click(); }
+
+function setStatus(cat,type,msg){
+  const el=document.getElementById('status-'+cat);
+  if(!el) return;
+  el.className='status-box'+(type?' show '+type:'');
+  el.innerHTML=msg||'';
+}
+
+// ── PROMPTS DETALHADOS POR CATEGORIA ─────────────────────────────────────
+const PROMPTS = {
+  online: `Você é especialista em extrair dados de comprovantes de compra online.
+Analise este documento e extraia os campos abaixo em JSON puro (sem markdown).
+- item: nome exato do produto
+- vmedio: preço de referência/original (se não visível, use o valor pago)
+- vpago: valor unitário pago
+- vtotal: valor total da compra
+- economia: vmedio*qtd - vtotal (pode ser negativo)
+- fornecedor: loja ou marketplace
+- Valores SEM R$, use ponto decimal (ex: 1234.56)
+Retorne APENAS: {"item":"","solicitante":"","descricao":"","qtd":1,"vmedio":0,"vpago":0,"vtotal":0,"economia":0,"fornecedor":""}`,
+
+  obras: `Você é especialista em notas fiscais de materiais de construção.
+Extraia em JSON puro (sem markdown):
+- material: nome do material ou lista resumida
+- qtd: quantidade
+- fornecedor: empresa/loja
+- preco: preço unitário pago
+- frete: valor do frete (0 se não houver)
+- concorrente: preço concorrente se mencionado
+- Valores SEM R$, ponto decimal
+Retorne APENAS: {"material":"","qtd":1,"fornecedor":"","preco":0,"frete":0,"concorrente":0,"fconcorrente":0,"obs":""}`,
+
+  geral: `Extraia dados deste comprovante em JSON puro (sem markdown):
+- item: nome do produto/serviço
+- preco: preço unitário original/referência
+- padquirido: preço unitário efetivamente pago
+- vtotal: total pago
+- data: data em YYYY-MM-DD
+- Valores SEM R$, ponto decimal
+Retorne APENAS: {"item":"","solicitante":"","descricao":"","qtd":1,"preco":0,"padquirido":0,"vtotal":0,"semdesconto":0,"economia":0,"data":"","obs":""}`,
+
+  passagens: `Extraia dados deste comprovante de passagem em JSON puro (sem markdown):
+- rota: formato "CIDADE ORIGEM - CIDADE DESTINO"
+- passageiros: nomes separados por vírgula
+- tipo: "Ida e Volta", "Somente Ida" ou "Somente Volta"
+- preco: valor de tabela/referência
+- padquirido: valor efetivamente pago
+- empresa: companhia aérea ou agência
+- data: data em YYYY-MM-DD
+- Valores SEM R$, ponto decimal
+Retorne APENAS: {"rota":"","solicitante":"","passageiros":"","descricao":"","tipo":"Ida e Volta","preco":0,"padquirido":0,"vtotal":0,"economia":0,"empresa":"","data":""}`,
+
+  hospedagens: `Extraia dados deste comprovante de hospedagem em JSON puro (sem markdown):
+- local: cidade ou nome do hotel
+- pessoas: número de hóspedes
+- preco: valor de referência/tabela
+- padquirido: valor efetivamente pago
+- data: data do check-in em YYYY-MM-DD
+- Valores SEM R$, ponto decimal
+Retorne APENAS: {"local":"","solicitante":"","pessoas":1,"descricao":"","preco":0,"padquirido":0,"vtotal":0,"economia":0,"data":""}`,
+
+  seguro: `Extraia dados deste comprovante de seguro de viagem em JSON puro (sem markdown):
+- local: destino da viagem
+- pessoas: número de segurados
+- preco: valor de tabela/referência
+- padquirido: valor efetivamente pago
+- Valores SEM R$, ponto decimal
+Retorne APENAS: {"local":"","solicitante":"","pessoas":1,"descricao":"","preco":0,"padquirido":0,"vtotal":0,"economia":0}`
+};
+
+// Stores the last uploaded file per category so saveEntry can send to Drive
+const pendingFiles = {};
+
+async function handleImage(cat, input){
+  if(!input.files[0]) return;
+  const key = getKey();
+  if(!key){ alert('Configure a chave da API Anthropic em ⚙️ Configurações para usar a leitura automática.'); openSettings(); return; }
+  const file = input.files[0];
+  const isPDF = file.type === 'application/pdf';
+  const reader = new FileReader();
+  reader.onload = async(ev) => {
+    const b64 = ev.target.result.split(',')[1];
+    // Store file for later upload to Drive on save
+    pendingFiles[cat] = { b64, name: file.name, type: file.type, size: file.size };
+    setStatus(cat,'loading',`<span class="spin">⟳</span> Analisando ${isPDF?'PDF':'imagem'} com IA…`);
+    try{
+      const fileBlock = isPDF
+        ? { type:'document', source:{ type:'base64', media_type:'application/pdf', data:b64 } }
+        : { type:'image',    source:{ type:'base64', media_type:file.type||'image/jpeg', data:b64 } };
+
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+          'x-api-key':key,
+          'anthropic-version':'2023-06-01',
+          'anthropic-dangerous-direct-browser-access':'true'
+        },
+        body: JSON.stringify({
+          model:'claude-sonnet-4-6',
+          max_tokens:1200,
+          messages:[{ role:'user', content:[ fileBlock, { type:'text', text: PROMPTS[cat] } ] }]
+        })
+      });
+      const data = await res.json();
+      if(data.error) throw new Error(data.error.message);
+      const rawText = (data.content?.[0]?.text||'{}').replace(/```json|```/g,'').trim();
+      console.log('[IA] Raw:', rawText);
+      const json = JSON.parse(rawText);
+      console.log('[IA] Parsed:', json);
+      const hasData = Object.values(json).some(v => v !== '' && v !== 0 && v !== null && v !== undefined);
+      if(!hasData){
+        setStatus(cat,'error','⚠️ A IA não conseguiu extrair dados. Tente uma imagem mais nítida ou preencha manualmente.');
+        return;
+      }
+      fillForm(cat, json);
+      setStatus(cat,'success',`✓ ${isPDF?'PDF':'Imagem'} lido! Confira os dados antes de salvar.`);
+      setTimeout(()=>setStatus(cat,'',''),6000);
+    }catch(err){
+      console.error('[IA] Erro:', err);
+      setStatus(cat,'error','✗ '+err.message);
+    }
+    input.value='';
+  };
+  reader.readAsDataURL(file);
+}
+
+
+function fillForm(cat,d){
+  const sv=(id,v)=>{const el=document.getElementById(id);if(!el)return;if(typeof v==='number'&&v!==0){el.value=v;}else if(typeof v==='string'&&v!==''){el.value=v;}else if(typeof v==='number'&&v===0){/* skip zero */}};
+  if(cat==='online'){sv('online-item',d.item);sv('online-solicitante',d.solicitante);sv('online-descricao',d.descricao);sv('online-qtd',d.qtd);sv('online-vmedio',d.vmedio);sv('online-vpago',d.vpago);sv('online-vtotal',d.vtotal);sv('online-fornecedor',d.fornecedor);calcOnline();}
+  if(cat==='obras'){sv('obras-material',d.material);sv('obras-qtd',d.qtd);sv('obras-fornecedor',d.fornecedor);sv('obras-preco',d.preco);sv('obras-frete',d.frete);sv('obras-concorrente',d.concorrente);sv('obras-fconcorrente',d.fconcorrente);sv('obras-obs',d.obs);calcObras();}
+  if(cat==='geral'){sv('geral-item',d.item);sv('geral-solicitante',d.solicitante);sv('geral-descricao',d.descricao);sv('geral-qtd',d.qtd);sv('geral-preco',d.preco);sv('geral-padquirido',d.padquirido);sv('geral-data',d.data);sv('geral-obs',d.obs);calcGeral();}
+  if(cat==='passagens'){sv('passagens-rota',d.rota);sv('passagens-solicitante',d.solicitante);sv('passagens-passageiros',d.passageiros);sv('passagens-descricao',d.descricao);sv('passagens-preco',d.preco);sv('passagens-padquirido',d.padquirido);sv('passagens-empresa',d.empresa);sv('passagens-data',d.data);calcPassagens();}
+  if(cat==='hospedagens'){sv('hospedagens-local',d.local);sv('hospedagens-solicitante',d.solicitante);sv('hospedagens-pessoas',d.pessoas);sv('hospedagens-descricao',d.descricao);sv('hospedagens-preco',d.preco);sv('hospedagens-padquirido',d.padquirido);sv('hospedagens-data',d.data);calcHospedagens();}
+  if(cat==='seguro'){sv('seguro-local',d.local);sv('seguro-solicitante',d.solicitante);sv('seguro-pessoas',d.pessoas);sv('seguro-descricao',d.descricao);sv('seguro-preco',d.preco);sv('seguro-padquirido',d.padquirido);calcSeguro();}
+}
+
+// ── CALCS ─────────────────────────────────────────────
+const gn=(id)=>parseFloat(document.getElementById(id)?.value)||0;
+const sn=(id,v)=>{const el=document.getElementById(id);if(el)el.value=parseFloat(v||0).toFixed(2);};
+
+function calcOnline(){const vm=gn('online-vmedio'),q=gn('online-qtd')||1,vt=gn('online-vtotal')||gn('online-vpago');sn('online-economia',vm*q-vt);}
+function calcObras(){const p=gn('obras-preco'),f=gn('obras-frete');sn('obras-total',p+f);const c=gn('obras-concorrente'),fc=gn('obras-fconcorrente');sn('obras-semdesconto',c+fc);sn('obras-economia',(c+fc)-(p+f));}
+function calcGeral(){const p=gn('geral-preco'),pa=gn('geral-padquirido'),q=gn('geral-qtd')||1;sn('geral-vtotal',pa*q);sn('geral-semdesconto',p*q);sn('geral-economia',(p-pa)*q);}
+function calcPassagens(){const p=gn('passagens-preco'),pa=gn('passagens-padquirido');sn('passagens-vtotal',pa||p);sn('passagens-economia',p-pa);}
+function calcHospedagens(){const p=gn('hospedagens-preco'),pa=gn('hospedagens-padquirido');sn('hospedagens-vtotal',pa||p);sn('hospedagens-economia',p-pa);}
+function calcSeguro(){const p=gn('seguro-preco'),pa=gn('seguro-padquirido');sn('seguro-vtotal',pa||p);sn('seguro-economia',p-pa);}
+
+// ── SAVE + SYNC ───────────────────────────────────────
+const g=(id)=>document.getElementById(id)?.value||'';
+
+function buildEntry(cat){
+  let e={cat,id:Date.now(),synced:false};
+  if(cat==='online') return{...e,mes:g('online-mes'),item:g('online-item'),solicitante:g('online-solicitante'),descricao:g('online-descricao'),qtd:gn('online-qtd'),vmedio:gn('online-vmedio'),vpago:gn('online-vpago'),vtotal:gn('online-vtotal'),economia:gn('online-economia'),fornecedor:g('online-fornecedor')};
+  if(cat==='obras') return{...e,mes:g('obras-mes'),material:g('obras-material'),qtd:gn('obras-qtd'),fornecedor:g('obras-fornecedor'),preco:gn('obras-preco'),frete:gn('obras-frete'),total:gn('obras-total'),concorrente:gn('obras-concorrente'),fconcorrente:gn('obras-fconcorrente'),semdesconto:gn('obras-semdesconto'),economia:gn('obras-economia'),obs:g('obras-obs')};
+  if(cat==='geral') return{...e,mes:g('geral-mes'),item:g('geral-item'),solicitante:g('geral-solicitante'),descricao:g('geral-descricao'),qtd:gn('geral-qtd'),preco:gn('geral-preco'),padquirido:gn('geral-padquirido'),economia:gn('geral-economia'),vtotal:gn('geral-vtotal'),semdesconto:gn('geral-semdesconto'),data:g('geral-data'),obs:g('geral-obs')};
+  if(cat==='passagens') return{...e,mes:g('passagens-mes'),rota:g('passagens-rota'),solicitante:g('passagens-solicitante'),passageiros:g('passagens-passageiros'),descricao:g('passagens-descricao'),tipo:g('passagens-tipo'),preco:gn('passagens-preco'),padquirido:gn('passagens-padquirido'),economia:gn('passagens-economia'),vtotal:gn('passagens-vtotal'),empresa:g('passagens-empresa'),data:g('passagens-data')};
+  if(cat==='hospedagens') return{...e,mes:g('hospedagens-mes'),local:g('hospedagens-local'),solicitante:g('hospedagens-solicitante'),pessoas:gn('hospedagens-pessoas'),descricao:g('hospedagens-descricao'),preco:gn('hospedagens-preco'),padquirido:gn('hospedagens-padquirido'),economia:gn('hospedagens-economia'),vtotal:gn('hospedagens-vtotal'),data:g('hospedagens-data')};
+  if(cat==='seguro') return{...e,mes:g('seguro-mes'),local:g('seguro-local'),solicitante:g('seguro-solicitante'),pessoas:gn('seguro-pessoas'),descricao:g('seguro-descricao'),preco:gn('seguro-preco'),padquirido:gn('seguro-padquirido'),economia:gn('seguro-economia'),vtotal:gn('seguro-vtotal')};
+}
+
+async function saveEntry(cat){
+  const entry=buildEntry(cat);
+  if(!entry) return;
+  db.push(entry); saveDB(); clearForm(cat); renderTable(cat);
+  const url=getSheetsURL();
+  if(!url){
+    setStatus(cat,'success','✓ Salvo localmente. Configure o Google Sheets para sincronizar com a planilha.');
+    delete pendingFiles[cat];
+    setTimeout(()=>setStatus(cat,'',''),4000); return;
+  }
+
+  // ── Send to Sheets + Drive in parallel ────────────────────────────────
+  const pf = pendingFiles[cat] || null;
+  const payload = { ...entry };
+  if(pf){
+    // Include file for Drive upload
+    payload.comprovante = { b64: pf.b64, name: pf.name, type: pf.type };
+    setStatus(cat,'saving','<span class="spin">⟳</span> Salvando na planilha e enviando comprovante para o Drive…');
+  } else {
+    setStatus(cat,'saving','<span class="spin">⟳</span> Salvando na planilha Google Sheets…');
+  }
+
+  try{
+    const res = await fetch(url, {
+      method:'POST',
+      body: JSON.stringify(payload),
+      headers:{'Content-Type':'text/plain'}
+    });
+    const data = await res.json();
+    if(data.ok){
+      entry.synced = true;
+      if(data.driveUrl) entry.driveUrl = data.driveUrl;
+      saveDB(); renderTable(cat);
+      const driveMsg = data.driveUrl ? ` · <a href="${data.driveUrl}" target="_blank" rel="noopener" style="color:var(--green-dark);font-weight:600">📎 Ver comprovante ↗</a>` : '';
+      setStatus(cat,'success',`✅ Salvo! Aba ${CAT_LABEL[cat]}, linha ${data.rows}${driveMsg}`);
+      updateSheetsCount();
+      delete pendingFiles[cat];
+    } else throw new Error(data.error||'Erro desconhecido');
+  }catch(err){
+    setStatus(cat,'error','⚠️ Salvo localmente, mas falha ao enviar: '+err.message);
+  }
+  setTimeout(()=>setStatus(cat,'',''),8000);
+}
+
+function getSheetsFileURL(){ return localStorage.getItem('sheets_file_url')||''; }
+
+async function updateSheetsCount(){
+  const url=getSheetsURL();
+  if(!url) return;
+  // Restore saved spreadsheet URL immediately (no wait)
+  const saved = getSheetsFileURL();
+  if(saved){
+    const link = document.getElementById('sheets-link');
+    if(link){ link.href=saved; link.style.pointerEvents=''; link.style.opacity='1'; }
+  }
+  try{
+    const res=await fetch(url);
+    const data=await res.json();
+    if(data.ok){
+      const total=Object.values(data.summary).filter(v=>typeof v==='number').reduce((a,b)=>a+b,0);
+      document.getElementById('sheets-count').textContent=total+' lançamentos na planilha';
+      if(data.url){
+        localStorage.setItem('sheets_file_url', data.url); // persist for next load
+        const link = document.getElementById('sheets-link');
+        if(link){ link.href=data.url; link.style.pointerEvents=''; link.style.opacity='1'; }
+      }
+    }
+  }catch(e){ console.warn('[Sheets] updateSheetsCount error:',e); }
+}
+
+// ── DELETE ────────────────────────────────────────────
+async function deleteEntry(id){
+  const entry = db.find(e => e.id === id);
+  if(!entry) return;
+  const label = entry.item || entry.material || entry.rota || entry.local || entry.descricao || 'este lançamento';
+  if(!confirm(`Excluir "${label}"?
+
+✅ Será removido localmente.
+${entry.synced ? '✅ Será removido do Google Sheets.' : '⚠️ Este registro não estava sincronizado com o Sheets.'}`)) return;
+
+  db = db.filter(e => e.id !== id);
+  saveDB();
+  await saveToGist(db);
+  renderAllTables();
+  renderRelatorio();
+
+  // Delete from Sheets if was synced
+  if(entry.synced && getSheetsURL()){
+    try{
+      await fetch(getSheetsURL(), {
+        method:'POST',
+        body: JSON.stringify({
+          action:'delete',
+          cat: entry.cat,
+          entryId: entry.id,
+          driveUrl: entry.driveUrl || null
+        }),
+        headers:{'Content-Type':'text/plain'}
+      });
+    }catch(e){ console.warn('Sheets/Drive delete failed:', e); }
+  }
+}
+
+
+function clearForm(cat){
+  const map={
+    online:['online-item','online-solicitante','online-descricao','online-vmedio','online-vpago','online-vtotal','online-economia','online-fornecedor'],
+    obras:['obras-material','obras-fornecedor','obras-preco','obras-frete','obras-total','obras-concorrente','obras-fconcorrente','obras-semdesconto','obras-economia','obras-obs'],
+    geral:['geral-item','geral-solicitante','geral-descricao','geral-preco','geral-padquirido','geral-economia','geral-vtotal','geral-semdesconto','geral-data','geral-obs'],
+    passagens:['passagens-rota','passagens-solicitante','passagens-passageiros','passagens-descricao','passagens-preco','passagens-padquirido','passagens-economia','passagens-vtotal','passagens-empresa','passagens-data'],
+    hospedagens:['hospedagens-local','hospedagens-solicitante','hospedagens-descricao','hospedagens-preco','hospedagens-padquirido','hospedagens-economia','hospedagens-vtotal','hospedagens-data'],
+    seguro:['seguro-local','seguro-solicitante','seguro-descricao','seguro-preco','seguro-padquirido','seguro-economia','seguro-vtotal']
+  };
+  (map[cat]||[]).forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+}
+
+// ── TABLES ────────────────────────────────────────────
+const fmt=(v)=>'R$ '+parseFloat(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+function renderTable(cat){
+  const wrap=document.getElementById('table-'+cat);
+  if(!wrap) return;
+  const rows=db.filter(e=>e.cat===cat);
+  if(!rows.length){wrap.innerHTML='<p class="empty">Nenhum lançamento ainda. Preencha o formulário acima e clique em Salvar.</p>';return;}
+  const heads={
+    online:['','Mês','Item','Solicitante','Qtd','V. Médio','V. Pago','V. Total','Economia','Fornecedor',''],
+    obras:['','Mês','Material','Qtd','Fornecedor','Preço','Frete','Total Pago','Sem Desconto','Economia','Obs',''],
+    geral:['','Mês','Item','Solicitante','Qtd','Preço','P. Adquirido','V. Total','Economia','Data',''],
+    passagens:['','Mês','Rota','Solicitante','Passageiros','Tipo','Preço','P. Adquirido','V. Total','Empresa','Data',''],
+    hospedagens:['','Mês','Local','Solicitante','Pessoas','Descrição','Preço','P. Adquirido','V. Total','Economia','Data',''],
+    seguro:['','Mês','Local','Solicitante','Pessoas','Descrição','Preço','P. Adquirido','V. Total','Economia','']
+  };
+  let html='<div class="tbl-wrap" style="margin-top:1rem"><table><thead><tr>'+(heads[cat]||[]).map(h=>`<th>${h}</th>`).join('')+'</tr></thead><tbody>';
+  rows.slice().reverse().forEach(r=>{
+    const dot=r.synced?'<span class="sync-dot" title="Salvo na planilha"></span>':'<span class="sync-dot pending" title="Apenas local"></span>';
+    html+=`<tr><td style="width:24px">${dot}</td>`;
+    if(cat==='online') html+=`<td>${r.mes}</td><td>${r.item}</td><td>${r.solicitante}</td><td>${r.qtd}</td><td>${fmt(r.vmedio)}</td><td>${fmt(r.vpago)}</td><td>${fmt(r.vtotal)}</td><td style="color:var(--green-dark);font-weight:500">${fmt(r.economia)}</td><td>${r.fornecedor}</td><td>${r.driveUrl?`<a href="${r.driveUrl}" target="_blank" rel="noopener" style="color:var(--green-dark);text-decoration:none" title="Ver comprovante no Drive">📎</a>`:''}</td>`;
+    if(cat==='obras') html+=`<td>${r.mes}</td><td>${r.material}</td><td>${r.qtd}</td><td>${r.fornecedor}</td><td>${fmt(r.preco)}</td><td>${fmt(r.frete)}</td><td>${fmt(r.total)}</td><td>${fmt(r.semdesconto)}</td><td style="color:var(--green-dark);font-weight:500">${fmt(r.economia)}</td><td>${r.obs}</td><td>${r.driveUrl?`<a href="${r.driveUrl}" target="_blank" rel="noopener" style="color:var(--green-dark);text-decoration:none" title="Ver comprovante no Drive">📎</a>`:''}</td>` ;
+    if(cat==='geral') html+=`<td>${r.mes}</td><td>${r.item}</td><td>${r.solicitante}</td><td>${r.qtd}</td><td>${fmt(r.preco)}</td><td>${fmt(r.padquirido)}</td><td>${fmt(r.vtotal)}</td><td style="color:var(--green-dark);font-weight:500">${fmt(r.economia)}</td><td>${r.data}</td><td>${r.driveUrl?`<a href="${r.driveUrl}" target="_blank" rel="noopener" style="color:var(--green-dark);text-decoration:none" title="Ver comprovante no Drive">📎</a>`:''}</td>` ;
+    if(cat==='passagens') html+=`<td>${r.mes}</td><td>${r.rota}</td><td>${r.solicitante}</td><td>${r.passageiros}</td><td>${r.tipo}</td><td>${fmt(r.preco)}</td><td>${fmt(r.padquirido)}</td><td>${fmt(r.vtotal)}</td><td>${r.empresa}</td><td>${r.data}</td><td>${r.driveUrl?`<a href="${r.driveUrl}" target="_blank" rel="noopener" style="color:var(--green-dark);text-decoration:none" title="Ver comprovante no Drive">📎</a>`:''}</td>` ;
+    if(cat==='hospedagens') html+=`<td>${r.mes}</td><td>${r.local}</td><td>${r.solicitante}</td><td>${r.pessoas}</td><td>${r.descricao}</td><td>${fmt(r.preco)}</td><td>${fmt(r.padquirido)}</td><td>${fmt(r.vtotal)}</td><td style="color:var(--green-dark);font-weight:500">${fmt(r.economia)}</td><td>${r.data}</td><td>${r.driveUrl?`<a href="${r.driveUrl}" target="_blank" rel="noopener" style="color:var(--green-dark);text-decoration:none" title="Ver comprovante no Drive">📎</a>`:''}</td>` ;
+    if(cat==='seguro') html+=`<td>${r.mes}</td><td>${r.local}</td><td>${r.solicitante}</td><td>${r.pessoas}</td><td>${r.descricao}</td><td>${fmt(r.preco)}</td><td>${fmt(r.padquirido)}</td><td>${fmt(r.vtotal)}</td><td style="color:var(--green-dark);font-weight:500">${fmt(r.economia)}</td><td>${r.driveUrl?`<a href="${r.driveUrl}" target="_blank" rel="noopener" style="color:var(--green-dark);text-decoration:none" title="Ver comprovante no Drive">📎</a>`:''}</td>` ;
+    html+=`<td><button class="btn del" onclick="deleteEntry(${r.id})" title="Excluir local">×</button></td></tr>`;
+  });
+  wrap.innerHTML=html+'</tbody></table></div>';
+}
+
+function renderAllTables(){ ['online','obras','geral','passagens','hospedagens','seguro'].forEach(c=>renderTable(c)); }
+
+// ── RELATÓRIO ─────────────────────────────────────────
+function renderRelatorio(){
+  const mes=document.getElementById('rel-mes')?.value||'';
+  const cat=document.getElementById('rel-cat')?.value||'';
+  let rows=db;
+  if(mes) rows=rows.filter(e=>e.mes===mes);
+  if(cat) rows=rows.filter(e=>e.cat===cat);
+  const totPago=rows.reduce((s,r)=>s+(r.vtotal||r.total||r.padquirido||0),0);
+  const totSem=rows.reduce((s,r)=>s+(r.semdesconto||r.preco||0),0);
+  const totEco=rows.reduce((s,r)=>s+(r.economia||0),0);
+  const pct=totSem>0?((totEco/totSem)*100).toFixed(0)+'%':'—';
+  document.getElementById('rel-metrics').innerHTML=`
+    <div class="metric"><div class="lbl">Total Pago</div><div class="val">${fmt(totPago)}</div><div class="sub">${rows.length} lançamentos</div></div>
+    <div class="metric"><div class="lbl">Sem Desconto</div><div class="val">${fmt(totSem)}</div></div>
+    <div class="metric"><div class="lbl">Economia Total</div><div class="val" style="color:var(--green-dark)">${fmt(totEco)}</div><div class="sub">${pct} de economia</div></div>`;
+  if(!rows.length){document.getElementById('rel-table').innerHTML='<p class="empty">Nenhum lançamento encontrado.</p>';return;}
+  let html='<div class="tbl-wrap"><table><thead><tr><th></th><th>Categoria</th><th>Mês</th><th>Descrição</th><th>Solicitante</th><th>Valor Total</th><th>Economia</th></tr></thead><tbody>';
+  rows.slice().reverse().forEach(r=>{
+    const desc=r.item||r.material||r.rota||r.local||r.descricao||'—';
+    const dot=r.synced?'<span class="sync-dot" title="Na planilha"></span>':'<span class="sync-dot pending" title="Só local"></span>';
+    html+=`<tr><td>${dot}</td><td><span class="badge b-${r.cat}">${CAT_LABEL[r.cat]}</span></td><td>${r.mes}</td><td>${desc}</td><td>${r.solicitante||'—'}</td><td>${fmt(r.vtotal||r.total||0)}</td><td style="color:var(--green-dark);font-weight:500">${fmt(r.economia||0)}</td></tr>`;
+  });
+  document.getElementById('rel-table').innerHTML=html+'</tbody></table></div>';
+}
+
+// ── EXPORTS ───────────────────────────────────────────
+function getFiltered(){
+  const mes=document.getElementById('rel-mes')?.value||'';
+  const cat=document.getElementById('rel-cat')?.value||'';
+  let rows=db;
+  if(mes) rows=rows.filter(e=>e.mes===mes);
+  if(cat) rows=rows.filter(e=>e.cat===cat);
+  return rows;
+}
+function exportCSV(){
+  const rows=getFiltered();
+  if(!rows.length){alert('Nenhum dado para exportar.');return;}
+  const h='Categoria,Mes,Descricao,Solicitante,Valor Total,Sem Desconto,Economia,Sincronizado\n';
+  const lines=rows.map(r=>{
+    const desc=r.item||r.material||r.rota||r.local||r.descricao||'';
+    return `"${CAT_LABEL[r.cat]}","${r.mes}","${desc}","${r.solicitante||''}","${r.vtotal||r.total||0}","${r.semdesconto||r.preco||0}","${r.economia||0}","${r.synced?'Sim':'Não'}"`;
+  }).join('\n');
+  dl('\uFEFF'+h+lines,'relatorio_compras.csv','text/csv;charset=utf-8;');
+}
+function exportTXT(){
+  const rows=getFiltered();
+  if(!rows.length){alert('Nenhum dado.');return;}
+  const totPago=rows.reduce((s,r)=>s+(r.vtotal||r.total||0),0);
+  const totEco=rows.reduce((s,r)=>s+(r.economia||0),0);
+  let txt=`RELATÓRIO DE COMPRAS\n${'═'.repeat(52)}\n`;
+  ['online','obras','geral','passagens','hospedagens','seguro'].forEach(cat=>{
+    const cr=rows.filter(r=>r.cat===cat);
+    if(!cr.length) return;
+    txt+=`\n${CAT_LABEL[cat].toUpperCase()}\n${'─'.repeat(40)}\n`;
+    cr.forEach(r=>{
+      const desc=r.item||r.material||r.rota||r.local||r.descricao||'';
+      txt+=`• ${r.mes} | ${desc}${r.solicitante?' ('+r.solicitante+')':''}\n  Pago: ${fmt(r.vtotal||r.total||0)} | Economia: ${fmt(r.economia||0)}\n`;
+    });
+  });
+  txt+=`\n${'═'.repeat(52)}\nTOTAL PAGO: ${fmt(totPago)}\nECONOMIA:   ${fmt(totEco)}\n`;
+  dl(txt,'relatorio_compras.txt','text/plain;charset=utf-8;');
+}
+function dl(content,filename,type){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([content],{type}));
+  a.download=filename; a.click();
+}
+
+// ── SETTINGS ──────────────────────────────────────────
+function openSettings(){
+  document.getElementById('settings-sheets').value=getSheetsURL();
+  document.getElementById('settings-sheets-file').value=getSheetsFileURL();
+  document.getElementById('settings-apikey').value=getKey();
+  document.getElementById('settings-github').value=getGistToken();
+  const gistEl = document.getElementById('gist-status');
+  if(gistEl) gistEl.textContent = getGistId() ? `✅ Gist ativo: ${getGistId().substring(0,12)}…` : '';
+  document.getElementById('settings-overlay').classList.add('open');
+}
+function closeSettings(){ document.getElementById('settings-overlay').classList.remove('open'); }
+function maybeClose(e){ if(e.target===document.getElementById('settings-overlay')) closeSettings(); }
+async function saveSettings(){
+  const url       = document.getElementById('settings-sheets').value.trim();
+  const fileUrl   = document.getElementById('settings-sheets-file').value.trim();
+  const key       = document.getElementById('settings-apikey').value.trim();
+  const github    = document.getElementById('settings-github').value.trim();
+  localStorage.setItem('sheets_url', url);
+  localStorage.setItem('anthropic_key', key);
+  if(fileUrl) localStorage.setItem('sheets_file_url', fileUrl);
+  if(github) localStorage.setItem('github_token', github);
+  else localStorage.removeItem('github_token');
+  const oldToken = getGistToken();
+  if(github && github !== oldToken) localStorage.removeItem('gist_id');
+  closeSettings();
+  updateBanners();
+  // Apply spreadsheet link immediately if URL was provided
+  if(fileUrl){
+    const link = document.getElementById('sheets-link');
+    if(link){ link.href=fileUrl; link.style.pointerEvents=''; link.style.opacity='1'; }
+  }
+  if(url) updateSheetsCount();
+  if(github){ await saveToGist(db); console.log('[Gist] Backup tested'); }
+}
+
+// ── INIT ──────────────────────────────────────────────
+async function init(){
+  loadDB(); // Load from localStorage first (instant)
+  renderAllTables();
+  renderRelatorio();
+  updateBanners();
+  updateSheetsCount();
+  // Then try to restore from Gist (may have newer data from another device)
+  if(getGistToken() && getGistId()){
+    try{
+      const gistData = await loadFromGist();
+      if(gistData && gistData.length > db.length){
+        db = gistData;
+        localStorage.setItem('compras_v3', JSON.stringify(db));
+        renderAllTables();
+        renderRelatorio();
+        console.log(`[Gist] Restored ${db.length} entries from backup`);
+      }
+    }catch(e){ console.warn('[Gist] Could not restore:', e); }
+  }
+}
+init();
+
+// ── PDF GENERATOR (jsPDF + AutoTable) ─────────────────────────────────────
+async function gerarPDF() {
+  const mes = document.getElementById('rel-mes')?.value || '';
+  const cat = document.getElementById('rel-cat')?.value || '';
+  let rows = db;
+  if (mes) rows = rows.filter(e => e.mes === mes);
+  if (cat) rows = rows.filter(e => e.cat === cat);
+  if (!rows.length) { alert('Nenhum dado para gerar relatório.'); return; }
+
+  const btn = document.getElementById('pdf-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Gerando PDF...';
+
+  try {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+    const W = doc.internal.pageSize.getWidth();
+    const H = doc.internal.pageSize.getHeight();
+
+    const GREEN   = [29, 158, 117];
+    const GDARK   = [15, 110, 86];
+    const GLIGHT  = [225, 245, 238];
+    const WHITE   = [255, 255, 255];
+    const GRAY    = [107, 114, 128];
+    const GBORDER = [229, 231, 235];
+    const BLACK   = [17, 24, 39];
+
+    const ORDER = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+    const meses = [...new Set(rows.map(e => e.mes).filter(Boolean))].sort((a,b) => ORDER.indexOf(a) - ORDER.indexOf(b));
+    const period = mes ? mes + ' / 2026' : meses.join(' • ') + ' / 2026';
+
+    const totPago = rows.reduce((s,r) => s + (parseFloat(r.vtotal||r.total||0)), 0);
+    const totSem  = rows.reduce((s,r) => s + (parseFloat(r.semdesconto||r.preco||0)), 0);
+    const totEco  = rows.reduce((s,r) => s + (parseFloat(r.economia||0)), 0);
+    const pctEco  = totSem ? (totEco/totSem*100).toFixed(1) + '%' : '—';
+
+    const byMes = {};
+    rows.forEach(r => {
+      if (!byMes[r.mes]) byMes[r.mes] = { pago:0, sem:0, eco:0, cats:new Set() };
+      byMes[r.mes].pago += parseFloat(r.vtotal||r.total||0);
+      byMes[r.mes].sem  += parseFloat(r.semdesconto||r.preco||0);
+      byMes[r.mes].eco  += parseFloat(r.economia||0);
+      byMes[r.mes].cats.add(r.cat);
+    });
+    const melhor = meses.reduce((a,b) =>
+      byMes[b]?.sem ? (byMes[b].eco/byMes[b].sem > (byMes[a]?.eco||0)/(byMes[a]?.sem||1) ? b : a) : a, meses[0]);
+    const melhorPct = byMes[melhor]?.sem ? (byMes[melhor].eco/byMes[melhor].sem*100).toFixed(1)+'%' : '—';
+
+    // ── CAPA ──────────────────────────────────────────────────────────────
+    doc.setFillColor(...GREEN);
+    doc.rect(0, 0, W, H, 'F');
+    doc.setFillColor(...GDARK);
+    doc.circle(W - 15, 15, 25, 'F');
+    doc.setFillColor(10, 92, 71);
+    doc.circle(10, H - 10, 18, 'F');
+
+    doc.setTextColor(...WHITE);
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(28);
+    doc.text('RELATÓRIO DE COMPRAS MENSAL', W/2, 45, { align:'center' });
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(13);
+    doc.setTextColor(167, 243, 208);
+    doc.text(period, W/2, 55, { align:'center' });
+
+    // Metric boxes
+    const boxes = [
+      { label:'TOTAL GASTO', val: fmt(totPago), sub: rows.length+' lançamentos' },
+      { label:'TOTAL ECONOMIZADO', val: fmt(totEco), sub: pctEco+' de economia' },
+      { label:'MELHOR MÊS', val: melhor||'—', sub: melhorPct+' de economia' },
+    ];
+    const bw = 70, bx0 = (W - boxes.length*bw - (boxes.length-1)*6) / 2;
+    boxes.forEach((b, i) => {
+      const x = bx0 + i*(bw+6);
+      doc.setFillColor(10, 92, 71);
+      doc.roundedRect(x, 70, bw, 38, 4, 4, 'F');
+      doc.setTextColor(209, 250, 229);
+      doc.setFont('helvetica','normal'); doc.setFontSize(7.5);
+      doc.text(b.label, x + bw/2, 79, { align:'center' });
+      doc.setTextColor(...WHITE);
+      doc.setFont('helvetica','bold'); doc.setFontSize(14);
+      doc.text(b.val, x + bw/2, 90, { align:'center' });
+      doc.setTextColor(167, 243, 208);
+      doc.setFont('helvetica','normal'); doc.setFontSize(8);
+      doc.text(b.sub, x + bw/2, 100, { align:'center' });
+    });
+
+    const cats = [...new Set(rows.map(e => e.cat))];
+    doc.setTextColor(167, 243, 208);
+    doc.setFontSize(10); doc.setFont('helvetica','normal');
+    doc.text(cats.map(c => CAT_LABEL[c]).join('  ·  '), W/2, 122, { align:'center' });
+
+    doc.setTextColor(110, 231, 183);
+    doc.setFontSize(8.5);
+    doc.text('Documento confidencial – uso interno', W/2, H-12, { align:'center' });
+
+    // ── RESUMO EXECUTIVO ───────────────────────────────────────────────────
+    doc.addPage();
+    addPageHeader(doc, 'RESUMO EXECUTIVO', 'Visão Geral · ' + period, W, GREEN, GDARK, WHITE);
+
+    let y = 32;
+    doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(...GDARK);
+    doc.text('Evolução Mensal de Gastos', 14, y); y += 5;
+
+    const evoHead = [['Mês','Gasto Total','Economia Total','% Economizado','Vs. Mês Anterior']];
+    let prevPago = null;
+    const evoBody = meses.map(m => {
+      const d = byMes[m] || {};
+      const p = pct2(d.eco, d.sem);
+      let var_ = '—';
+      if (prevPago !== null) {
+        const chg = prevPago ? (d.pago - prevPago) / prevPago * 100 : 0;
+        var_ = (chg < 0 ? '▼ ' : '▲ ') + Math.abs(chg).toFixed(1) + '%';
+      }
+      prevPago = d.pago;
+      return [m, fmt(d.pago), fmt(d.eco), p, var_];
+    });
+    evoBody.push(['TOTAL GERAL', fmt(totPago), fmt(totEco), pctEco, '']);
+
+    doc.autoTable({
+      startY: y, head: evoHead, body: evoBody,
+      styles: { fontSize: 8.5, cellPadding: 3 },
+      headStyles: { fillColor: GREEN, textColor: 255, fontStyle: 'bold' },
+      alternateRowStyles: { fillColor: [249, 250, 251] },
+      foot: [], showFoot: 'never',
+      didDrawRow: (data) => {
+        if (data.row.index === evoBody.length - 1) {
+          data.row.cells[0].styles.fontStyle = 'bold';
+          data.row.cells[0].styles.textColor = GDARK;
+        }
+      },
+      columnStyles: { 1:{halign:'right'}, 2:{halign:'right'}, 3:{halign:'center'}, 4:{halign:'center'} },
+      margin: { left: 14, right: 14 },
+      theme: 'grid',
+    });
+
+    y = doc.lastAutoTable.finalY + 8;
+    doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(...GDARK);
+    doc.text('Resumo por Categoria', 14, y); y += 5;
+
+    const byCat = {};
+    const byCatMes = {};
+    rows.forEach(r => {
+      if (!byCat[r.cat]) byCat[r.cat] = { pago:0, eco:0 };
+      byCat[r.cat].pago += parseFloat(r.vtotal||r.total||0);
+      byCat[r.cat].eco  += parseFloat(r.economia||0);
+      if (!byCatMes[r.cat]) byCatMes[r.cat] = {};
+      if (!byCatMes[r.cat][r.mes]) byCatMes[r.cat][r.mes] = 0;
+      byCatMes[r.cat][r.mes] += parseFloat(r.vtotal||r.total||0);
+    });
+
+    const catOrder = ['online','obras','geral','passagens','hospedagens','seguro'];
+    const catHead = [['Categoria', ...meses, 'Econ. Acum.']];
+    const catBody = catOrder.filter(c => byCat[c]).map(c => [
+      CAT_LABEL[c],
+      ...meses.map(m => byCatMes[c]?.[m] ? fmt(byCatMes[c][m]) : '—'),
+      fmt(byCat[c].eco)
+    ]);
+    const totRow = ['TOTAL',
+      ...meses.map(m => fmt(catOrder.reduce((s,c) => s+(byCatMes[c]?.[m]||0), 0))),
+      fmt(Object.values(byCat).reduce((s,d) => s+d.eco, 0))
+    ];
+    catBody.push(totRow);
+
+    doc.autoTable({
+      startY: y, head: catHead, body: catBody,
+      styles: { fontSize: 8, cellPadding: 3 },
+      headStyles: { fillColor: GREEN, textColor: 255, fontStyle: 'bold' },
+      alternateRowStyles: { fillColor: [249, 250, 251] },
+      columnStyles: Object.fromEntries([...meses.map((_,i) => [i+1, {halign:'right'}]), [meses.length+1, {halign:'right'}]]),
+      margin: { left: 14, right: 14 },
+      theme: 'grid',
+    });
+
+    // ── PÁGINAS POR CATEGORIA ──────────────────────────────────────────────
+    for (const cat of catOrder) {
+      const catRows = rows.filter(r => r.cat === cat);
+      if (!catRows.length) continue;
+
+      doc.addPage();
+      const cPago = catRows.reduce((s,r) => s+parseFloat(r.vtotal||r.total||0), 0);
+      const cSem  = catRows.reduce((s,r) => s+parseFloat(r.semdesconto||r.preco||0), 0);
+      const cEco  = catRows.reduce((s,r) => s+parseFloat(r.economia||0), 0);
+      addCatHeader(doc, cat, fmt(cPago), fmt(cSem), fmt(cEco), pct2(cEco,cSem), W, GREEN, GDARK, GLIGHT, WHITE, GRAY);
+
+      let cy = 42;
+      for (const m of meses) {
+        const mRows = catRows.filter(r => r.mes === m);
+        if (!mRows.length) continue;
+
+        doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(...GDARK);
+        doc.text('● ' + m, 14, cy); cy += 3;
+
+        const { head, body, cols } = buildCatTable(cat, mRows);
+        doc.autoTable({
+          startY: cy, head: [head], body,
+          styles: { fontSize: 7.5, cellPadding: 2.5, overflow:'ellipsize' },
+          headStyles: { fillColor: GREEN, textColor: 255, fontStyle: 'bold' },
+          alternateRowStyles: { fillColor: [249, 250, 251] },
+          columnStyles: cols,
+          margin: { left: 14, right: 14 },
+          theme: 'grid',
+        });
+
+        cy = doc.lastAutoTable.finalY + 2;
+        const mPago = mRows.reduce((s,r) => s+parseFloat(r.vtotal||r.total||0), 0);
+        const mEco  = mRows.reduce((s,r) => s+parseFloat(r.economia||0), 0);
+        const mSem  = mRows.reduce((s,r) => s+parseFloat(r.semdesconto||r.preco||0), 0);
+        doc.setFont('helvetica','bold'); doc.setFontSize(7.5); doc.setTextColor(...GDARK);
+        doc.text(`Subtotal ${m}: Pago ${fmt(mPago)} · Sem Desconto ${fmt(mSem)} · Economia ${fmt(mEco)} (${pct2(mEco,mSem)})`, 16, cy + 4);
+        cy += 9;
+      }
+    }
+
+    // ── CONSOLIDADO ────────────────────────────────────────────────────────
+    doc.addPage();
+    addPageHeader(doc, 'CONSOLIDADO GERAL', 'Acumulado de todos os meses e categorias', W, GREEN, GDARK, WHITE);
+
+    let conY = 32;
+    const conHead = [['Categoria', ...meses, 'Econ. Acum.']];
+    const conBody = catOrder.filter(c => byCat[c]).map(c => [
+      CAT_LABEL[c],
+      ...meses.map(m => byCatMes[c]?.[m] ? fmt(byCatMes[c][m]) : '—'),
+      fmt(byCat[c].eco)
+    ]);
+    conBody.push(['TOTAL GERAL',
+      ...meses.map(m => fmt(catOrder.reduce((s,c) => s+(byCatMes[c]?.[m]||0), 0))),
+      fmt(Object.values(byCat).reduce((s,d) => s+d.eco, 0))
+    ]);
+
+    doc.autoTable({
+      startY: conY, head: conHead, body: conBody,
+      styles: { fontSize: 8.5, cellPadding: 3 },
+      headStyles: { fillColor: GREEN, textColor: 255, fontStyle: 'bold' },
+      alternateRowStyles: { fillColor: [249, 250, 251] },
+      columnStyles: Object.fromEntries([...meses.map((_,i) => [i+1, {halign:'right'}]), [meses.length+1, {halign:'right', fontStyle:'bold', textColor: GDARK}]]),
+      margin: { left: 14, right: 14 },
+      theme: 'grid',
+    });
+    conY = doc.lastAutoTable.finalY + 8;
+
+    doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(...GDARK);
+    doc.text('Indicadores de Performance', 14, conY); conY += 5;
+
+    const kpiHead = [['Indicador', ...meses]];
+    const kpiBody = [
+      ['Gasto Total',        ...meses.map(m => fmt(byMes[m]?.pago||0))],
+      ['Economia Total',     ...meses.map(m => fmt(byMes[m]?.eco||0))],
+      ['% Economizado',      ...meses.map(m => pct2(byMes[m]?.eco||0, byMes[m]?.sem||0))],
+      ['Categorias Ativas',  ...meses.map(m => String(byMes[m]?.cats?.size||0))],
+    ];
+    doc.autoTable({
+      startY: conY, head: kpiHead, body: kpiBody,
+      styles: { fontSize: 8.5, cellPadding: 3 },
+      headStyles: { fillColor: GREEN, textColor: 255, fontStyle: 'bold' },
+      alternateRowStyles: { fillColor: [249, 250, 251] },
+      columnStyles: Object.fromEntries(meses.map((_,i) => [i+1, {halign:'center'}])),
+      margin: { left: 14, right: 14 },
+      theme: 'grid',
+    });
+
+    // Footer on all pages
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      if (i === 1) continue; // cover has no footer
+      doc.setPage(i);
+      doc.setFont('helvetica','normal'); doc.setFontSize(7);
+      doc.setTextColor(...GRAY);
+      doc.text(`RELATÓRIO DE COMPRAS MENSAL  ${period}  |  Documento de uso interno  |  Pág. ${i} de ${pageCount}`, W/2, H-6, { align:'center' });
+      doc.setDrawColor(...GBORDER);
+      doc.setLineWidth(0.3);
+      doc.line(14, H-8, W-14, H-8);
+    }
+
+    const label = mes ? `relatorio_${mes.toLowerCase()}_2026.pdf` : 'relatorio_compras_2026.pdf';
+    doc.save(label);
+
+  } catch(err) {
+    alert('Erro ao gerar PDF: ' + err.message);
+    console.error(err);
+  }
+
+  btn.disabled = false;
+  btn.textContent = '📄 Gerar PDF';
+}
+
+function pct2(eco, sem) {
+  sem = parseFloat(sem||0); eco = parseFloat(eco||0);
+  return sem ? (eco/sem*100).toFixed(1)+'%' : '—';
+}
+
+function addPageHeader(doc, title, sub, W, GREEN, GDARK, WHITE) {
+  doc.setFillColor(...GREEN);
+  doc.rect(0, 0, W, 22, 'F');
+  doc.setFont('helvetica','bold'); doc.setFontSize(13); doc.setTextColor(...WHITE);
+  doc.text(title, 14, 12);
+  doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(209, 250, 229);
+  doc.text(sub, 14, 19);
+}
+
+function addCatHeader(doc, cat, pago, sem, eco, pct, W, GREEN, GDARK, GLIGHT, WHITE, GRAY) {
+  const icons = { online:'ONLINE', obras:'OBRAS', geral:'GERAL', passagens:'PASSAGENS', hospedagens:'HOSPEDAGENS', seguro:'SEGURO DE VIAGEM' };
+  doc.setFillColor(...GREEN);
+  doc.rect(0, 0, W, 16, 'F');
+  doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.setTextColor(...WHITE);
+  doc.text((CAT_ICON[cat]||'') + '  ' + (CAT_LABEL[cat]||cat.toUpperCase()), 14, 11);
+
+  doc.setFillColor(...GLIGHT);
+  doc.rect(0, 16, W, 20, 'F');
+  const metrics = [['TOTAL PAGO', pago], ['SEM DESCONTO', sem], ['ECONOMIA', eco], ['% ECONOMIZADO', pct]];
+  const mw = W/4;
+  metrics.forEach(([l, v], i) => {
+    const x = i * mw + mw/2;
+    doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(...GRAY);
+    doc.text(l, x, 23, { align:'center' });
+    doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(...GDARK);
+    doc.text(v, x, 31, { align:'center' });
+  });
+}
+
+// CAT_LABEL and CAT_ICON defined above
+
+function buildCatTable(cat, rows) {
+  if (cat === 'online') return {
+    head: ['Item','Solicitante','Descrição','Qtd','V. Médio','V. Pago','V. Total','Economia','Fornecedor'],
+    body: rows.map(r => [r.item||'', r.solicitante||'', (r.descricao||'').substring(0,30), r.qtd||1, fmt(r.vmedio), fmt(r.vpago), fmt(r.vtotal), fmt(r.economia), r.fornecedor||'']),
+    cols: {4:{halign:'right'},5:{halign:'right'},6:{halign:'right'},7:{halign:'right',textColor:[15,110,86]}}
+  };
+  if (cat === 'obras') return {
+    head: ['Material','Qtd','Fornecedor','Preço','Frete','Total Pago','Concorrente','Sem Desc.','Economia'],
+    body: rows.map(r => [r.material||'', r.qtd||1, r.fornecedor||'', fmt(r.preco), fmt(r.frete), fmt(r.total), fmt(r.concorrente), fmt(r.semdesconto), fmt(r.economia)]),
+    cols: {3:{halign:'right'},4:{halign:'right'},5:{halign:'right'},6:{halign:'right'},7:{halign:'right'},8:{halign:'right',textColor:[15,110,86]}}
+  };
+  if (cat === 'geral') return {
+    head: ['Item','Solicitante','Descrição','Qtd','Preço Unit.','P. Adquirido','V. Total','Economia','Data'],
+    body: rows.map(r => [r.item||'', r.solicitante||'', (r.descricao||'').substring(0,28), r.qtd||1, fmt(r.preco), fmt(r.padquirido||0), fmt(r.vtotal), fmt(r.economia), r.data||'']),
+    cols: {4:{halign:'right'},5:{halign:'right'},6:{halign:'right'},7:{halign:'right',textColor:[15,110,86]}}
+  };
+  if (cat === 'passagens') return {
+    head: ['Rota','Solicitante','Passageiros','Descrição','Tipo','Preço','P. Adquirido','V. Total','Economia','Empresa','Data'],
+    body: rows.map(r => [r.rota||'', r.solicitante||'', (r.passageiros||'').substring(0,18), (r.descricao||'').substring(0,18), r.tipo||'', fmt(r.preco), fmt(r.padquirido||0), fmt(r.vtotal), fmt(r.economia), r.empresa||'', r.data||'']),
+    cols: {5:{halign:'right'},6:{halign:'right'},7:{halign:'right'},8:{halign:'right',textColor:[15,110,86]}}
+  };
+  if (cat === 'hospedagens') return {
+    head: ['Local','Solicitante','Pessoas','Descrição','Preço','P. Adquirido','V. Total','Economia','Data'],
+    body: rows.map(r => [r.local||'', r.solicitante||'', r.pessoas||1, (r.descricao||'').substring(0,30), fmt(r.preco), fmt(r.padquirido||0), fmt(r.vtotal), fmt(r.economia), r.data||'']),
+    cols: {4:{halign:'right'},5:{halign:'right'},6:{halign:'right'},7:{halign:'right',textColor:[15,110,86]}}
+  };
+  if (cat === 'seguro') return {
+    head: ['Local','Solicitante','Pessoas','Descrição','Preço','P. Adquirido','V. Total','Economia'],
+    body: rows.map(r => [r.local||'', r.solicitante||'', r.pessoas||1, r.descricao||'', fmt(r.preco), fmt(r.padquirido||0), fmt(r.vtotal), fmt(r.economia)]),
+    cols: {4:{halign:'right'},5:{halign:'right'},6:{halign:'right'},7:{halign:'right',textColor:[15,110,86]}}
+  };
+  return { head:[], body:[], cols:{} };
+}
+
+</script>
+</body>
+</html>
