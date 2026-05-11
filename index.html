@@ -142,7 +142,7 @@ code{background:var(--bg);border:1px solid var(--border);border-radius:4px;paddi
 <div class="sheets-bar" id="sheets-bar">
   <span class="sheets-dot"></span>
   <span>Conectado ao Google Sheets — </span>
-  <a id="sheets-link" href="#" target="_blank">Abrir planilha ↗</a>
+  <a id="sheets-link" href="#" target="_blank" rel="noopener noreferrer" style="pointer-events:none;opacity:0.5" title="Carregando URL da planilha...">Abrir planilha ↗</a>
   <span style="color:var(--text3);margin-left:auto" id="sheets-count"></span>
 </div>
 
@@ -608,6 +608,9 @@ Retorne APENAS: {"local":"","solicitante":"","pessoas":1,"descricao":"","preco":
 Retorne APENAS: {"local":"","solicitante":"","pessoas":1,"descricao":"","preco":0,"padquirido":0,"vtotal":0,"economia":0}`
 };
 
+// Stores the last uploaded file per category so saveEntry can send to Drive
+const pendingFiles = {};
+
 async function handleImage(cat, input){
   if(!input.files[0]) return;
   const key = getKey();
@@ -617,6 +620,8 @@ async function handleImage(cat, input){
   const reader = new FileReader();
   reader.onload = async(ev) => {
     const b64 = ev.target.result.split(',')[1];
+    // Store file for later upload to Drive on save
+    pendingFiles[cat] = { b64, name: file.name, type: file.type, size: file.size };
     setStatus(cat,'loading',`<span class="spin">⟳</span> Analisando ${isPDF?'PDF':'imagem'} com IA…`);
     try{
       const fileBlock = isPDF
@@ -699,38 +704,70 @@ async function saveEntry(cat){
   const entry=buildEntry(cat);
   if(!entry) return;
   db.push(entry); saveDB(); clearForm(cat); renderTable(cat);
-  setStatus(cat,'saving','<span class="spin">⟳</span> Salvando na planilha Google Sheets...');
   const url=getSheetsURL();
   if(!url){
     setStatus(cat,'success','✓ Salvo localmente. Configure o Google Sheets para sincronizar com a planilha.');
+    delete pendingFiles[cat];
     setTimeout(()=>setStatus(cat,'',''),4000); return;
   }
+
+  // ── Send to Sheets + Drive in parallel ────────────────────────────────
+  const pf = pendingFiles[cat] || null;
+  const payload = { ...entry };
+  if(pf){
+    // Include file for Drive upload
+    payload.comprovante = { b64: pf.b64, name: pf.name, type: pf.type };
+    setStatus(cat,'saving','<span class="spin">⟳</span> Salvando na planilha e enviando comprovante para o Drive…');
+  } else {
+    setStatus(cat,'saving','<span class="spin">⟳</span> Salvando na planilha Google Sheets…');
+  }
+
   try{
-    const res=await fetch(url,{method:'POST',body:JSON.stringify(entry),headers:{'Content-Type':'text/plain'}});
-    const data=await res.json();
+    const res = await fetch(url, {
+      method:'POST',
+      body: JSON.stringify(payload),
+      headers:{'Content-Type':'text/plain'}
+    });
+    const data = await res.json();
     if(data.ok){
-      entry.synced=true; saveDB(); renderTable(cat);
-      setStatus(cat,'success',`✅ Salvo na planilha Google Sheets! (aba ${CAT_LABEL[cat]}, linha ${data.rows})`);
+      entry.synced = true;
+      if(data.driveUrl) entry.driveUrl = data.driveUrl;
+      saveDB(); renderTable(cat);
+      const driveMsg = data.driveUrl ? ` · <a href="${data.driveUrl}" target="_blank" rel="noopener" style="color:var(--green-dark);font-weight:600">📎 Ver comprovante ↗</a>` : '';
+      setStatus(cat,'success',`✅ Salvo! Aba ${CAT_LABEL[cat]}, linha ${data.rows}${driveMsg}`);
       updateSheetsCount();
+      delete pendingFiles[cat];
     } else throw new Error(data.error||'Erro desconhecido');
   }catch(err){
-    setStatus(cat,'error','⚠️ Salvo localmente, mas falha ao enviar para planilha: '+err.message);
+    setStatus(cat,'error','⚠️ Salvo localmente, mas falha ao enviar: '+err.message);
   }
-  setTimeout(()=>setStatus(cat,'',''),6000);
+  setTimeout(()=>setStatus(cat,'',''),8000);
 }
+
+function getSheetsFileURL(){ return localStorage.getItem('sheets_file_url')||''; }
 
 async function updateSheetsCount(){
   const url=getSheetsURL();
   if(!url) return;
+  // Restore saved spreadsheet URL immediately (no wait)
+  const saved = getSheetsFileURL();
+  if(saved){
+    const link = document.getElementById('sheets-link');
+    if(link){ link.href=saved; link.style.pointerEvents=''; link.style.opacity='1'; }
+  }
   try{
     const res=await fetch(url);
     const data=await res.json();
     if(data.ok){
       const total=Object.values(data.summary).filter(v=>typeof v==='number').reduce((a,b)=>a+b,0);
       document.getElementById('sheets-count').textContent=total+' lançamentos na planilha';
-      if(data.url) document.getElementById('sheets-link').href=data.url;
+      if(data.url){
+        localStorage.setItem('sheets_file_url', data.url); // persist for next load
+        const link = document.getElementById('sheets-link');
+        if(link){ link.href=data.url; link.style.pointerEvents=''; link.style.opacity='1'; }
+      }
     }
-  }catch(e){}
+  }catch(e){ console.warn('[Sheets] updateSheetsCount error:',e); }
 }
 
 // ── DELETE ────────────────────────────────────────────
@@ -754,10 +791,15 @@ ${entry.synced ? '✅ Será removido do Google Sheets.' : '⚠️ Este registro 
     try{
       await fetch(getSheetsURL(), {
         method:'POST',
-        body: JSON.stringify({ action:'delete', cat: entry.cat, entryId: entry.id }),
+        body: JSON.stringify({
+          action:'delete',
+          cat: entry.cat,
+          entryId: entry.id,
+          driveUrl: entry.driveUrl || null
+        }),
         headers:{'Content-Type':'text/plain'}
       });
-    }catch(e){ console.warn('Sheets delete failed:', e); }
+    }catch(e){ console.warn('Sheets/Drive delete failed:', e); }
   }
 }
 
@@ -794,12 +836,12 @@ function renderTable(cat){
   rows.slice().reverse().forEach(r=>{
     const dot=r.synced?'<span class="sync-dot" title="Salvo na planilha"></span>':'<span class="sync-dot pending" title="Apenas local"></span>';
     html+=`<tr><td style="width:24px">${dot}</td>`;
-    if(cat==='online') html+=`<td>${r.mes}</td><td>${r.item}</td><td>${r.solicitante}</td><td>${r.qtd}</td><td>${fmt(r.vmedio)}</td><td>${fmt(r.vpago)}</td><td>${fmt(r.vtotal)}</td><td style="color:var(--green-dark);font-weight:500">${fmt(r.economia)}</td><td>${r.fornecedor}</td>`;
-    if(cat==='obras') html+=`<td>${r.mes}</td><td>${r.material}</td><td>${r.qtd}</td><td>${r.fornecedor}</td><td>${fmt(r.preco)}</td><td>${fmt(r.frete)}</td><td>${fmt(r.total)}</td><td>${fmt(r.semdesconto)}</td><td style="color:var(--green-dark);font-weight:500">${fmt(r.economia)}</td><td>${r.obs}</td>`;
-    if(cat==='geral') html+=`<td>${r.mes}</td><td>${r.item}</td><td>${r.solicitante}</td><td>${r.qtd}</td><td>${fmt(r.preco)}</td><td>${fmt(r.padquirido)}</td><td>${fmt(r.vtotal)}</td><td style="color:var(--green-dark);font-weight:500">${fmt(r.economia)}</td><td>${r.data}</td>`;
-    if(cat==='passagens') html+=`<td>${r.mes}</td><td>${r.rota}</td><td>${r.solicitante}</td><td>${r.passageiros}</td><td>${r.tipo}</td><td>${fmt(r.preco)}</td><td>${fmt(r.padquirido)}</td><td>${fmt(r.vtotal)}</td><td>${r.empresa}</td><td>${r.data}</td>`;
-    if(cat==='hospedagens') html+=`<td>${r.mes}</td><td>${r.local}</td><td>${r.solicitante}</td><td>${r.pessoas}</td><td>${r.descricao}</td><td>${fmt(r.preco)}</td><td>${fmt(r.padquirido)}</td><td>${fmt(r.vtotal)}</td><td style="color:var(--green-dark);font-weight:500">${fmt(r.economia)}</td><td>${r.data}</td>`;
-    if(cat==='seguro') html+=`<td>${r.mes}</td><td>${r.local}</td><td>${r.solicitante}</td><td>${r.pessoas}</td><td>${r.descricao}</td><td>${fmt(r.preco)}</td><td>${fmt(r.padquirido)}</td><td>${fmt(r.vtotal)}</td><td style="color:var(--green-dark);font-weight:500">${fmt(r.economia)}</td>`;
+    if(cat==='online') html+=`<td>${r.mes}</td><td>${r.item}</td><td>${r.solicitante}</td><td>${r.qtd}</td><td>${fmt(r.vmedio)}</td><td>${fmt(r.vpago)}</td><td>${fmt(r.vtotal)}</td><td style="color:var(--green-dark);font-weight:500">${fmt(r.economia)}</td><td>${r.fornecedor}</td><td>${r.driveUrl?`<a href="${r.driveUrl}" target="_blank" rel="noopener" style="color:var(--green-dark);text-decoration:none" title="Ver comprovante no Drive">📎</a>`:''}</td>`;
+    if(cat==='obras') html+=`<td>${r.mes}</td><td>${r.material}</td><td>${r.qtd}</td><td>${r.fornecedor}</td><td>${fmt(r.preco)}</td><td>${fmt(r.frete)}</td><td>${fmt(r.total)}</td><td>${fmt(r.semdesconto)}</td><td style="color:var(--green-dark);font-weight:500">${fmt(r.economia)}</td><td>${r.obs}</td><td>${r.driveUrl?`<a href="${r.driveUrl}" target="_blank" rel="noopener" style="color:var(--green-dark);text-decoration:none" title="Ver comprovante no Drive">📎</a>`:''}</td>` ;
+    if(cat==='geral') html+=`<td>${r.mes}</td><td>${r.item}</td><td>${r.solicitante}</td><td>${r.qtd}</td><td>${fmt(r.preco)}</td><td>${fmt(r.padquirido)}</td><td>${fmt(r.vtotal)}</td><td style="color:var(--green-dark);font-weight:500">${fmt(r.economia)}</td><td>${r.data}</td><td>${r.driveUrl?`<a href="${r.driveUrl}" target="_blank" rel="noopener" style="color:var(--green-dark);text-decoration:none" title="Ver comprovante no Drive">📎</a>`:''}</td>` ;
+    if(cat==='passagens') html+=`<td>${r.mes}</td><td>${r.rota}</td><td>${r.solicitante}</td><td>${r.passageiros}</td><td>${r.tipo}</td><td>${fmt(r.preco)}</td><td>${fmt(r.padquirido)}</td><td>${fmt(r.vtotal)}</td><td>${r.empresa}</td><td>${r.data}</td><td>${r.driveUrl?`<a href="${r.driveUrl}" target="_blank" rel="noopener" style="color:var(--green-dark);text-decoration:none" title="Ver comprovante no Drive">📎</a>`:''}</td>` ;
+    if(cat==='hospedagens') html+=`<td>${r.mes}</td><td>${r.local}</td><td>${r.solicitante}</td><td>${r.pessoas}</td><td>${r.descricao}</td><td>${fmt(r.preco)}</td><td>${fmt(r.padquirido)}</td><td>${fmt(r.vtotal)}</td><td style="color:var(--green-dark);font-weight:500">${fmt(r.economia)}</td><td>${r.data}</td><td>${r.driveUrl?`<a href="${r.driveUrl}" target="_blank" rel="noopener" style="color:var(--green-dark);text-decoration:none" title="Ver comprovante no Drive">📎</a>`:''}</td>` ;
+    if(cat==='seguro') html+=`<td>${r.mes}</td><td>${r.local}</td><td>${r.solicitante}</td><td>${r.pessoas}</td><td>${r.descricao}</td><td>${fmt(r.preco)}</td><td>${fmt(r.padquirido)}</td><td>${fmt(r.vtotal)}</td><td style="color:var(--green-dark);font-weight:500">${fmt(r.economia)}</td><td>${r.driveUrl?`<a href="${r.driveUrl}" target="_blank" rel="noopener" style="color:var(--green-dark);text-decoration:none" title="Ver comprovante no Drive">📎</a>`:''}</td>` ;
     html+=`<td><button class="btn del" onclick="deleteEntry(${r.id})" title="Excluir local">×</button></td></tr>`;
   });
   wrap.innerHTML=html+'</tbody></table></div>';
