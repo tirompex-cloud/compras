@@ -117,6 +117,8 @@ code{background:var(--bg);border:1px solid var(--border);border-radius:4px;paddi
 .empty{text-align:center;padding:2.5rem;color:var(--text3);font-size:13px}
 @media(max-width:640px){.g2,.g3{grid-template-columns:1fr}.metrics{grid-template-columns:1fr}.nav-tab{padding:14px 10px;font-size:12px}}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
 
@@ -152,8 +154,8 @@ code{background:var(--bg);border:1px solid var(--border);border-radius:4px;paddi
   <div class="upload-zone" onclick="triggerUpload('online')">
     <div class="upload-icon">📷</div>
     <h3>Enviar comprovante — IA lê e preenche automaticamente</h3>
-    <p>Clique para fazer upload da foto, print ou nota fiscal<br>Aceita: JPG, PNG, WebP</p>
-    <input type="file" id="file-online" accept="image/*" style="display:none" onchange="handleImage('online',this)">
+    <p>Clique para fazer upload da foto, print, nota fiscal ou <strong>PDF</strong><br>Aceita: JPG, PNG, WebP, PDF</p>
+    <input type="file" id="file-online" accept="image/*,application/pdf" style="display:none" onchange="handleImage('online',this)">
   </div>
   <div id="status-online" class="status-box"></div>
   <div class="card">
@@ -189,7 +191,7 @@ code{background:var(--bg);border:1px solid var(--border);border-radius:4px;paddi
     <div class="upload-icon">🏗️</div>
     <h3>Enviar nota / comprovante de obras</h3>
     <p>A IA extrai material, fornecedor e valores automaticamente</p>
-    <input type="file" id="file-obras" accept="image/*" style="display:none" onchange="handleImage('obras',this)">
+    <input type="file" id="file-obras" accept="image/*,application/pdf" style="display:none" onchange="handleImage('obras',this)">
   </div>
   <div id="status-obras" class="status-box"></div>
   <div class="card">
@@ -229,7 +231,7 @@ code{background:var(--bg);border:1px solid var(--border);border-radius:4px;paddi
     <div class="upload-icon">📦</div>
     <h3>Compras Gerais — Enviar comprovante</h3>
     <p>Uniformes, câmeras, equipamentos, material de escritório</p>
-    <input type="file" id="file-geral" accept="image/*" style="display:none" onchange="handleImage('geral',this)">
+    <input type="file" id="file-geral" accept="image/*,application/pdf" style="display:none" onchange="handleImage('geral',this)">
   </div>
   <div id="status-geral" class="status-box"></div>
   <div class="card">
@@ -269,7 +271,7 @@ code{background:var(--bg);border:1px solid var(--border);border-radius:4px;paddi
     <div class="upload-icon">✈️</div>
     <h3>Passagens — Enviar comprovante</h3>
     <p>A IA identifica origem, destino, passageiros e valores</p>
-    <input type="file" id="file-passagens" accept="image/*" style="display:none" onchange="handleImage('passagens',this)">
+    <input type="file" id="file-passagens" accept="image/*,application/pdf" style="display:none" onchange="handleImage('passagens',this)">
   </div>
   <div id="status-passagens" class="status-box"></div>
   <div class="card">
@@ -309,7 +311,7 @@ code{background:var(--bg);border:1px solid var(--border);border-radius:4px;paddi
     <div class="upload-icon">🏨</div>
     <h3>Hospedagens — Enviar comprovante</h3>
     <p>A IA identifica local, datas e valores automaticamente</p>
-    <input type="file" id="file-hospedagens" accept="image/*" style="display:none" onchange="handleImage('hospedagens',this)">
+    <input type="file" id="file-hospedagens" accept="image/*,application/pdf" style="display:none" onchange="handleImage('hospedagens',this)">
   </div>
   <div id="status-hospedagens" class="status-box"></div>
   <div class="card">
@@ -347,7 +349,7 @@ code{background:var(--bg);border:1px solid var(--border);border-radius:4px;paddi
     <div class="upload-icon">🛡️</div>
     <h3>Seguro de Viagem — Enviar comprovante</h3>
     <p>A IA extrai informações do seguro de viagem</p>
-    <input type="file" id="file-seguro" accept="image/*" style="display:none" onchange="handleImage('seguro',this)">
+    <input type="file" id="file-seguro" accept="image/*,application/pdf" style="display:none" onchange="handleImage('seguro',this)">
   </div>
   <div id="status-seguro" class="status-box"></div>
   <div class="card">
@@ -388,6 +390,7 @@ code{background:var(--bg);border:1px solid var(--border);border-radius:4px;paddi
           <option value="hospedagens">Hospedagens</option><option value="seguro">Seguro de Viagem</option>
         </select>
       </div>
+      <button class="btn primary" id="pdf-btn" onclick="gerarPDF()" style="background:#0F6E56;border-color:#0F6E56">📄 Gerar PDF</button>
       <button class="btn dark" onclick="exportCSV()">⬇ CSV para Excel</button>
       <button class="btn" onclick="exportTXT()">📄 Resumo TXT</button>
     </div>
@@ -402,6 +405,20 @@ code{background:var(--bg);border:1px solid var(--border);border-radius:4px;paddi
 <div class="overlay" id="settings-overlay" onclick="maybeClose(event)">
 <div class="modal" onclick="event.stopPropagation()">
   <h2>⚙️ Configurações</h2>
+
+  <div class="modal-section">
+    <h3>☁️ GitHub Gist (backup automático dos dados)</h3>
+    <p class="desc">Cole seu <strong>GitHub Personal Access Token</strong> para ativar o backup automático. Cada lançamento e exclusão será sincronizado com um Gist privado na sua conta GitHub — seus dados ficam seguros mesmo se trocar de navegador.</p>
+    <div class="step"><div class="step-num">1</div><p>Acesse <strong>github.com → Settings → Developer settings → Personal access tokens → Tokens (classic)</strong></p></div>
+    <div class="step"><div class="step-num">2</div><p>Clique em <strong>Generate new token</strong>, marque apenas o escopo <strong>gist</strong> e clique em Generate</p></div>
+    <div class="step"><div class="step-num">3</div><p>Copie o token e cole abaixo. Na primeira vez, um Gist privado é criado automaticamente.</p></div>
+    <div class="field" style="margin-top:10px">
+      <label>GitHub Personal Access Token (ghp_...)</label>
+      <input type="password" id="settings-github" placeholder="ghp_xxxxxxxxxxxxxxxx">
+    </div>
+    <div id="gist-status" style="margin-top:8px;font-size:12px;color:var(--green-dark)"></div>
+    <div class="info-box">O Gist é <strong>privado</strong> e acessível apenas pela sua conta. Nenhum dado fica exposto no repositório público.</div>
+  </div>
 
   <div class="modal-section">
     <h3>📄 Google Sheets (planilha na nuvem)</h3>
@@ -439,10 +456,54 @@ code{background:var(--bg);border:1px solid var(--border);border-radius:4px;paddi
 const MESES_LIST=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const MES_ATUAL=MESES_LIST[new Date().getMonth()];
 const CAT_LABEL={online:'Online',obras:'Obras',geral:'Geral',passagens:'Passagens',hospedagens:'Hospedagens',seguro:'Seguro de Viagem'};
+const CAT_ICON={online:'🛒',obras:'🏗️',geral:'📦',passagens:'✈️',hospedagens:'🏨',seguro:'🛡️'};
 let db=[];
 
+function getGistToken(){ return localStorage.getItem('github_token')||''; }
+function getGistId()   { return localStorage.getItem('gist_id')||''; }
+
+async function saveToGist(data){
+  const token = getGistToken();
+  if(!token) return;
+  try{
+    const gistId = getGistId();
+    const body = {
+      description:'📋 Lançamento de Compras — Backup automático',
+      public: false,
+      files:{ 'compras_db.json':{ content: JSON.stringify(data, null, 2) } }
+    };
+    const url = gistId ? `https://api.github.com/gists/${gistId}` : 'https://api.github.com/gists';
+    const res = await fetch(url, {
+      method: gistId ? 'PATCH' : 'POST',
+      headers:{ 'Authorization':`token ${token}`, 'Content-Type':'application/json' },
+      body: JSON.stringify(body)
+    });
+    const result = await res.json();
+    if(result.id && !gistId) localStorage.setItem('gist_id', result.id);
+    console.log('[Gist] Backup salvo:', result.html_url||result.id);
+  }catch(err){ console.warn('[Gist] Falha no backup:', err); }
+}
+
+async function loadFromGist(){
+  const token = getGistToken();
+  const gistId = getGistId();
+  if(!token || !gistId) return null;
+  try{
+    const res = await fetch(`https://api.github.com/gists/${gistId}`, {
+      headers:{ 'Authorization':`token ${token}` }
+    });
+    const result = await res.json();
+    const content = result.files?.['compras_db.json']?.content;
+    return content ? JSON.parse(content) : null;
+  }catch(err){ console.warn('[Gist] Falha ao carregar backup:', err); return null; }
+}
+
 function loadDB(){ try{ db=JSON.parse(localStorage.getItem('compras_v3')||'[]'); }catch(e){ db=[]; } }
-function saveDB(){ localStorage.setItem('compras_v3',JSON.stringify(db)); }
+function saveDB(){
+  localStorage.setItem('compras_v3',JSON.stringify(db));
+  saveToGist(db); // async fire-and-forget
+}
+
 function getKey(){ return localStorage.getItem('anthropic_key')||''; }
 function getSheetsURL(){ return localStorage.getItem('sheets_url')||''; }
 
@@ -485,48 +546,123 @@ function setStatus(cat,type,msg){
   el.innerHTML=msg||'';
 }
 
-async function handleImage(cat,input){
+// ── PROMPTS DETALHADOS POR CATEGORIA ─────────────────────────────────────
+const PROMPTS = {
+  online: `Você é especialista em extrair dados de comprovantes de compra online.
+Analise este documento e extraia os campos abaixo em JSON puro (sem markdown).
+- item: nome exato do produto
+- vmedio: preço de referência/original (se não visível, use o valor pago)
+- vpago: valor unitário pago
+- vtotal: valor total da compra
+- economia: vmedio*qtd - vtotal (pode ser negativo)
+- fornecedor: loja ou marketplace
+- Valores SEM R$, use ponto decimal (ex: 1234.56)
+Retorne APENAS: {"item":"","solicitante":"","descricao":"","qtd":1,"vmedio":0,"vpago":0,"vtotal":0,"economia":0,"fornecedor":""}`,
+
+  obras: `Você é especialista em notas fiscais de materiais de construção.
+Extraia em JSON puro (sem markdown):
+- material: nome do material ou lista resumida
+- qtd: quantidade
+- fornecedor: empresa/loja
+- preco: preço unitário pago
+- frete: valor do frete (0 se não houver)
+- concorrente: preço concorrente se mencionado
+- Valores SEM R$, ponto decimal
+Retorne APENAS: {"material":"","qtd":1,"fornecedor":"","preco":0,"frete":0,"concorrente":0,"fconcorrente":0,"obs":""}`,
+
+  geral: `Extraia dados deste comprovante em JSON puro (sem markdown):
+- item: nome do produto/serviço
+- preco: preço unitário original/referência
+- padquirido: preço unitário efetivamente pago
+- vtotal: total pago
+- data: data em YYYY-MM-DD
+- Valores SEM R$, ponto decimal
+Retorne APENAS: {"item":"","solicitante":"","descricao":"","qtd":1,"preco":0,"padquirido":0,"vtotal":0,"semdesconto":0,"economia":0,"data":"","obs":""}`,
+
+  passagens: `Extraia dados deste comprovante de passagem em JSON puro (sem markdown):
+- rota: formato "CIDADE ORIGEM - CIDADE DESTINO"
+- passageiros: nomes separados por vírgula
+- tipo: "Ida e Volta", "Somente Ida" ou "Somente Volta"
+- preco: valor de tabela/referência
+- padquirido: valor efetivamente pago
+- empresa: companhia aérea ou agência
+- data: data em YYYY-MM-DD
+- Valores SEM R$, ponto decimal
+Retorne APENAS: {"rota":"","solicitante":"","passageiros":"","descricao":"","tipo":"Ida e Volta","preco":0,"padquirido":0,"vtotal":0,"economia":0,"empresa":"","data":""}`,
+
+  hospedagens: `Extraia dados deste comprovante de hospedagem em JSON puro (sem markdown):
+- local: cidade ou nome do hotel
+- pessoas: número de hóspedes
+- preco: valor de referência/tabela
+- padquirido: valor efetivamente pago
+- data: data do check-in em YYYY-MM-DD
+- Valores SEM R$, ponto decimal
+Retorne APENAS: {"local":"","solicitante":"","pessoas":1,"descricao":"","preco":0,"padquirido":0,"vtotal":0,"economia":0,"data":""}`,
+
+  seguro: `Extraia dados deste comprovante de seguro de viagem em JSON puro (sem markdown):
+- local: destino da viagem
+- pessoas: número de segurados
+- preco: valor de tabela/referência
+- padquirido: valor efetivamente pago
+- Valores SEM R$, ponto decimal
+Retorne APENAS: {"local":"","solicitante":"","pessoas":1,"descricao":"","preco":0,"padquirido":0,"vtotal":0,"economia":0}`
+};
+
+async function handleImage(cat, input){
   if(!input.files[0]) return;
-  const key=getKey();
+  const key = getKey();
   if(!key){ alert('Configure a chave da API Anthropic em ⚙️ Configurações para usar a leitura automática.'); openSettings(); return; }
-  const file=input.files[0];
-  const reader=new FileReader();
-  reader.onload=async(e)=>{
-    const b64=e.target.result.split(',')[1];
-    setStatus(cat,'loading','<span class="spin">⟳</span> Analisando comprovante com IA...');
+  const file = input.files[0];
+  const isPDF = file.type === 'application/pdf';
+  const reader = new FileReader();
+  reader.onload = async(ev) => {
+    const b64 = ev.target.result.split(',')[1];
+    setStatus(cat,'loading',`<span class="spin">⟳</span> Analisando ${isPDF?'PDF':'imagem'} com IA…`);
     try{
-      const prompts={
-        online:'{"item":"nome do produto","solicitante":"","descricao":"uso/finalidade","qtd":1,"vmedio":0,"vpago":0,"vtotal":0,"fornecedor":""}',
-        obras:'{"material":"","qtd":1,"fornecedor":"","preco":0,"frete":0,"concorrente":0,"fconcorrente":0,"obs":""}',
-        geral:'{"item":"","solicitante":"","descricao":"","qtd":1,"preco":0,"padquirido":0,"data":"YYYY-MM-DD","obs":""}',
-        passagens:'{"rota":"ORIGEM - DESTINO","solicitante":"","passageiros":"nomes","descricao":"evento","tipo":"Ida e Volta","preco":0,"padquirido":0,"empresa":"","data":"YYYY-MM-DD"}',
-        hospedagens:'{"local":"cidade","solicitante":"","pessoas":1,"descricao":"","preco":0,"padquirido":0,"data":"YYYY-MM-DD"}',
-        seguro:'{"local":"destino","solicitante":"","pessoas":1,"descricao":"","preco":0,"padquirido":0}'
-      };
-      const res=await fetch('https://api.anthropic.com/v1/messages',{
+      const fileBlock = isPDF
+        ? { type:'document', source:{ type:'base64', media_type:'application/pdf', data:b64 } }
+        : { type:'image',    source:{ type:'base64', media_type:file.type||'image/jpeg', data:b64 } };
+
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
         method:'POST',
-        headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-        body:JSON.stringify({model:'claude-opus-4-5',max_tokens:800,messages:[{role:'user',content:[
-          {type:'image',source:{type:'base64',media_type:file.type||'image/jpeg',data:b64}},
-          {type:'text',text:'Analise este comprovante/nota fiscal. Retorne APENAS JSON puro sem markdown, sem explicação. Campos: '+prompts[cat]+'. Se não encontrar um campo, use string vazia ou 0.'}
-        ]}]})
+        headers:{
+          'Content-Type':'application/json',
+          'x-api-key':key,
+          'anthropic-version':'2023-06-01',
+          'anthropic-dangerous-direct-browser-access':'true'
+        },
+        body: JSON.stringify({
+          model:'claude-sonnet-4-6',
+          max_tokens:1200,
+          messages:[{ role:'user', content:[ fileBlock, { type:'text', text: PROMPTS[cat] } ] }]
+        })
       });
-      const data=await res.json();
+      const data = await res.json();
       if(data.error) throw new Error(data.error.message);
-      const json=JSON.parse((data.content?.[0]?.text||'{}').replace(/```json|```/g,'').trim());
-      fillForm(cat,json);
-      setStatus(cat,'success','✓ Dados extraídos! Confira e ajuste se necessário antes de salvar.');
-      setTimeout(()=>setStatus(cat,'',''),5000);
+      const rawText = (data.content?.[0]?.text||'{}').replace(/```json|```/g,'').trim();
+      console.log('[IA] Raw:', rawText);
+      const json = JSON.parse(rawText);
+      console.log('[IA] Parsed:', json);
+      const hasData = Object.values(json).some(v => v !== '' && v !== 0 && v !== null && v !== undefined);
+      if(!hasData){
+        setStatus(cat,'error','⚠️ A IA não conseguiu extrair dados. Tente uma imagem mais nítida ou preencha manualmente.');
+        return;
+      }
+      fillForm(cat, json);
+      setStatus(cat,'success',`✓ ${isPDF?'PDF':'Imagem'} lido! Confira os dados antes de salvar.`);
+      setTimeout(()=>setStatus(cat,'',''),6000);
     }catch(err){
-      setStatus(cat,'error','✗ '+err.message+'. Preencha manualmente.');
+      console.error('[IA] Erro:', err);
+      setStatus(cat,'error','✗ '+err.message);
     }
     input.value='';
   };
   reader.readAsDataURL(file);
 }
 
+
 function fillForm(cat,d){
-  const sv=(id,v)=>{const el=document.getElementById(id);if(el&&v!==undefined&&v!==null&&v!=='')el.value=v;};
+  const sv=(id,v)=>{const el=document.getElementById(id);if(!el)return;if(typeof v==='number'&&v!==0){el.value=v;}else if(typeof v==='string'&&v!==''){el.value=v;}else if(typeof v==='number'&&v===0){/* skip zero */}};
   if(cat==='online'){sv('online-item',d.item);sv('online-solicitante',d.solicitante);sv('online-descricao',d.descricao);sv('online-qtd',d.qtd);sv('online-vmedio',d.vmedio);sv('online-vpago',d.vpago);sv('online-vtotal',d.vtotal);sv('online-fornecedor',d.fornecedor);calcOnline();}
   if(cat==='obras'){sv('obras-material',d.material);sv('obras-qtd',d.qtd);sv('obras-fornecedor',d.fornecedor);sv('obras-preco',d.preco);sv('obras-frete',d.frete);sv('obras-concorrente',d.concorrente);sv('obras-fconcorrente',d.fconcorrente);sv('obras-obs',d.obs);calcObras();}
   if(cat==='geral'){sv('geral-item',d.item);sv('geral-solicitante',d.solicitante);sv('geral-descricao',d.descricao);sv('geral-qtd',d.qtd);sv('geral-preco',d.preco);sv('geral-padquirido',d.padquirido);sv('geral-data',d.data);sv('geral-obs',d.obs);calcGeral();}
@@ -598,10 +734,33 @@ async function updateSheetsCount(){
 }
 
 // ── DELETE ────────────────────────────────────────────
-function deleteEntry(id){
-  if(!confirm('Excluir este lançamento local?\n(Nota: registros já enviados ao Google Sheets não são removidos da planilha automaticamente)')) return;
-  db=db.filter(e=>e.id!==id); saveDB(); renderAllTables(); renderRelatorio();
+async function deleteEntry(id){
+  const entry = db.find(e => e.id === id);
+  if(!entry) return;
+  const label = entry.item || entry.material || entry.rota || entry.local || entry.descricao || 'este lançamento';
+  if(!confirm(`Excluir "${label}"?
+
+✅ Será removido localmente.
+${entry.synced ? '✅ Será removido do Google Sheets.' : '⚠️ Este registro não estava sincronizado com o Sheets.'}`)) return;
+
+  db = db.filter(e => e.id !== id);
+  saveDB();
+  await saveToGist(db);
+  renderAllTables();
+  renderRelatorio();
+
+  // Delete from Sheets if was synced
+  if(entry.synced && getSheetsURL()){
+    try{
+      await fetch(getSheetsURL(), {
+        method:'POST',
+        body: JSON.stringify({ action:'delete', cat: entry.cat, entryId: entry.id }),
+        headers:{'Content-Type':'text/plain'}
+      });
+    }catch(e){ console.warn('Sheets delete failed:', e); }
+  }
 }
+
 
 function clearForm(cat){
   const map={
@@ -720,26 +879,413 @@ function dl(content,filename,type){
 function openSettings(){
   document.getElementById('settings-sheets').value=getSheetsURL();
   document.getElementById('settings-apikey').value=getKey();
+  document.getElementById('settings-github').value=getGistToken();
+  const gistEl = document.getElementById('gist-status');
+  if(gistEl) gistEl.textContent = getGistId() ? `✅ Gist ativo: ${getGistId().substring(0,12)}…` : '';
   document.getElementById('settings-overlay').classList.add('open');
 }
 function closeSettings(){ document.getElementById('settings-overlay').classList.remove('open'); }
 function maybeClose(e){ if(e.target===document.getElementById('settings-overlay')) closeSettings(); }
-function saveSettings(){
-  const url=document.getElementById('settings-sheets').value.trim();
-  const key=document.getElementById('settings-apikey').value.trim();
-  localStorage.setItem('sheets_url',url);
-  localStorage.setItem('anthropic_key',key);
+async function saveSettings(){
+  const url    = document.getElementById('settings-sheets').value.trim();
+  const key    = document.getElementById('settings-apikey').value.trim();
+  const github = document.getElementById('settings-github').value.trim();
+  localStorage.setItem('sheets_url', url);
+  localStorage.setItem('anthropic_key', key);
+  if(github) localStorage.setItem('github_token', github);
+  else localStorage.removeItem('github_token');
+  // If new GitHub token, reset gist ID so a new one is created
+  const oldToken = getGistToken();
+  if(github && github !== oldToken) localStorage.removeItem('gist_id');
   closeSettings();
   updateBanners();
   if(url) updateSheetsCount();
+  // Test gist connection if token provided
+  if(github){
+    const saved = await saveToGist(db);
+    console.log('[Gist] Token saved and backup tested');
+  }
 }
 
 // ── INIT ──────────────────────────────────────────────
-loadDB();
-renderAllTables();
-renderRelatorio();
-updateBanners();
-updateSheetsCount();
+async function init(){
+  loadDB(); // Load from localStorage first (instant)
+  renderAllTables();
+  renderRelatorio();
+  updateBanners();
+  updateSheetsCount();
+  // Then try to restore from Gist (may have newer data from another device)
+  if(getGistToken() && getGistId()){
+    try{
+      const gistData = await loadFromGist();
+      if(gistData && gistData.length > db.length){
+        db = gistData;
+        localStorage.setItem('compras_v3', JSON.stringify(db));
+        renderAllTables();
+        renderRelatorio();
+        console.log(`[Gist] Restored ${db.length} entries from backup`);
+      }
+    }catch(e){ console.warn('[Gist] Could not restore:', e); }
+  }
+}
+init();
+
+// ── PDF GENERATOR (jsPDF + AutoTable) ─────────────────────────────────────
+async function gerarPDF() {
+  const mes = document.getElementById('rel-mes')?.value || '';
+  const cat = document.getElementById('rel-cat')?.value || '';
+  let rows = db;
+  if (mes) rows = rows.filter(e => e.mes === mes);
+  if (cat) rows = rows.filter(e => e.cat === cat);
+  if (!rows.length) { alert('Nenhum dado para gerar relatório.'); return; }
+
+  const btn = document.getElementById('pdf-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Gerando PDF...';
+
+  try {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+    const W = doc.internal.pageSize.getWidth();
+    const H = doc.internal.pageSize.getHeight();
+
+    const GREEN   = [29, 158, 117];
+    const GDARK   = [15, 110, 86];
+    const GLIGHT  = [225, 245, 238];
+    const WHITE   = [255, 255, 255];
+    const GRAY    = [107, 114, 128];
+    const GBORDER = [229, 231, 235];
+    const BLACK   = [17, 24, 39];
+
+    const ORDER = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+    const meses = [...new Set(rows.map(e => e.mes).filter(Boolean))].sort((a,b) => ORDER.indexOf(a) - ORDER.indexOf(b));
+    const period = mes ? mes + ' / 2026' : meses.join(' • ') + ' / 2026';
+
+    const totPago = rows.reduce((s,r) => s + (parseFloat(r.vtotal||r.total||0)), 0);
+    const totSem  = rows.reduce((s,r) => s + (parseFloat(r.semdesconto||r.preco||0)), 0);
+    const totEco  = rows.reduce((s,r) => s + (parseFloat(r.economia||0)), 0);
+    const pctEco  = totSem ? (totEco/totSem*100).toFixed(1) + '%' : '—';
+
+    const byMes = {};
+    rows.forEach(r => {
+      if (!byMes[r.mes]) byMes[r.mes] = { pago:0, sem:0, eco:0, cats:new Set() };
+      byMes[r.mes].pago += parseFloat(r.vtotal||r.total||0);
+      byMes[r.mes].sem  += parseFloat(r.semdesconto||r.preco||0);
+      byMes[r.mes].eco  += parseFloat(r.economia||0);
+      byMes[r.mes].cats.add(r.cat);
+    });
+    const melhor = meses.reduce((a,b) =>
+      byMes[b]?.sem ? (byMes[b].eco/byMes[b].sem > (byMes[a]?.eco||0)/(byMes[a]?.sem||1) ? b : a) : a, meses[0]);
+    const melhorPct = byMes[melhor]?.sem ? (byMes[melhor].eco/byMes[melhor].sem*100).toFixed(1)+'%' : '—';
+
+    // ── CAPA ──────────────────────────────────────────────────────────────
+    doc.setFillColor(...GREEN);
+    doc.rect(0, 0, W, H, 'F');
+    doc.setFillColor(...GDARK);
+    doc.circle(W - 15, 15, 25, 'F');
+    doc.setFillColor(10, 92, 71);
+    doc.circle(10, H - 10, 18, 'F');
+
+    doc.setTextColor(...WHITE);
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(28);
+    doc.text('RELATÓRIO DE COMPRAS MENSAL', W/2, 45, { align:'center' });
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(13);
+    doc.setTextColor(167, 243, 208);
+    doc.text(period, W/2, 55, { align:'center' });
+
+    // Metric boxes
+    const boxes = [
+      { label:'TOTAL GASTO', val: fmt(totPago), sub: rows.length+' lançamentos' },
+      { label:'TOTAL ECONOMIZADO', val: fmt(totEco), sub: pctEco+' de economia' },
+      { label:'MELHOR MÊS', val: melhor||'—', sub: melhorPct+' de economia' },
+    ];
+    const bw = 70, bx0 = (W - boxes.length*bw - (boxes.length-1)*6) / 2;
+    boxes.forEach((b, i) => {
+      const x = bx0 + i*(bw+6);
+      doc.setFillColor(10, 92, 71);
+      doc.roundedRect(x, 70, bw, 38, 4, 4, 'F');
+      doc.setTextColor(209, 250, 229);
+      doc.setFont('helvetica','normal'); doc.setFontSize(7.5);
+      doc.text(b.label, x + bw/2, 79, { align:'center' });
+      doc.setTextColor(...WHITE);
+      doc.setFont('helvetica','bold'); doc.setFontSize(14);
+      doc.text(b.val, x + bw/2, 90, { align:'center' });
+      doc.setTextColor(167, 243, 208);
+      doc.setFont('helvetica','normal'); doc.setFontSize(8);
+      doc.text(b.sub, x + bw/2, 100, { align:'center' });
+    });
+
+    const cats = [...new Set(rows.map(e => e.cat))];
+    doc.setTextColor(167, 243, 208);
+    doc.setFontSize(10); doc.setFont('helvetica','normal');
+    doc.text(cats.map(c => CAT_LABEL[c]).join('  ·  '), W/2, 122, { align:'center' });
+
+    doc.setTextColor(110, 231, 183);
+    doc.setFontSize(8.5);
+    doc.text('Documento confidencial – uso interno', W/2, H-12, { align:'center' });
+
+    // ── RESUMO EXECUTIVO ───────────────────────────────────────────────────
+    doc.addPage();
+    addPageHeader(doc, 'RESUMO EXECUTIVO', 'Visão Geral · ' + period, W, GREEN, GDARK, WHITE);
+
+    let y = 32;
+    doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(...GDARK);
+    doc.text('Evolução Mensal de Gastos', 14, y); y += 5;
+
+    const evoHead = [['Mês','Gasto Total','Economia Total','% Economizado','Vs. Mês Anterior']];
+    let prevPago = null;
+    const evoBody = meses.map(m => {
+      const d = byMes[m] || {};
+      const p = pct2(d.eco, d.sem);
+      let var_ = '—';
+      if (prevPago !== null) {
+        const chg = prevPago ? (d.pago - prevPago) / prevPago * 100 : 0;
+        var_ = (chg < 0 ? '▼ ' : '▲ ') + Math.abs(chg).toFixed(1) + '%';
+      }
+      prevPago = d.pago;
+      return [m, fmt(d.pago), fmt(d.eco), p, var_];
+    });
+    evoBody.push(['TOTAL GERAL', fmt(totPago), fmt(totEco), pctEco, '']);
+
+    doc.autoTable({
+      startY: y, head: evoHead, body: evoBody,
+      styles: { fontSize: 8.5, cellPadding: 3 },
+      headStyles: { fillColor: GREEN, textColor: 255, fontStyle: 'bold' },
+      alternateRowStyles: { fillColor: [249, 250, 251] },
+      foot: [], showFoot: 'never',
+      didDrawRow: (data) => {
+        if (data.row.index === evoBody.length - 1) {
+          data.row.cells[0].styles.fontStyle = 'bold';
+          data.row.cells[0].styles.textColor = GDARK;
+        }
+      },
+      columnStyles: { 1:{halign:'right'}, 2:{halign:'right'}, 3:{halign:'center'}, 4:{halign:'center'} },
+      margin: { left: 14, right: 14 },
+      theme: 'grid',
+    });
+
+    y = doc.lastAutoTable.finalY + 8;
+    doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(...GDARK);
+    doc.text('Resumo por Categoria', 14, y); y += 5;
+
+    const byCat = {};
+    const byCatMes = {};
+    rows.forEach(r => {
+      if (!byCat[r.cat]) byCat[r.cat] = { pago:0, eco:0 };
+      byCat[r.cat].pago += parseFloat(r.vtotal||r.total||0);
+      byCat[r.cat].eco  += parseFloat(r.economia||0);
+      if (!byCatMes[r.cat]) byCatMes[r.cat] = {};
+      if (!byCatMes[r.cat][r.mes]) byCatMes[r.cat][r.mes] = 0;
+      byCatMes[r.cat][r.mes] += parseFloat(r.vtotal||r.total||0);
+    });
+
+    const catOrder = ['online','obras','geral','passagens','hospedagens','seguro'];
+    const catHead = [['Categoria', ...meses, 'Econ. Acum.']];
+    const catBody = catOrder.filter(c => byCat[c]).map(c => [
+      CAT_LABEL[c],
+      ...meses.map(m => byCatMes[c]?.[m] ? fmt(byCatMes[c][m]) : '—'),
+      fmt(byCat[c].eco)
+    ]);
+    const totRow = ['TOTAL',
+      ...meses.map(m => fmt(catOrder.reduce((s,c) => s+(byCatMes[c]?.[m]||0), 0))),
+      fmt(Object.values(byCat).reduce((s,d) => s+d.eco, 0))
+    ];
+    catBody.push(totRow);
+
+    doc.autoTable({
+      startY: y, head: catHead, body: catBody,
+      styles: { fontSize: 8, cellPadding: 3 },
+      headStyles: { fillColor: GREEN, textColor: 255, fontStyle: 'bold' },
+      alternateRowStyles: { fillColor: [249, 250, 251] },
+      columnStyles: Object.fromEntries([...meses.map((_,i) => [i+1, {halign:'right'}]), [meses.length+1, {halign:'right'}]]),
+      margin: { left: 14, right: 14 },
+      theme: 'grid',
+    });
+
+    // ── PÁGINAS POR CATEGORIA ──────────────────────────────────────────────
+    for (const cat of catOrder) {
+      const catRows = rows.filter(r => r.cat === cat);
+      if (!catRows.length) continue;
+
+      doc.addPage();
+      const cPago = catRows.reduce((s,r) => s+parseFloat(r.vtotal||r.total||0), 0);
+      const cSem  = catRows.reduce((s,r) => s+parseFloat(r.semdesconto||r.preco||0), 0);
+      const cEco  = catRows.reduce((s,r) => s+parseFloat(r.economia||0), 0);
+      addCatHeader(doc, cat, fmt(cPago), fmt(cSem), fmt(cEco), pct2(cEco,cSem), W, GREEN, GDARK, GLIGHT, WHITE, GRAY);
+
+      let cy = 42;
+      for (const m of meses) {
+        const mRows = catRows.filter(r => r.mes === m);
+        if (!mRows.length) continue;
+
+        doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(...GDARK);
+        doc.text('● ' + m, 14, cy); cy += 3;
+
+        const { head, body, cols } = buildCatTable(cat, mRows);
+        doc.autoTable({
+          startY: cy, head: [head], body,
+          styles: { fontSize: 7.5, cellPadding: 2.5, overflow:'ellipsize' },
+          headStyles: { fillColor: GREEN, textColor: 255, fontStyle: 'bold' },
+          alternateRowStyles: { fillColor: [249, 250, 251] },
+          columnStyles: cols,
+          margin: { left: 14, right: 14 },
+          theme: 'grid',
+        });
+
+        cy = doc.lastAutoTable.finalY + 2;
+        const mPago = mRows.reduce((s,r) => s+parseFloat(r.vtotal||r.total||0), 0);
+        const mEco  = mRows.reduce((s,r) => s+parseFloat(r.economia||0), 0);
+        const mSem  = mRows.reduce((s,r) => s+parseFloat(r.semdesconto||r.preco||0), 0);
+        doc.setFont('helvetica','bold'); doc.setFontSize(7.5); doc.setTextColor(...GDARK);
+        doc.text(`Subtotal ${m}: Pago ${fmt(mPago)} · Sem Desconto ${fmt(mSem)} · Economia ${fmt(mEco)} (${pct2(mEco,mSem)})`, 16, cy + 4);
+        cy += 9;
+      }
+    }
+
+    // ── CONSOLIDADO ────────────────────────────────────────────────────────
+    doc.addPage();
+    addPageHeader(doc, 'CONSOLIDADO GERAL', 'Acumulado de todos os meses e categorias', W, GREEN, GDARK, WHITE);
+
+    let conY = 32;
+    const conHead = [['Categoria', ...meses, 'Econ. Acum.']];
+    const conBody = catOrder.filter(c => byCat[c]).map(c => [
+      CAT_LABEL[c],
+      ...meses.map(m => byCatMes[c]?.[m] ? fmt(byCatMes[c][m]) : '—'),
+      fmt(byCat[c].eco)
+    ]);
+    conBody.push(['TOTAL GERAL',
+      ...meses.map(m => fmt(catOrder.reduce((s,c) => s+(byCatMes[c]?.[m]||0), 0))),
+      fmt(Object.values(byCat).reduce((s,d) => s+d.eco, 0))
+    ]);
+
+    doc.autoTable({
+      startY: conY, head: conHead, body: conBody,
+      styles: { fontSize: 8.5, cellPadding: 3 },
+      headStyles: { fillColor: GREEN, textColor: 255, fontStyle: 'bold' },
+      alternateRowStyles: { fillColor: [249, 250, 251] },
+      columnStyles: Object.fromEntries([...meses.map((_,i) => [i+1, {halign:'right'}]), [meses.length+1, {halign:'right', fontStyle:'bold', textColor: GDARK}]]),
+      margin: { left: 14, right: 14 },
+      theme: 'grid',
+    });
+    conY = doc.lastAutoTable.finalY + 8;
+
+    doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(...GDARK);
+    doc.text('Indicadores de Performance', 14, conY); conY += 5;
+
+    const kpiHead = [['Indicador', ...meses]];
+    const kpiBody = [
+      ['Gasto Total',        ...meses.map(m => fmt(byMes[m]?.pago||0))],
+      ['Economia Total',     ...meses.map(m => fmt(byMes[m]?.eco||0))],
+      ['% Economizado',      ...meses.map(m => pct2(byMes[m]?.eco||0, byMes[m]?.sem||0))],
+      ['Categorias Ativas',  ...meses.map(m => String(byMes[m]?.cats?.size||0))],
+    ];
+    doc.autoTable({
+      startY: conY, head: kpiHead, body: kpiBody,
+      styles: { fontSize: 8.5, cellPadding: 3 },
+      headStyles: { fillColor: GREEN, textColor: 255, fontStyle: 'bold' },
+      alternateRowStyles: { fillColor: [249, 250, 251] },
+      columnStyles: Object.fromEntries(meses.map((_,i) => [i+1, {halign:'center'}])),
+      margin: { left: 14, right: 14 },
+      theme: 'grid',
+    });
+
+    // Footer on all pages
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      if (i === 1) continue; // cover has no footer
+      doc.setPage(i);
+      doc.setFont('helvetica','normal'); doc.setFontSize(7);
+      doc.setTextColor(...GRAY);
+      doc.text(`RELATÓRIO DE COMPRAS MENSAL  ${period}  |  Documento de uso interno  |  Pág. ${i} de ${pageCount}`, W/2, H-6, { align:'center' });
+      doc.setDrawColor(...GBORDER);
+      doc.setLineWidth(0.3);
+      doc.line(14, H-8, W-14, H-8);
+    }
+
+    const label = mes ? `relatorio_${mes.toLowerCase()}_2026.pdf` : 'relatorio_compras_2026.pdf';
+    doc.save(label);
+
+  } catch(err) {
+    alert('Erro ao gerar PDF: ' + err.message);
+    console.error(err);
+  }
+
+  btn.disabled = false;
+  btn.textContent = '📄 Gerar PDF';
+}
+
+function pct2(eco, sem) {
+  sem = parseFloat(sem||0); eco = parseFloat(eco||0);
+  return sem ? (eco/sem*100).toFixed(1)+'%' : '—';
+}
+
+function addPageHeader(doc, title, sub, W, GREEN, GDARK, WHITE) {
+  doc.setFillColor(...GREEN);
+  doc.rect(0, 0, W, 22, 'F');
+  doc.setFont('helvetica','bold'); doc.setFontSize(13); doc.setTextColor(...WHITE);
+  doc.text(title, 14, 12);
+  doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(209, 250, 229);
+  doc.text(sub, 14, 19);
+}
+
+function addCatHeader(doc, cat, pago, sem, eco, pct, W, GREEN, GDARK, GLIGHT, WHITE, GRAY) {
+  const icons = { online:'ONLINE', obras:'OBRAS', geral:'GERAL', passagens:'PASSAGENS', hospedagens:'HOSPEDAGENS', seguro:'SEGURO DE VIAGEM' };
+  doc.setFillColor(...GREEN);
+  doc.rect(0, 0, W, 16, 'F');
+  doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.setTextColor(...WHITE);
+  doc.text((CAT_ICON[cat]||'') + '  ' + (CAT_LABEL[cat]||cat.toUpperCase()), 14, 11);
+
+  doc.setFillColor(...GLIGHT);
+  doc.rect(0, 16, W, 20, 'F');
+  const metrics = [['TOTAL PAGO', pago], ['SEM DESCONTO', sem], ['ECONOMIA', eco], ['% ECONOMIZADO', pct]];
+  const mw = W/4;
+  metrics.forEach(([l, v], i) => {
+    const x = i * mw + mw/2;
+    doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(...GRAY);
+    doc.text(l, x, 23, { align:'center' });
+    doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(...GDARK);
+    doc.text(v, x, 31, { align:'center' });
+  });
+}
+
+// CAT_LABEL and CAT_ICON defined above
+
+function buildCatTable(cat, rows) {
+  if (cat === 'online') return {
+    head: ['Item','Solicitante','Descrição','Qtd','V. Médio','V. Pago','V. Total','Economia','Fornecedor'],
+    body: rows.map(r => [r.item||'', r.solicitante||'', (r.descricao||'').substring(0,30), r.qtd||1, fmt(r.vmedio), fmt(r.vpago), fmt(r.vtotal), fmt(r.economia), r.fornecedor||'']),
+    cols: {4:{halign:'right'},5:{halign:'right'},6:{halign:'right'},7:{halign:'right',textColor:[15,110,86]}}
+  };
+  if (cat === 'obras') return {
+    head: ['Material','Qtd','Fornecedor','Preço','Frete','Total Pago','Concorrente','Sem Desc.','Economia'],
+    body: rows.map(r => [r.material||'', r.qtd||1, r.fornecedor||'', fmt(r.preco), fmt(r.frete), fmt(r.total), fmt(r.concorrente), fmt(r.semdesconto), fmt(r.economia)]),
+    cols: {3:{halign:'right'},4:{halign:'right'},5:{halign:'right'},6:{halign:'right'},7:{halign:'right'},8:{halign:'right',textColor:[15,110,86]}}
+  };
+  if (cat === 'geral') return {
+    head: ['Item','Solicitante','Descrição','Qtd','Preço Unit.','P. Adquirido','V. Total','Economia','Data'],
+    body: rows.map(r => [r.item||'', r.solicitante||'', (r.descricao||'').substring(0,28), r.qtd||1, fmt(r.preco), fmt(r.padquirido||0), fmt(r.vtotal), fmt(r.economia), r.data||'']),
+    cols: {4:{halign:'right'},5:{halign:'right'},6:{halign:'right'},7:{halign:'right',textColor:[15,110,86]}}
+  };
+  if (cat === 'passagens') return {
+    head: ['Rota','Solicitante','Passageiros','Descrição','Tipo','Preço','P. Adquirido','V. Total','Economia','Empresa','Data'],
+    body: rows.map(r => [r.rota||'', r.solicitante||'', (r.passageiros||'').substring(0,18), (r.descricao||'').substring(0,18), r.tipo||'', fmt(r.preco), fmt(r.padquirido||0), fmt(r.vtotal), fmt(r.economia), r.empresa||'', r.data||'']),
+    cols: {5:{halign:'right'},6:{halign:'right'},7:{halign:'right'},8:{halign:'right',textColor:[15,110,86]}}
+  };
+  if (cat === 'hospedagens') return {
+    head: ['Local','Solicitante','Pessoas','Descrição','Preço','P. Adquirido','V. Total','Economia','Data'],
+    body: rows.map(r => [r.local||'', r.solicitante||'', r.pessoas||1, (r.descricao||'').substring(0,30), fmt(r.preco), fmt(r.padquirido||0), fmt(r.vtotal), fmt(r.economia), r.data||'']),
+    cols: {4:{halign:'right'},5:{halign:'right'},6:{halign:'right'},7:{halign:'right',textColor:[15,110,86]}}
+  };
+  if (cat === 'seguro') return {
+    head: ['Local','Solicitante','Pessoas','Descrição','Preço','P. Adquirido','V. Total','Economia'],
+    body: rows.map(r => [r.local||'', r.solicitante||'', r.pessoas||1, r.descricao||'', fmt(r.preco), fmt(r.padquirido||0), fmt(r.vtotal), fmt(r.economia)]),
+    cols: {4:{halign:'right'},5:{halign:'right'},6:{halign:'right'},7:{halign:'right',textColor:[15,110,86]}}
+  };
+  return { head:[], body:[], cols:{} };
+}
+
 </script>
 </body>
 </html>
