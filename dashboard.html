@@ -140,6 +140,7 @@
       transition: all 0.2s;
       cursor: pointer;
       border-left: 3px solid transparent;
+      position: relative;
     }
 
     .menu-item:hover {
@@ -163,6 +164,51 @@
     .menu-item .label {
       flex: 1;
       font-size: 14px;
+    }
+
+    .menu-item .arrow {
+      font-size: 12px;
+      transition: transform 0.2s;
+    }
+
+    .menu-item.expanded .arrow {
+      transform: rotate(180deg);
+    }
+
+    .submenu {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      background: var(--bg);
+    }
+
+    .submenu.show {
+      max-height: 500px;
+    }
+
+    .submenu-item {
+      padding: 10px 20px 10px 56px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-light);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border-left: 3px solid transparent;
+    }
+
+    .submenu-item:hover {
+      background: var(--white);
+      color: var(--primary);
+      padding-left: 60px;
+    }
+
+    .submenu-item.active {
+      color: var(--primary-dark);
+      font-weight: 600;
+      border-left-color: var(--primary);
+      background: var(--white);
     }
 
     .menu-item.disabled {
@@ -226,6 +272,13 @@
       font-size: 24px;
       font-weight: 700;
       color: var(--text);
+      flex: 1;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
 
     .topbar-info {
@@ -397,15 +450,10 @@
     <main class="main-content">
       <div class="topbar">
         <div class="topbar-title" id="pageTitle">Dashboard</div>
-        <div class="topbar-info">
-          <span id="currentDate">---</span>
-          <span>•</span>
-          <span id="currentTime">--:--</span>
-          <button class="btn-logout-top" onclick="confirmarLogout()">
-            <span>🚪</span>
-            <span>Sair</span>
-          </button>
-        </div>
+        <button class="btn-logout-top" onclick="confirmarLogout()">
+          <span>🚪</span>
+          <span>Sair</span>
+        </button>
       </div>
 
       <div class="content-area" id="contentArea">
@@ -431,7 +479,6 @@
     carregarDadosUsuario();
     carregarMenu();
     carregarModulo('home');
-    atualizarRelogio();
     atualizarTempoSessao();
 
     // ========================================
@@ -448,12 +495,50 @@
     // ========================================
     function carregarMenu() {
       const modulos = [
-        { id: 'compras', nome: 'Compras', icone: '🛒', url: 'modulos/compras.html' },
-        { id: 'financeiro', nome: 'Financeiro', icone: '💰', url: 'modulos/financeiro.html' },
-        { id: 'suprimentos', nome: 'Suprimentos', icone: '📦', url: '#' },
-        { id: 'comercial', nome: 'Comercial', icone: '💼', url: '#' },
-        { id: 'rh', nome: 'RH', icone: '👥', url: '#' },
-        { id: 'logistica', nome: 'Logística', icone: '🚚', url: '#' }
+        { 
+          id: 'compras', 
+          nome: 'Compras', 
+          icone: '🛒',
+          submodulos: [
+            { id: 'lancamento', nome: 'Lançamento de Compras', url: 'modulos/compras.html' }
+          ]
+        },
+        { 
+          id: 'financeiro', 
+          nome: 'Financeiro', 
+          icone: '💰',
+          submodulos: [
+            { id: 'dashboard-fin', nome: '📊 Dashboard', url: 'modulos/financeiro.html' },
+            { id: 'aprovacoes', nome: '✅ Aprovações', url: '#' },
+            { id: 'relatorios', nome: '📈 Relatórios', url: '#' }
+          ]
+        },
+        { 
+          id: 'suprimentos', 
+          nome: 'Suprimentos', 
+          icone: '📦',
+          submodulos: [
+            { id: 'estoque', nome: '📦 Estoque', url: '#' }
+          ]
+        },
+        { 
+          id: 'comercial', 
+          nome: 'Comercial', 
+          icone: '💼',
+          submodulos: []
+        },
+        { 
+          id: 'rh', 
+          nome: 'RH', 
+          icone: '👥',
+          submodulos: []
+        },
+        { 
+          id: 'logistica', 
+          nome: 'Logística', 
+          icone: '🚚',
+          submodulos: []
+        }
       ];
 
       const menuModulos = document.getElementById('menuModulos');
@@ -462,19 +547,95 @@
       modulos.forEach(function(mod) {
         const permitido = temPermissao(mod.id);
         const classe = permitido ? 'menu-item' : 'menu-item disabled';
-        const onclick = permitido ? 'onclick="carregarModulo(\'' + mod.id + '\')"' : '';
-
-        html += '<a class="' + classe + '" ' + onclick + '>';
-        html += '<span class="icon">' + mod.icone + '</span>';
-        html += '<span class="label">' + mod.nome + '</span>';
-        html += '</a>';
+        const temSubmenu = mod.submodulos && mod.submodulos.length > 0;
+        const arrow = temSubmenu ? '<span class="arrow">▼</span>' : '';
+        
+        if (permitido && temSubmenu) {
+          // Módulo com submenu
+          html += '<div>';
+          html += '<a class="' + classe + '" onclick="toggleSubmenu(\'' + mod.id + '\')">';
+          html += '<span class="icon">' + mod.icone + '</span>';
+          html += '<span class="label">' + mod.nome + '</span>';
+          html += arrow;
+          html += '</a>';
+          
+          // Submenu
+          html += '<div class="submenu" id="submenu-' + mod.id + '">';
+          mod.submodulos.forEach(function(sub) {
+            html += '<div class="submenu-item" onclick="carregarSubmodulo(\'' + mod.id + '\', \'' + sub.id + '\', \'' + sub.url + '\', \'' + sub.nome + '\')">';
+            html += sub.nome;
+            html += '</div>';
+          });
+          html += '</div>';
+          html += '</div>';
+        } else if (permitido) {
+          // Módulo sem submenu
+          html += '<a class="' + classe + '" onclick="alert(\'Módulo em desenvolvimento\')">';
+          html += '<span class="icon">' + mod.icone + '</span>';
+          html += '<span class="label">' + mod.nome + '</span>';
+          html += '</a>';
+        } else {
+          // Módulo desabilitado
+          html += '<a class="' + classe + '">';
+          html += '<span class="icon">' + mod.icone + '</span>';
+          html += '<span class="label">' + mod.nome + '</span>';
+          html += '</a>';
+        }
       });
 
       menuModulos.innerHTML += html;
     }
 
     // ========================================
-    // CARREGAR MÓDULO
+    // TOGGLE SUBMENU
+    // ========================================
+    function toggleSubmenu(moduloId) {
+      const submenu = document.getElementById('submenu-' + moduloId);
+      const menuItem = submenu.previousElementSibling;
+      
+      // Fechar outros submenus
+      document.querySelectorAll('.submenu').forEach(function(sm) {
+        if (sm.id !== 'submenu-' + moduloId) {
+          sm.classList.remove('show');
+          sm.previousElementSibling.classList.remove('expanded');
+        }
+      });
+      
+      // Toggle do submenu clicado
+      submenu.classList.toggle('show');
+      menuItem.classList.toggle('expanded');
+    }
+
+    // ========================================
+    // CARREGAR SUBMÓDULO
+    // ========================================
+    function carregarSubmodulo(moduloId, submoduloId, url, nome) {
+      const contentArea = document.getElementById('contentArea');
+      const pageTitle = document.getElementById('pageTitle');
+      
+      // Remover active de todos
+      document.querySelectorAll('.submenu-item').forEach(function(item) {
+        item.classList.remove('active');
+      });
+      
+      // Adicionar active no clicado
+      event.target.classList.add('active');
+      
+      // Atualizar título
+      pageTitle.textContent = nome;
+      
+      // Carregar conteúdo
+      if (url === '#') {
+        contentArea.innerHTML = '<div class="welcome-card"><h2>🚧 Em Desenvolvimento</h2><p>Este submódulo estará disponível em breve.</p></div>';
+      } else {
+        contentArea.innerHTML = '<iframe class="module-iframe" src="' + url + '"></iframe>';
+      }
+      
+      registrarLog('acesso_' + moduloId + '_' + submoduloId, sessao.username);
+    }
+
+    // ========================================
+    // CARREGAR MÓDULO (função antiga mantida para compatibilidade)
     // ========================================
     function carregarModulo(modulo) {
       const contentArea = document.getElementById('contentArea');
@@ -557,27 +718,8 @@
     }
 
     // ========================================
-    // RELÓGIO E TEMPO DE SESSÃO
+    // TEMPO DE SESSÃO
     // ========================================
-    function atualizarRelogio() {
-      const agora = new Date();
-      const data = agora.toLocaleDateString('pt-BR', { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-      });
-      const hora = agora.toLocaleTimeString('pt-BR', { 
-        hour: '2-digit', 
-        minute: '2-digit' 
-      });
-
-      document.getElementById('currentDate').textContent = data.charAt(0).toUpperCase() + data.slice(1);
-      document.getElementById('currentTime').textContent = hora;
-
-      setTimeout(atualizarRelogio, 1000);
-    }
-
     function atualizarTempoSessao() {
       const tempo = obterTempoSessao();
       document.getElementById('sessionTime').textContent = tempo;
