@@ -282,7 +282,50 @@ function fmtVal(v) { return 'R$ ' + parseFloat(v||0).toLocaleString('pt-BR',{min
 function ecoColor(v) { return parseFloat(v||0) < 0 ? '#DC2626' : 'var(--green-dark)'; }
 function makeDL(u) { return u ? '<a href="' + u + '" target="_blank" rel="noopener" style="color:var(--green-dark)" title="Ver comprovante">📎</a>' : ''; }
 
-function loadDB() { try { db = JSON.parse(localStorage.getItem('compras_v4') || '[]'); } catch(e) { db = []; } }
+function loadDB() { 
+  try { 
+    // Tentar carregar de compras_v4 primeiro
+    var v4 = JSON.parse(localStorage.getItem('compras_v4') || '[]');
+    
+    // Se v4 estiver vazia, tentar migrar de versões antigas
+    if (v4.length === 0) {
+      var versoes = ['compras', 'compras_v1', 'compras_v2', 'compras_v3'];
+      var migrado = false;
+      
+      for (var i = 0; i < versoes.length; i++) {
+        var dados = JSON.parse(localStorage.getItem(versoes[i]) || '[]');
+        if (dados.length > 0) {
+          console.log('🔄 Migrando ' + dados.length + ' lançamentos de ' + versoes[i] + ' para compras_v4');
+          
+          // Adicionar campos novos se não existirem
+          dados.forEach(function(item) {
+            if (!item.formaPagamento) item.formaPagamento = '';
+            if (!item.parcelas) item.parcelas = '';
+            if (!item.ultimosDigitos) item.ultimosDigitos = null;
+            if (!item.dataCompra) item.dataCompra = new Date().toISOString().split('T')[0];
+          });
+          
+          // Salvar em v4
+          localStorage.setItem('compras_v4', JSON.stringify(dados));
+          v4 = dados;
+          migrado = true;
+          
+          alert('✅ Migração automática concluída!\n\n' + dados.length + ' lançamentos foram recuperados de ' + versoes[i] + ' e transferidos para a nova versão.\n\nSeus dados estão de volta!');
+          break;
+        }
+      }
+      
+      if (!migrado) {
+        console.log('ℹ️ Nenhum dado antigo encontrado para migrar');
+      }
+    }
+    
+    db = v4;
+  } catch(e) { 
+    console.error('Erro ao carregar dados:', e);
+    db = []; 
+  } 
+}
 function saveDB() { localStorage.setItem('compras_v4', JSON.stringify(db)); }
 function getKey()  { return localStorage.getItem('anthropic_key') || ''; }
 function getSheetsURL() { return localStorage.getItem('sheets_url') || ''; }
