@@ -653,9 +653,8 @@ body{
       </div>
 
       <div class="nav-section">
-      <div class="nav-section">
         <div class="nav-section-title">Sistema</div>
-        <a href="documentos.html" class="nav-item">
+        <a href="documentos.html" class="nav-item active">
           <svg viewBox="0 0 24 24">
             <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
             <polyline points="13 2 13 9 20 9"/>
@@ -671,12 +670,6 @@ body{
           </svg>
           <span>Usuários</span>
         </a>
-        <a href="atualizacoes.html" class="nav-item">
-          <svg viewBox="0 0 24 24">
-            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-          </svg>
-          <span>Atualizações</span>
-        </a>
         <div class="nav-item">
           <svg viewBox="0 0 24 24">
             <circle cx="12" cy="12" r="3"/>
@@ -685,6 +678,193 @@ body{
           <span>Configurações</span>
         </div>
       </div>
+    </nav>
+
+    <div class="sidebar-user">
+      <div class="user-avatar" id="user-avatar">AD</div>
+      <div class="user-info">
+        <div class="user-name" id="user-name">Admin</div>
+        <div class="user-role" id="user-role">Administrador</div>
+      </div>
+      <div class="user-menu" onclick="fazerLogout()">
+        <svg viewBox="0 0 24 24">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <header class="topbar">
+      <div>
+        <div class="page-title">Gestão de Documentos</div>
+        <div class="page-subtitle">Armazenamento seguro na nuvem</div>
+      </div>
+      <div class="topbar-right">
+        <button class="topbar-btn" onclick="abrirGoogleDrive()">
+          <svg viewBox="0 0 24 24">
+            <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
+          </svg>
+          Abrir Google Drive
+        </button>
+      </div>
+    </header>
+
+    <main class="content">
+      <div class="alert info">
+        <svg viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="16" x2="12" y2="12"/>
+          <line x1="12" y1="8" x2="12.01" y2="8"/>
+        </svg>
+        <div>
+          <strong>💡 Armazenamento em Nuvem:</strong> Os documentos são salvos automaticamente no Google Drive da empresa. Configure a integração nas Configurações do sistema.
+        </div>
+      </div>
+
+      <div class="upload-area" id="upload-area" onclick="document.getElementById('file-input').click()">
+        <input type="file" id="file-input" multiple onchange="handleFiles(this.files)">
+        <div class="upload-icon">📄</div>
+        <h3>Enviar Documentos</h3>
+        <p>Clique para selecionar ou arraste arquivos aqui<br>
+        <strong>PDF, DOC, XLS, IMG</strong> • Máx. 50MB por arquivo</p>
+      </div>
+
+      <div class="filters">
+        <button class="filter-btn active" onclick="filtrarDocs('todos')">📂 Todos</button>
+        <button class="filter-btn" onclick="filtrarDocs('pdf')">📕 PDF</button>
+        <button class="filter-btn" onclick="filtrarDocs('doc')">📘 Documentos</button>
+        <button class="filter-btn" onclick="filtrarDocs('xls')">📗 Planilhas</button>
+        <button class="filter-btn" onclick="filtrarDocs('img')">🖼️ Imagens</button>
+      </div>
+
+      <div class="docs-grid" id="docs-grid">
+        <!-- Preenchido por JS -->
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- MODAL EXCLUIR -->
+<div class="overlay" id="modal-delete">
+  <div class="modal">
+    <h2>Confirmar Exclusão</h2>
+    <p style="color:var(--text-secondary);margin:16px 0">Tem certeza que deseja excluir este documento? Esta ação não pode ser desfeita.</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeDelete()">Cancelar</button>
+      <button class="btn danger" onclick="confirmarExclusao()">Excluir</button>
+    </div>
+  </div>
+</div>
+
+<script src="../auth.js"></script>
+<script>
+const sessao = verificarAutenticacao();
+if (sessao) {
+  document.getElementById('user-name').textContent = sessao.nome;
+  document.getElementById('user-role').textContent = sessao.perfil;
+  document.getElementById('user-avatar').textContent = sessao.nome.substring(0, 2).toUpperCase();
+}
+iniciarMonitoramentoSessao();
+
+let documentos = [];
+let filtroAtual = 'todos';
+let excluindoId = null;
+
+function loadDocs() {
+  try {
+    documentos = JSON.parse(localStorage.getItem('rompex_documentos') || '[]');
+  } catch(e) {
+    documentos = [];
+  }
+}
+
+function saveDocs() {
+  localStorage.setItem('rompex_documentos', JSON.stringify(documentos));
+}
+
+function getFileIcon(tipo) {
+  const icons = {
+    pdf: '📕',
+    doc: '📘',
+    xls: '📗',
+    img: '🖼️',
+    other: '📄'
+  };
+  return icons[tipo] || icons.other;
+}
+
+function getFileBadge(tipo) {
+  const badges = {
+    pdf: 'badge-pdf',
+    doc: 'badge-doc',
+    xls: 'badge-xls',
+    img: 'badge-img',
+    other: 'badge-other'
+  };
+  return badges[tipo] || badges.other;
+}
+
+function getTipoFromExt(filename) {
+  const ext = filename.split('.').pop().toLowerCase();
+  if (ext === 'pdf') return 'pdf';
+  if (['doc', 'docx', 'txt'].includes(ext)) return 'doc';
+  if (['xls', 'xlsx', 'csv'].includes(ext)) return 'xls';
+  if (['jpg', 'jpeg', 'png', 'gif', 'svg'].includes(ext)) return 'img';
+  return 'other';
+}
+
+function formatSize(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / 1048576).toFixed(1) + ' MB';
+}
+
+function renderDocs() {
+  const grid = document.getElementById('docs-grid');
+  let filtered = documentos;
+  
+  if (filtroAtual !== 'todos') {
+    filtered = documentos.filter(d => d.tipo === filtroAtual);
+  }
+  
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="empty">Nenhum documento encontrado</div>';
+    return;
+  }
+  
+  let html = '';
+  filtered.forEach(doc => {
+    const icon = getFileIcon(doc.tipo);
+    const badge = getFileBadge(doc.tipo);
+    
+    html += `<div class="doc-card">
+      <div class="doc-icon">${icon}</div>
+      <div class="doc-name" title="${doc.nome}">${doc.nome}</div>
+      <div class="doc-meta">
+        <span>${formatSize(doc.tamanho)}</span>
+        <span>${doc.data}</span>
+      </div>
+      <span class="badge ${badge}">${doc.tipo.toUpperCase()}</span>
+      <div class="doc-actions" style="margin-top:12px">
+        <button class="btn-sm" onclick="baixarDoc(${doc.id})">
+          <svg viewBox="0 0 24 24">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Baixar
+        </button>
+        <button class="btn-sm danger" onclick="excluirDoc(${doc.id})">
+          <svg viewBox="0 0 24 24">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+          </svg>
+        </button>
+      </div>
+    </div>`;
   });
   
   grid.innerHTML = html;
