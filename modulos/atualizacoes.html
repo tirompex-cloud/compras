@@ -428,7 +428,6 @@ body{
       </div>
 
       <div class="nav-section">
-      <div class="nav-section">
         <div class="nav-section-title">Sistema</div>
         <a href="documentos.html" class="nav-item">
           <svg viewBox="0 0 24 24">
@@ -446,7 +445,7 @@ body{
           </svg>
           <span>Usuários</span>
         </a>
-        <a href="atualizacoes.html" class="nav-item">
+        <a href="atualizacoes.html" class="nav-item active">
           <svg viewBox="0 0 24 24">
             <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
           </svg>
@@ -460,3 +459,161 @@ body{
           <span>Configurações</span>
         </div>
       </div>
+    </nav>
+
+    <div class="sidebar-user">
+      <div class="user-avatar" id="user-avatar">AD</div>
+      <div class="user-info">
+        <div class="user-name" id="user-name">Admin</div>
+        <div class="user-role" id="user-role">Administrador</div>
+      </div>
+      <div class="user-menu" onclick="fazerLogout()">
+        <svg viewBox="0 0 24 24">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <header class="topbar">
+      <div>
+        <div class="page-title">📋 Histórico de Atualizações</div>
+        <div class="page-subtitle">Novidades, melhorias e correções do sistema</div>
+      </div>
+    </header>
+
+    <main class="content">
+      <div class="timeline">
+        
+        <div class="version">
+          <div class="version-header">
+            <div class="version-title">📦 Versão 3.0.0</div>
+            <div class="version-date">13 de Maio de 2026</div>
+          </div>
+          
+          <div class="changes-group">
+            <div class="group-title">🆕 NOVIDADES</div>
+            <div class="change-item">
+              <strong>Gestão de Usuários:</strong> Novo módulo completo para criar, editar e gerenciar usuários com controle de permissões por módulo
+            </div>
+            <div class="change-item">
+              <strong>Gestão de Documentos:</strong> Sistema de upload, download e organização de arquivos com integração Google Drive
+            </div>
+            <div class="change-item">
+              <strong>Dashboard Financeiro:</strong> Nova página "Relação de Compras" com métricas e filtros detalhados
+            </div>
+            <div class="change-item">
+              <strong>Sistema de Permissões:</strong> Controle de acesso por perfil - módulos são escondidos automaticamente para usuários sem permissão
+            </div>
+            <div class="change-item">
+              <strong>Página de Atualizações:</strong> Histórico completo de mudanças do sistema (esta página!)
+            </div>
+          </div>
+          
+          <div class="changes-group">
+            <div class="group-title">⚡ MELHORIAS</div>
+            <div class="change-item">
+              <strong>Logo redesenhada:</strong> Agora aparece maior (80px na sidebar, 120px no login) e sem o texto "ROMPEX"
+            </div>
+            <div class="change-item">
+              <strong>Menu inteligente:</strong> Submenus agora abrem/fecham individualmente sem recolher outros automaticamente
+            </div>
+            <div class="change-item">
+              <strong>Submenu Financeiro:</strong> Agora possui subitem "Relação de Compras" para melhor organização
+            </div>
+          </div>
+          
+          <div class="changes-group">
+            <div class="group-title">🔧 CORREÇÕES</div>
+            <div class="change-item">
+              Menu não recolhe mais ao abrir outro submenu
+            </div>
+            <div class="change-item">
+              Sidebar sempre visível em todos os módulos
+            </div>
+            <div class="change-item">
+              Links corrigidos para estrutura /modulos/
+            </div>
+          </div>
+        </div>
+
+        <div class="version">
+          <div class="version-header">
+            <div class="version-title">📦 Versão 2.0.0</div>
+            <div class="version-date">01 de Maio de 2026</div>
+          </div>
+          
+          <div class="changes-group">
+            <div class="group-title">🆕 NOVIDADES</div>
+            <div class="change-item">
+              <strong>Sistema de Compras Completo:</strong> 7 categorias (Online, Obras, Geral, Passagens, Hospedagens, Seguros, Relatórios)
+            </div>
+            <div class="change-item">
+              <strong>Módulo Financeiro:</strong> Dashboard com visão geral dos gastos
+            </div>
+            <div class="change-item">
+              <strong>Upload de Comprovantes:</strong> Zona de drag & drop para anexar recibos
+            </div>
+          </div>
+        </div>
+
+        <div class="version">
+          <div class="version-header">
+            <div class="version-title">📦 Versão 1.0.0</div>
+            <div class="version-date">15 de Abril de 2026</div>
+          </div>
+          
+          <div class="changes-group">
+            <div class="group-title">🆕 LANÇAMENTO INICIAL</div>
+            <div class="change-item">
+              Sistema de login e autenticação
+            </div>
+            <div class="change-item">
+              Dashboard principal com métricas
+            </div>
+            <div class="change-item">
+              Navegação lateral com menu expansível
+            </div>
+            <div class="change-item">
+              Design azul escuro com acentos verdes
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="../auth.js"></script>
+<script>
+const sessao = verificarAutenticacao();
+if (sessao) {
+  document.getElementById('user-name').textContent = sessao.nome;
+  document.getElementById('user-role').textContent = sessao.perfil;
+  document.getElementById('user-avatar').textContent = sessao.nome.substring(0, 2).toUpperCase();
+}
+iniciarMonitoramentoSessao();
+
+function toggleSubmenu(id, event) {
+  if (event) event.stopPropagation();
+  const submenu = document.getElementById('submenu-' + id);
+  const item = event ? event.currentTarget : document.querySelector('[onclick*="' + id + '"]');
+  if (submenu) {
+    const isOpen = submenu.classList.contains('open');
+    if (isOpen) {
+      submenu.classList.remove('open');
+      if (item) item.classList.remove('expanded');
+    } else {
+      submenu.classList.add('open');
+      if (item) item.classList.add('expanded');
+    }
+  }
+}
+</script>
+
+</body>
+</html>
