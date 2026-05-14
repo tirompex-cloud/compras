@@ -6,6 +6,12 @@
 <title>ROMPEX Intranet • Login</title>
 <link rel="icon" type="image/png" href="Rompex_Favicon_Transparente.png">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- Anti-cache -->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -80,8 +86,8 @@ body::before{
   background:radial-gradient(circle,rgba(255,255,255,0.1) 0%,transparent 70%);
 }
 .logo-icon{
-  width:120px;
-  height:120px;
+  width:160px;
+  height:160px;
   margin:0 auto 20px;
   position:relative;
   display:flex;
@@ -92,73 +98,23 @@ body::before{
   width:100%;
   height:100%;
   object-fit:contain;
-  filter:brightness(0) invert(1);
 }
 .login-header h1{
-  font-size:32px;
-  font-weight:800;
-  margin-bottom:8px;
-  letter-spacing:-0.02em;
-  position:relative;
+  display:none;
 }
 .login-header p{
   font-size:15px;
   opacity:0.95;
+  font-weight:500;
   position:relative;
 }
 .login-body{
   padding:40px 32px;
 }
-.demo-credentials{
-  background:rgba(16,185,129,0.1);
-  border:1px solid rgba(16,185,129,0.3);
-  padding:16px;
-  border-radius:var(--radius-sm);
-  margin-bottom:24px;
-  font-size:13px;
-  line-height:1.7;
-  color:var(--text-secondary);
-}
-.demo-credentials strong{
-  display:block;
-  color:var(--accent);
-  margin-bottom:8px;
-  font-size:12px;
-  text-transform:uppercase;
-  letter-spacing:0.05em;
-}
-.demo-credentials code{
-  background:var(--bg-tertiary);
-  padding:2px 8px;
-  border-radius:6px;
-  font-family:'Courier New',monospace;
-  color:var(--text-primary);
-  font-weight:600;
-}
-.error-message{
-  background:rgba(239,68,68,0.15);
-  border:1px solid rgba(239,68,68,0.4);
-  color:#FCA5A5;
-  padding:12px 16px;
-  border-radius:var(--radius-sm);
-  font-size:13px;
-  margin-bottom:20px;
-  display:none;
-  border-left:4px solid var(--danger);
-  animation:shake 0.3s;
-}
-.error-message.show{
-  display:block;
-}
-@keyframes shake{
-  0%,100%{transform:translateX(0)}
-  25%{transform:translateX(-10px)}
-  75%{transform:translateX(10px)}
-}
 .form-group{
-  margin-bottom:20px;
+  margin-bottom:24px;
 }
-.form-group label{
+.form-label{
   display:block;
   font-size:13px;
   font-weight:600;
@@ -177,79 +133,114 @@ body::before{
   transform:translateY(-50%);
   width:20px;
   height:20px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-.input-icon svg{
-  width:20px;
-  height:20px;
   stroke:var(--text-muted);
   stroke-width:2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
   fill:none;
 }
-.form-group input{
+.form-input{
   width:100%;
   padding:14px 16px 14px 48px;
-  font-size:15px;
-  border:2px solid var(--border-light);
-  border-radius:var(--radius-sm);
-  font-family:'Inter',sans-serif;
-  transition:all 0.2s;
   background:var(--bg-tertiary);
+  border:1px solid var(--border-light);
+  border-radius:var(--radius-sm);
   color:var(--text-primary);
+  font-size:15px;
+  font-family:inherit;
+  transition:all 0.2s;
 }
-.form-group input:focus{
+.form-input:focus{
   outline:none;
   border-color:var(--accent);
-  box-shadow:0 0 0 4px rgba(16,185,129,0.15);
-  background:var(--bg-secondary);
+  box-shadow:0 0 0 3px rgba(16,185,129,0.15);
 }
-.form-group input:focus + .input-icon svg{
-  stroke:var(--accent);
+.form-input::placeholder{
+  color:var(--text-muted);
 }
-.btn-login{
+.login-btn{
   width:100%;
-  padding:16px;
-  font-size:16px;
-  font-weight:700;
-  color:#fff;
+  padding:14px;
   background:linear-gradient(135deg,var(--accent) 0%,#059669 100%);
   border:none;
   border-radius:var(--radius-sm);
-  cursor:pointer;
-  transition:all 0.2s;
-  font-family:'Inter',sans-serif;
+  color:#fff;
+  font-size:15px;
+  font-weight:700;
   text-transform:uppercase;
   letter-spacing:0.05em;
-  box-shadow:0 4px 20px rgba(16,185,129,0.3);
+  cursor:pointer;
+  transition:all 0.3s;
+  box-shadow:0 4px 16px rgba(16,185,129,0.3);
 }
-.btn-login:hover{
+.login-btn:hover{
   transform:translateY(-2px);
-  box-shadow:0 8px 30px rgba(16,185,129,0.4);
+  box-shadow:0 8px 24px rgba(16,185,129,0.4);
 }
-.btn-login:active{
+.login-btn:active{
   transform:translateY(0);
 }
-.btn-login:disabled{
-  opacity:0.6;
-  cursor:not-allowed;
-  transform:none;
+.demo-info{
+  margin-top:24px;
+  padding:16px;
+  background:rgba(16,185,129,0.08);
+  border:1px solid rgba(16,185,129,0.2);
+  border-radius:var(--radius-sm);
+}
+.demo-info-title{
+  font-size:12px;
+  font-weight:700;
+  color:var(--accent);
+  margin-bottom:8px;
+  text-transform:uppercase;
+  letter-spacing:0.05em;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.demo-info-title svg{
+  width:16px;
+  height:16px;
+}
+.demo-credentials{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  font-size:13px;
+  color:var(--text-secondary);
+}
+.demo-credentials code{
+  display:inline-flex;
+  padding:2px 6px;
+  background:var(--bg-tertiary);
+  border-radius:4px;
+  font-family:'Courier New',monospace;
+  color:var(--accent);
+  font-size:12px;
 }
 .login-footer{
-  padding:24px 32px;
-  background:var(--bg-tertiary);
   text-align:center;
+  padding:24px;
+  border-top:1px solid var(--border-light);
   font-size:12px;
   color:var(--text-muted);
-  border-top:1px solid var(--border);
+}
+.error-message{
+  margin-top:16px;
+  padding:12px 16px;
+  background:rgba(239,68,68,0.1);
+  border:1px solid rgba(239,68,68,0.3);
+  border-radius:var(--radius-sm);
+  color:#FCA5A5;
+  font-size:13px;
+  display:none;
+}
+.error-message.show{
+  display:block;
 }
 @media(max-width:480px){
-  .login-header{
-    padding:36px 24px;
-  }
-  .login-header h1{
-    font-size:28px;
+  .login-container{
+    max-width:100%;
   }
   .login-body{
     padding:32px 24px;
@@ -269,121 +260,100 @@ body::before{
   </div>
 
   <div class="login-body">
-    <div class="demo-credentials">
-      <strong>🔑 Credenciais de Teste:</strong>
-      Admin: <code>admin</code> / <code>admin123</code><br>
-      Compras: <code>compras</code> / <code>compras123</code><br>
-      Financeiro: <code>financeiro</code> / <code>fin123</code>
-    </div>
-
-    <div id="errorMsg" class="error-message"></div>
-
-    <form id="loginForm">
+    <form id="login-form" onsubmit="return handleLogin(event)">
       <div class="form-group">
-        <label>Usuário</label>
+        <label class="form-label">Usuário</label>
         <div class="input-wrapper">
+          <svg class="input-icon" viewBox="0 0 24 24">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
           <input 
             type="text" 
+            class="form-input" 
             id="username" 
             placeholder="Digite seu usuário"
-            autocomplete="username"
             required
+            autocomplete="username"
           >
-          <div class="input-icon">
-            <svg viewBox="0 0 24 24">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-              <circle cx="12" cy="7" r="4"/>
-            </svg>
-          </div>
         </div>
       </div>
 
       <div class="form-group">
-        <label>Senha</label>
+        <label class="form-label">Senha</label>
         <div class="input-wrapper">
+          <svg class="input-icon" viewBox="0 0 24 24">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
           <input 
             type="password" 
+            class="form-input" 
             id="password" 
             placeholder="Digite sua senha"
-            autocomplete="current-password"
             required
+            autocomplete="current-password"
           >
-          <div class="input-icon">
-            <svg viewBox="0 0 24 24">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-            </svg>
-          </div>
         </div>
       </div>
 
-      <button type="submit" class="btn-login" id="btnLogin">
-        Entrar
-      </button>
+      <div class="error-message" id="error-message"></div>
+
+      <button type="submit" class="login-btn">Entrar</button>
     </form>
+
+    <div class="demo-info">
+      <div class="demo-info-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/>
+          <line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+        Credenciais de Teste
+      </div>
+      <div class="demo-credentials">
+        <div>Admin: <code>admin</code> / <code>admin123</code></div>
+        <div>Compras: <code>compras</code> / <code>compras123</code></div>
+        <div>Financeiro: <code>financeiro</code> / <code>fin123</code></div>
+      </div>
+    </div>
   </div>
 
   <div class="login-footer">
-    Desenvolvido internamente • Versão 2.0.0
+    Desenvolvido internamente • Versão 3.0.0
   </div>
 </div>
 
 <script src="auth.js"></script>
 <script>
-if (obterSessao()) {
-  window.location.href = 'dashboard.html';
-}
+console.log('🚀 ROMPEX Login v3.0.0');
 
-const form = document.getElementById('loginForm');
-const btnLogin = document.getElementById('btnLogin');
-const errorMsg = document.getElementById('errorMsg');
-
-form.addEventListener('submit', function(e) {
-  e.preventDefault();
+function handleLogin(event) {
+  event.preventDefault();
   
-  const username = document.getElementById('username').value.trim();
+  const username = document.getElementById('username').value;
   const password = document.getElementById('password').value;
-
-  if (!username || !password) {
-    mostrarErro('Preencha todos os campos');
-    return;
-  }
-
-  btnLogin.disabled = true;
-  btnLogin.textContent = 'Entrando...';
-
-  setTimeout(function() {
-    const resultado = fazerLogin(username, password);
-
-    if (resultado.sucesso) {
-      window.location.href = 'dashboard.html';
-    } else {
-      mostrarErro(resultado.erro);
-      btnLogin.disabled = false;
-      btnLogin.textContent = 'Entrar';
-      document.getElementById('password').value = '';
-    }
-  }, 500);
-});
-
-function mostrarErro(mensagem) {
-  errorMsg.textContent = mensagem;
-  errorMsg.classList.add('show');
+  const errorMsg = document.getElementById('error-message');
   
-  setTimeout(function() {
-    errorMsg.classList.remove('show');
-  }, 3000);
+  errorMsg.classList.remove('show');
+  
+  const resultado = fazerLogin(username, password);
+  
+  if (resultado.sucesso) {
+    window.location.href = 'dashboard.html?v=' + new Date().getTime();
+  } else {
+    errorMsg.textContent = '❌ ' + resultado.erro;
+    errorMsg.classList.add('show');
+  }
+  
+  return false;
 }
 
-document.getElementById('username').addEventListener('input', function() {
-  errorMsg.classList.remove('show');
-});
-
-document.getElementById('password').addEventListener('input', function() {
-  errorMsg.classList.remove('show');
-});
-
-document.getElementById('username').focus();
+// Anti-cache: adiciona timestamp na URL ao carregar
+if (window.location.search.indexOf('v=') === -1) {
+  const newUrl = window.location.pathname + '?v=' + new Date().getTime();
+  window.history.replaceState({}, '', newUrl);
+}
 </script>
 
 </body>
