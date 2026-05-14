@@ -464,7 +464,6 @@ tr:hover td{
       </div>
 
       <div class="nav-section">
-      <div class="nav-section">
         <div class="nav-section-title">Sistema</div>
         <a href="documentos.html" class="nav-item">
           <svg viewBox="0 0 24 24">
@@ -496,3 +495,233 @@ tr:hover td{
           <span>Configurações</span>
         </div>
       </div>
+    </nav>
+
+    <div class="sidebar-user">
+      <div class="user-avatar" id="user-avatar">AD</div>
+      <div class="user-info">
+        <div class="user-name" id="user-name">Admin</div>
+        <div class="user-role" id="user-role">Administrador</div>
+      </div>
+      <div class="user-menu" onclick="fazerLogout()">
+        <svg viewBox="0 0 24 24">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <header class="topbar">
+      <div>
+        <div class="page-title">💰 Relação de Compras</div>
+        <div class="page-subtitle">Dashboard financeiro do mês</div>
+      </div>
+    </header>
+
+    <main class="content">
+      <div class="metrics">
+        <div class="metric-card">
+          <div class="metric-value" id="total-compras">R$ 0,00</div>
+          <div class="metric-label">Total em Compras</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value" id="total-economia">R$ 0,00</div>
+          <div class="metric-label">Economia Total</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value" id="total-lancamentos">0</div>
+          <div class="metric-label">Lançamentos</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value" id="ticket-medio">R$ 0,00</div>
+          <div class="metric-label">Ticket Médio</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📊 Compras do Mês</div>
+        </div>
+        
+        <div class="filters">
+          <select class="filter-select" id="filter-mes" onchange="filtrarDados()">
+            <option value="">Todos os meses</option>
+            <option value="Janeiro">Janeiro</option>
+            <option value="Fevereiro">Fevereiro</option>
+            <option value="Março">Março</option>
+            <option value="Abril">Abril</option>
+            <option value="Maio">Maio</option>
+            <option value="Junho">Junho</option>
+            <option value="Julho">Julho</option>
+            <option value="Agosto">Agosto</option>
+            <option value="Setembro">Setembro</option>
+            <option value="Outubro">Outubro</option>
+            <option value="Novembro">Novembro</option>
+            <option value="Dezembro">Dezembro</option>
+          </select>
+          
+          <select class="filter-select" id="filter-categoria" onchange="filtrarDados()">
+            <option value="">Todas as categorias</option>
+            <option value="online">Online</option>
+            <option value="obras">Obras</option>
+            <option value="geral">Geral</option>
+            <option value="passagens">Passagens</option>
+            <option value="hospedagens">Hospedagens</option>
+            <option value="seguro">Seguro</option>
+          </select>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Mês</th>
+                <th>Categoria</th>
+                <th>Item</th>
+                <th>Solicitante</th>
+                <th>Fornecedor</th>
+                <th>Valor Total</th>
+                <th>Economia</th>
+                <th>Data</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-compras">
+              <tr><td colspan="8" class="empty">Nenhuma compra registrada</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="../auth.js"></script>
+<script>
+const sessao = verificarAutenticacao();
+if (sessao) {
+  document.getElementById('user-name').textContent = sessao.nome;
+  document.getElementById('user-role').textContent = sessao.perfil;
+  document.getElementById('user-avatar').textContent = sessao.nome.substring(0, 2).toUpperCase();
+}
+iniciarMonitoramentoSessao();
+
+let compras = [];
+
+function loadCompras() {
+  try {
+    const db = JSON.parse(localStorage.getItem('compras_v4') || '{}');
+    compras = [];
+    
+    // Agregar todas as categorias
+    ['online','obras','geral','passagens','hospedagens','seguro'].forEach(cat => {
+      if (db[cat] && Array.isArray(db[cat])) {
+        db[cat].forEach(item => {
+          compras.push({...item, categoria: cat});
+        });
+      }
+    });
+  } catch(e) {
+    compras = [];
+  }
+}
+
+function calcularMetricas(dados) {
+  const total = dados.reduce((sum, c) => sum + (parseFloat(c.vtotal) || 0), 0);
+  const economia = dados.reduce((sum, c) => sum + (parseFloat(c.economia) || 0), 0);
+  const ticketMedio = dados.length ? total / dados.length : 0;
+  
+  document.getElementById('total-compras').textContent = 'R$ ' + total.toFixed(2).replace('.',',');
+  document.getElementById('total-economia').textContent = 'R$ ' + economia.toFixed(2).replace('.',',');
+  document.getElementById('total-lancamentos').textContent = dados.length;
+  document.getElementById('ticket-medio').textContent = 'R$ ' + ticketMedio.toFixed(2).replace('.',',');
+}
+
+function getBadgeClass(cat) {
+  const classes = {
+    online: 'b-online',
+    obras: 'b-obras',
+    geral: 'b-geral',
+    passagens: 'b-passagens',
+    hospedagens: 'b-hospedagens',
+    seguro: 'b-seguro'
+  };
+  return classes[cat] || 'b-geral';
+}
+
+function renderTabela(dados) {
+  const tbody = document.getElementById('tbody-compras');
+  
+  if (!dados.length) {
+    tbody.innerHTML = '<tr><td colspan="8" class="empty">Nenhuma compra encontrada</td></tr>';
+    return;
+  }
+  
+  let html = '';
+  dados.forEach(c => {
+    const badgeClass = getBadgeClass(c.categoria);
+    html += `<tr>
+      <td>${c.mes || '-'}</td>
+      <td><span class="badge ${badgeClass}">${c.categoria}</span></td>
+      <td><strong>${c.item || '-'}</strong></td>
+      <td>${c.solicitante || '-'}</td>
+      <td>${c.fornecedor || '-'}</td>
+      <td><strong>R$ ${(parseFloat(c.vtotal) || 0).toFixed(2).replace('.',',')}</strong></td>
+      <td style="color:var(--accent)"><strong>R$ ${(parseFloat(c.economia) || 0).toFixed(2).replace('.',',')}</strong></td>
+      <td>${c.data || '-'}</td>
+    </tr>`;
+  });
+  
+  tbody.innerHTML = html;
+}
+
+function filtrarDados() {
+  const mes = document.getElementById('filter-mes').value;
+  const categoria = document.getElementById('filter-categoria').value;
+  
+  let filtrados = compras;
+  
+  if (mes) {
+    filtrados = filtrados.filter(c => c.mes === mes);
+  }
+  
+  if (categoria) {
+    filtrados = filtrados.filter(c => c.categoria === categoria);
+  }
+  
+  calcularMetricas(filtrados);
+  renderTabela(filtrados);
+}
+
+function toggleSubmenu(id, event) {
+  if (event) event.stopPropagation();
+  const submenu = document.getElementById('submenu-' + id);
+  const item = event ? event.currentTarget : document.querySelector('[onclick*="' + id + '"]');
+  if (submenu) {
+    const isOpen = submenu.classList.contains('open');
+    if (isOpen) {
+      submenu.classList.remove('open');
+      if (item) item.classList.remove('expanded');
+    } else {
+      submenu.classList.add('open');
+      if (item) item.classList.add('expanded');
+    }
+  }
+}
+
+// Carregar e exibir dados
+loadCompras();
+calcularMetricas(compras);
+renderTabela(compras);
+
+// Selecionar mês atual
+const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const mesAtual = meses[new Date().getMonth()];
+document.getElementById('filter-mes').value = mesAtual;
+filtrarDados();
+</script>
+
+</body>
+</html>
