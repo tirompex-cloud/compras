@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ROMPEX • Módulo Financeiro</title>
+<link rel="icon" type="image/png" href="../Rompex_Favicon_Transparente.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg-primary:#0A0E1A;
+  --bg-secondary:#0F172A;
+  --bg-tertiary:#1E293B;
+  --bg-card:#1E3A52;
+  --accent:#10B981;
+  --accent-hover:#059669;
+  --accent-light:rgba(16,185,129,0.1);
+  --text-primary:#F8FAFC;
+  --text-secondary:#94A3B8;
+  --text-muted:#64748B;
+  --border:#1E293B;
+  --border-light:#334155;
+  --radius:14px;
+  --radius-sm:10px;
+  --shadow:0 4px 24px rgba(0,0,0,0.4);
+  --sidebar-width:280px;
+}
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--bg-primary);
+  color:var(--text-primary);
+  font-size:14px;
+  min-height:100vh;
+  line-height:1.6;
+}
+.layout{display:flex;min-height:100vh}
+.sidebar{
+  width:var(--sidebar-width);
+  background:var(--bg-secondary);
+  border-right:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  position:fixed;
+  left:0;
+  top:0;
+  bottom:0;
+  z-index:100;
+}
+.main-content{
+  flex:1;
+  margin-left:var(--sidebar-width);
+  display:flex;
+  flex-direction:column;
+}
+.sidebar-logo{
+  padding:24px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.logo-icon{
+  width:80px;
+  height:80px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.logo-icon img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+.sidebar-nav{
+  flex:1;
+  padding:16px;
+  overflow-y:auto;
+}
+.nav-section{
+  margin-bottom:24px;
+}
+.nav-section-title{
+  font-size:11px;
+  font-weight:700;
+  color:var(--text-muted);
+  text-transform:uppercase;
+  letter-spacing:0.12em;
+  padding:8px 12px 12px;
+}
+.nav-item{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:var(--radius-sm);
+  color:var(--text-secondary);
+  cursor:pointer;
+  transition:all 0.2s;
+  margin-bottom:4px;
+  font-size:14px;
+  font-weight:500;
+  text-decoration:none;
+}
+.nav-item svg{
+  width:20px;
+  height:20px;
+  stroke:currentColor;
+  stroke-width:2;
+  fill:none;
+  flex-shrink:0;
+}
+.nav-item:hover{
+  background:rgba(16,185,129,0.08);
+  color:var(--text-primary);
+}
+.nav-item.active{
+  background:var(--accent-light);
+  color:var(--accent);
+  font-weight:600;
+}
+.nav-expand-icon{
+  margin-left:auto;
+  width:16px;
+  height:16px;
+  transition:transform 0.2s;
+}
+.nav-item.expanded .nav-expand-icon{
+  transform:rotate(90deg);
+}
+.nav-submenu{
+  max-height:0;
+  overflow:hidden;
+  transition:max-height 0.3s ease;
+  padding-left:32px;
+}
+.nav-submenu.open{
+  max-height:500px;
+}
+.nav-submenu .nav-item{
+  font-size:13px;
+  padding:10px 12px;
+}
+.sidebar-user{
+  padding:20px;
+  border-top:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.user-avatar{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#667eea,#764ba2);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+  font-size:16px;
+  color:#fff;
+}
+.user-info{flex:1;min-width:0}
+.user-name{
+  font-size:14px;
+  font-weight:600;
+  color:var(--text-primary);
+}
+.user-role{
+  font-size:12px;
+  color:var(--text-muted);
+}
+.user-menu{
+  cursor:pointer;
+  padding:4px;
+  border-radius:6px;
+  transition:0.2s;
+}
+.user-menu:hover{background:var(--bg-tertiary)}
+.user-menu svg{
+  width:18px;
+  height:18px;
+  stroke:var(--text-secondary);
+  fill:none;
+}
+.topbar{
+  background:var(--bg-secondary);
+  border-bottom:1px solid var(--border);
+  padding:16px 32px;
+  display:flex;
+  align-items:center;
+  gap:20px;
+}
+.page-title{
+  font-size:22px;
+  font-weight:700;
+  color:var(--text-primary);
+}
+.page-subtitle{
+  font-size:13px;
+  color:var(--text-muted);
+  margin-top:2px;
+}
+.topbar-right{
+  margin-left:auto;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.topbar-btn{
+  padding:10px 16px;
+  border-radius:var(--radius-sm);
+  background:var(--bg-tertiary);
+  border:1px solid var(--border-light);
+  color:var(--text-secondary);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:13px;
+  font-weight:600;
+  transition:all 0.2s;
+  text-decoration:none;
+}
+.topbar-btn svg{
+  width:18px;
+  height:18px;
+  stroke:currentColor;
+  fill:none;
+}
+.topbar-btn:hover{
+  background:var(--bg-card);
+  color:var(--text-primary);
+  border-color:var(--accent);
+}
+.content{
+  padding:32px;
+  flex:1;
+}
+.hero-section{
+  background:linear-gradient(135deg,var(--accent),#059669);
+  border-radius:var(--radius);
+  padding:48px;
+  text-align:center;
+  margin-bottom:32px;
+  position:relative;
+  overflow:hidden;
+}
+.hero-icon{
+  font-size:64px;
+  margin-bottom:16px;
+}
+.hero-title{
+  font-size:32px;
+  font-weight:800;
+  color:#fff;
+  margin-bottom:8px;
+}
+.hero-subtitle{
+  font-size:16px;
+  color:rgba(255,255,255,0.9);
+}
+.card{
+  background:var(--bg-secondary);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:24px;
+  margin-bottom:24px;
+}
+.card-header{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:20px;
+  padding-bottom:16px;
+  border-bottom:1px solid var(--border);
+}
+.card-header svg{
+  width:22px;
+  height:22px;
+  stroke:var(--accent);
+  fill:none;
+}
+.card-title{
+  font-size:18px;
+  font-weight:700;
+  color:var(--text-primary);
+}
+.features-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:20px;
+  margin-bottom:32px;
+}
+.feature-card{
+  background:var(--bg-tertiary);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:24px;
+  transition:all 0.3s;
+}
+.feature-card:hover{
+  border-color:var(--accent);
+  transform:translateY(-4px);
+}
+.feature-icon{
+  width:48px;
+  height:48px;
+  border-radius:12px;
+  background:var(--accent-light);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:16px;
+}
+.feature-icon svg{
+  width:24px;
+  height:24px;
+  stroke:var(--accent);
+  fill:none;
+}
+.feature-title{
+  font-size:16px;
+  font-weight:700;
+  color:var(--text-primary);
+  margin-bottom:8px;
+}
+.feature-description{
+  font-size:13px;
+  color:var(--text-muted);
+  line-height:1.6;
+}
+.dev-notice{
+  background:rgba(59,130,246,0.1);
+  border:2px dashed rgba(59,130,246,0.3);
+  border-radius:var(--radius);
+  padding:32px;
+  text-align:center;
+}
+.dev-icon{
+  font-size:48px;
+  margin-bottom:16px;
+}
+.dev-title{
+  font-size:20px;
+  font-weight:700;
+  color:#93C5FD;
+  margin-bottom:8px;
+}
+.dev-text{
+  font-size:14px;
+  color:var(--text-muted);
+}
+</style>
+</head>
+<body>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">
+        <img src="../logo-rompex-white.png" alt="ROMPEX">
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <div class="nav-section-title">Principal</div>
+        <a href="../dashboard.html" class="nav-item">
+          <svg viewBox="0 0 24 24">
+            <rect x="3" y="3" width="7" height="9" rx="1"/>
+            <rect x="14" y="3" width="7" height="5" rx="1"/>
+            <rect x="14" y="12" width="7" height="9" rx="1"/>
+            <rect x="3" y="16" width="7" height="5" rx="1"/>
+          </svg>
+          <span>Início</span>
+        </a>
+        <div class="nav-item">
+          <svg viewBox="0 0 24 24">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          <span>Avisos</span>
+        </div>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">Automações</div>
+        <div class="nav-item" onclick="toggleSubmenu('automacoes',event)">
+          <svg viewBox="0 0 24 24">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          </svg>
+          <span>Automações</span>
+          <svg class="nav-expand-icon" viewBox="0 0 24 24">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </div>
+        <div class="nav-submenu" id="submenu-automacoes">
+          <div class="nav-item" onclick="toggleSubmenu('compras',event)">
+            <svg viewBox="0 0 24 24">
+              <circle cx="9" cy="21" r="1"/>
+              <circle cx="20" cy="21" r="1"/>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+            </svg>
+            <span>Compras</span>
+            <svg class="nav-expand-icon" viewBox="0 0 24 24">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </div>
+          <div class="nav-submenu" id="submenu-compras">
+            <a href="compras.html" class="nav-item">
+              <svg viewBox="0 0 24 24">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              <span>Lançamento de Compras</span>
+            </a>
+          </div>
+          
+          <div class="nav-item active" onclick="toggleSubmenu('financeiro',event)">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+            <span>Financeiro</span>
+            <svg class="nav-expand-icon" viewBox="0 0 24 24">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </div>
+          <div class="nav-submenu open" id="submenu-financeiro">
+            <a href="relacao-compras.html" class="nav-item">
+              <svg viewBox="0 0 24 24">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+              </svg>
+              <span>Relação de Compras</span>
+            </a>
+            <a href="financeiro.html" class="nav-item active">
+              <svg viewBox="0 0 24 24">
+                <line x1="12" y1="1" x2="12" y2="23"/>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+              </svg>
+              <span>Dashboard</span>
+            </a>
+          </div>
+          
+          <div class="nav-item">
+            <svg viewBox="0 0 24 24">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+              <line x1="12" y1="22.08" x2="12" y2="12"/>
+            </svg>
+            <span>Estoque</span>
+          </div>
+          <div class="nav-item">
+            <svg viewBox="0 0 24 24">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+            <span>RH</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">Sistema</div>
+        <a href="documentos.html" class="nav-item">
+          <svg viewBox="0 0 24 24">
+            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
+            <polyline points="13 2 13 9 20 9"/>
+          </svg>
+          <span>Documentos</span>
+        </a>
+        <a href="usuarios.html" class="nav-item">
+          <svg viewBox="0 0 24 24">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="8.5" cy="7" r="4"/>
+            <line x1="20" y1="8" x2="20" y2="14"/>
+            <line x1="23" y1="11" x2="17" y2="11"/>
+          </svg>
+          <span>Usuários</span>
+        </a>
+        <a href="atualizacoes.html" class="nav-item">
+          <svg viewBox="0 0 24 24">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+          <span>Atualizações</span>
+        </a>
+        <div class="nav-item">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          <span>Configurações</span>
+        </div>
+      </div>
+    </nav>
+
+    <div class="sidebar-user">
+      <div class="user-avatar" id="user-avatar">AD</div>
+      <div class="user-info">
+        <div class="user-name" id="user-name">Admin</div>
+        <div class="user-role" id="user-role">Administrador</div>
+      </div>
+      <div class="user-menu" onclick="fazerLogout()">
+        <svg viewBox="0 0 24 24">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <header class="topbar">
+      <div>
+        <div class="page-title">Módulo Financeiro</div>
+        <div class="page-subtitle">Visão consolidada e análise financeira</div>
+      </div>
+      <div class="topbar-right">
+        <a href="../dashboard.html" class="topbar-btn">
+          <svg viewBox="0 0 24 24">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          Voltar
+        </a>
+      </div>
+    </header>
+
+    <main class="content">
+      <div class="hero-section">
+        <div class="hero-icon">💰</div>
+        <div class="hero-title">Módulo Financeiro</div>
+        <div class="hero-subtitle">Visão consolidada e análise financeira completa</div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <svg viewBox="0 0 24 24">
+            <line x1="12" y1="20" x2="12" y2="10"/>
+            <line x1="18" y1="20" x2="18" y2="4"/>
+            <line x1="6" y1="20" x2="6" y2="16"/>
+          </svg>
+          <div class="card-title">Sobre este Módulo</div>
+        </div>
+        <p style="color:var(--text-muted);line-height:1.8">
+          O módulo Financeiro oferecerá uma visão consolidada de todas as compras realizadas, com foco em análise de custos, aprovações e controle orçamentário.
+        </p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24">
+              <line x1="12" y1="20" x2="12" y2="10"/>
+              <line x1="18" y1="20" x2="18" y2="4"/>
+              <line x1="6" y1="20" x2="6" y2="16"/>
+            </svg>
+          </div>
+          <div class="feature-title">Dashboard Financeiro</div>
+          <div class="feature-description">Visão geral de gastos por categoria, período e setor</div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </div>
+          <div class="feature-title">Aprovação de Compras</div>
+          <div class="feature-description">Fluxo de aprovação com múltiplos níveis hierárquicos</div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+              <line x1="8" y1="21" x2="16" y2="21"/>
+              <line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+          </div>
+          <div class="feature-title">Controle Orçamentário</div>
+          <div class="feature-description">Acompanhamento de orçamento vs realizado</div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+            </svg>
+          </div>
+          <div class="feature-title">Relatórios Executivos</div>
+          <div class="feature-description">Relatórios consolidados para diretoria</div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 6v6l4 2"/>
+            </svg>
+          </div>
+          <div class="feature-title">Análise de Economia</div>
+          <div class="feature-description">Comparativo de descontos e negociações</div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+            </svg>
+          </div>
+          <div class="feature-title">Previsão de Gastos</div>
+          <div class="feature-description">Projeção baseada em histórico</div>
+        </div>
+      </div>
+
+      <div class="dev-notice">
+        <div class="dev-icon">🛡️</div>
+        <div class="dev-title">Em Desenvolvimento</div>
+        <div class="dev-text">
+          Este módulo estará disponível em breve. As funcionalidades serão implementadas de acordo com as necessidades do setor financeiro.
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="../auth.js"></script>
+<script>
+console.log('🚀 ROMPEX Financeiro v3.0.0');
+
+const sessao = verificarAutenticacao();
+if (sessao) {
+  document.getElementById('user-name').textContent = sessao.nome;
+  document.getElementById('user-role').textContent = sessao.perfil;
+  document.getElementById('user-avatar').textContent = sessao.nome.substring(0, 2).toUpperCase();
+}
+iniciarMonitoramentoSessao();
+
+function toggleSubmenu(id, event) {
+  if (event) event.stopPropagation();
+  const submenu = document.getElementById('submenu-' + id);
+  const item = event ? event.currentTarget : null;
+  if (submenu) {
+    const isOpen = submenu.classList.contains('open');
+    submenu.classList.toggle('open');
+    if (item) item.classList.toggle('expanded');
+  }
+}
+</script>
+
+</body>
+</html>
