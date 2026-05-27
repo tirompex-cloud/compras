@@ -83,18 +83,21 @@ async function uploadArquivo(arquivo, nome, tipo, subpasta) {
   const tipoFinal = tipo || arquivo.type || 'application/octet-stream';
   const conteudoBase64 = await _arquivoParaBase64(arquivo);
 
-  /* IMPORTANTE: usamos text/plain para evitar o preflight CORS do Apps Script.
-     O Apps Script lê e.postData.contents como string e dá JSON.parse. */
+  /* IMPORTANTE: usamos application/x-www-form-urlencoded (URLSearchParams).
+     - É um content-type "CORS-safelisted" — NÃO dispara preflight OPTIONS.
+     - Popula automaticamente `e.parameter.X` no Apps Script (sem precisar
+       parsear postData.contents). Por isso usamos nomes que batem com o
+       script: `arquivo` (base64), `subpasta`, `nome`, `tipo`, `acao`. */
+  const body = new URLSearchParams();
+  body.append('acao', 'upload');
+  body.append('arquivo', conteudoBase64);
+  body.append('nome', nomeFinal);
+  body.append('tipo', tipoFinal);
+  body.append('subpasta', pastaFinal);
+
   const resposta = await fetch(ROMPEX_DRIVE_API_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify({
-      acao: 'upload',
-      pasta: pastaFinal,
-      nome: nomeFinal,
-      tipo: tipoFinal,
-      conteudo: conteudoBase64
-    })
+    body: body
   });
 
   if (!resposta.ok) {
