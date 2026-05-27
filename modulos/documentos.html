@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ROMPEX • Gestão de Documentos</title>
+<link rel="icon" type="image/png" href="../Rompex_Favicon_Transparente.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="../rompex-drive-api.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg-primary:#0A0E1A;
+  --bg-secondary:#0F172A;
+  --bg-tertiary:#1E293B;
+  --bg-card:#1E3A52;
+  --accent:#10B981;
+  --accent-hover:#059669;
+  --accent-light:rgba(16,185,129,0.1);
+  --text-primary:#F8FAFC;
+  --text-secondary:#94A3B8;
+  --text-muted:#64748B;
+  --border:#1E293B;
+  --border-light:#334155;
+  --danger:#EF4444;
+  --warning:#F59E0B;
+  --info:#3B82F6;
+  --radius:14px;
+  --radius-sm:10px;
+  --shadow:0 4px 24px rgba(0,0,0,0.4);
+  --sidebar-width:280px;
+}
+body{
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  background:var(--bg-primary);
+  color:var(--text-primary);
+  font-size:14px;
+  min-height:100vh;
+  line-height:1.6;
+}
+.layout{display:flex;min-height:100vh}
+.sidebar{
+  width:var(--sidebar-width);
+  background:var(--bg-secondary);
+  border-right:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  position:fixed;
+  left:0;
+  top:0;
+  bottom:0;
+  z-index:100;
+  transition:transform 0.3s;
+}
+.main-content{
+  flex:1;
+  margin-left:var(--sidebar-width);
+  display:flex;
+  flex-direction:column;
+}
+.sidebar-logo{
+  padding:24px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.logo-icon{
+  width:80px;
+  height:80px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.logo-icon img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+.logo-text{
+  display:none;
+}
+.sidebar-nav{
+  flex:1;
+  padding:16px;
+  overflow-y:auto;
+  scrollbar-width:thin;
+  scrollbar-color:var(--border-light) transparent;
+}
+.nav-section{
+  margin-bottom:24px;
+}
+.nav-section-title{
+  font-size:11px;
+  font-weight:700;
+  color:var(--text-muted);
+  text-transform:uppercase;
+  letter-spacing:0.12em;
+  padding:8px 12px 12px;
+}
+.nav-item{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:var(--radius-sm);
+  color:var(--text-secondary);
+  cursor:pointer;
+  transition:all 0.2s;
+  margin-bottom:4px;
+  position:relative;
+  font-size:14px;
+  font-weight:500;
+  text-decoration:none;
+}
+.nav-item svg{
+  width:20px;
+  height:20px;
+  stroke:currentColor;
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  fill:none;
+  flex-shrink:0;
+}
+.nav-item:hover{
+  background:rgba(16,185,129,0.08);
+  color:var(--text-primary);
+}
+.nav-item.active{
+  background:var(--accent-light);
+  color:var(--accent);
+  font-weight:600;
+}
+.nav-item.active::before{
+  content:'';
+  position:absolute;
+  left:0;
+  top:50%;
+  transform:translateY(-50%);
+  width:4px;
+  height:20px;
+  background:var(--accent);
+  border-radius:0 4px 4px 0;
+}
+.nav-badge{
+  margin-left:auto;
+  padding:2px 8px;
+  background:var(--accent);
+  color:#fff;
+  border-radius:12px;
+  font-size:11px;
+  font-weight:700;
+}
+.nav-expand-icon{
+  margin-left:auto;
+  width:16px;
+  height:16px;
+  transition:transform 0.2s;
+}
+.nav-item.expanded .nav-expand-icon{
+  transform:rotate(90deg);
+}
+.nav-submenu{
+  max-height:0;
+  overflow:hidden;
+  transition:max-height 0.3s ease;
+  padding-left:32px;
+}
+.nav-submenu.open{
+  max-height:500px;
+}
+.nav-submenu .nav-item{
+  font-size:13px;
+  padding:10px 12px;
+}
+.sidebar-user{
+  padding:20px;
+  border-top:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.user-avatar{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+  font-size:16px;
+  color:#fff;
+  flex-shrink:0;
+}
+.user-info{flex:1;min-width:0}
+.user-name{
+  font-size:14px;
+  font-weight:600;
+  color:var(--text-primary);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.user-role{font-size:12px;color:var(--text-muted)}
+.user-menu{cursor:pointer;padding:4px;border-radius:6px;transition:0.2s}
+.user-menu:hover{background:var(--bg-tertiary)}
+.user-menu svg{width:18px;height:18px;stroke:var(--text-secondary);fill:none}
+.topbar{
+  background:var(--bg-secondary);
+  border-bottom:1px solid var(--border);
+  padding:16px 32px;
+  display:flex;
+  align-items:center;
+  gap:20px;
+  position:sticky;
+  top:0;
+  z-index:50;
+}
+.page-title{
+  font-size:22px;
+  font-weight:700;
+  color:var(--text-primary);
+  letter-spacing:-0.02em;
+}
+.page-subtitle{
+  font-size:13px;
+  color:var(--text-muted);
+  margin-top:2px;
+}
+.topbar-right{
+  margin-left:auto;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.topbar-btn{
+  padding:10px 16px;
+  border-radius:var(--radius-sm);
+  background:var(--bg-tertiary);
+  border:1px solid var(--border-light);
+  color:var(--text-secondary);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:13px;
+  font-weight:600;
+  transition:all 0.2s;
+  text-decoration:none;
+}
+.topbar-btn svg{
+  width:18px;
+  height:18px;
+  stroke:currentColor;
+  fill:none;
+}
+.topbar-btn:hover{
+  background:var(--bg-card);
+  color:var(--text-primary);
+  border-color:var(--accent);
+}
+.topbar-btn.primary{
+  background:linear-gradient(135deg,var(--accent),#059669);
+  border:none;
+  color:#fff;
+  box-shadow:0 4px 16px rgba(16,185,129,0.3);
+}
+.topbar-btn.primary:hover{
+  box-shadow:0 6px 24px rgba(16,185,129,0.4);
+  transform:translateY(-1px);
+}
+.content{
+  padding:32px;
+  flex:1;
+}
+.alert{
+  padding:16px 20px;
+  border-radius:var(--radius);
+  margin-bottom:24px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-size:13px;
+  border:1px solid;
+}
+.alert.info{
+  background:rgba(59,130,246,0.1);
+  border-color:rgba(59,130,246,0.3);
+  color:#93C5FD;
+}
+.alert.warning{
+  background:rgba(245,158,11,0.1);
+  border-color:rgba(245,158,11,0.3);
+  color:#FCD34D;
+}
+.alert svg{
+  width:20px;
+  height:20px;
+  flex-shrink:0;
+}
+.upload-area{
+  background:var(--bg-secondary);
+  border:2px dashed var(--border-light);
+  border-radius:var(--radius);
+  padding:3rem;
+  text-align:center;
+  cursor:pointer;
+  transition:all 0.3s;
+  margin-bottom:32px;
+}
+.upload-area:hover{
+  border-color:var(--accent);
+  background:rgba(16,185,129,0.05);
+}
+.upload-area.dragover{
+  border-color:var(--accent);
+  background:rgba(16,185,129,0.1);
+  transform:scale(1.02);
+}
+.upload-icon{
+  width:80px;
+  height:80px;
+  margin:0 auto 20px;
+  background:linear-gradient(135deg,var(--accent),#059669);
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:40px;
+}
+.upload-area h3{
+  font-size:18px;
+  margin-bottom:8px;
+  color:var(--text-primary);
+}
+.upload-area p{
+  font-size:14px;
+  color:var(--text-secondary);
+  line-height:1.6;
+}
+.upload-area input[type="file"]{
+  display:none;
+}
+.filters{
+  display:flex;
+  gap:12px;
+  margin-bottom:24px;
+  flex-wrap:wrap;
+}
+.filter-btn{
+  padding:8px 16px;
+  border-radius:var(--radius-sm);
+  background:var(--bg-tertiary);
+  border:1px solid var(--border-light);
+  color:var(--text-secondary);
+  cursor:pointer;
+  font-size:13px;
+  font-weight:600;
+  transition:all 0.2s;
+}
+.filter-btn:hover{
+  background:var(--bg-card);
+  color:var(--text-primary);
+}
+.filter-btn.active{
+  background:var(--accent-light);
+  color:var(--accent);
+  border-color:var(--accent);
+}
+.docs-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:20px;
+}
+.doc-card{
+  background:var(--bg-secondary);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:20px;
+  transition:all 0.2s;
+  cursor:pointer;
+}
+.doc-card:hover{
+  border-color:var(--accent);
+  transform:translateY(-4px);
+  box-shadow:0 8px 24px rgba(16,185,129,0.2);
+}
+.doc-icon{
+  width:60px;
+  height:60px;
+  border-radius:12px;
+  background:var(--accent-light);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:16px;
+  font-size:28px;
+}
+.doc-name{
+  font-size:15px;
+  font-weight:600;
+  color:var(--text-primary);
+  margin-bottom:8px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.doc-meta{
+  font-size:12px;
+  color:var(--text-muted);
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:12px;
+}
+.doc-actions{
+  display:flex;
+  gap:8px;
+}
+.btn-sm{
+  padding:6px 12px;
+  border-radius:var(--radius-sm);
+  font-size:12px;
+  font-weight:600;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  border:1px solid var(--border-light);
+  background:var(--bg-tertiary);
+  color:var(--text-secondary);
+  transition:all 0.2s;
+}
+.btn-sm:hover{
+  background:var(--bg-card);
+  border-color:var(--accent);
+  color:var(--accent);
+}
+.btn-sm.danger:hover{
+  border-color:var(--danger);
+  color:var(--danger);
+}
+.btn-sm svg{
+  width:14px;
+  height:14px;
+}
+.badge{
+  display:inline-flex;
+  padding:4px 10px;
+  border-radius:20px;
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:0.05em;
+}
+.badge-pdf{background:rgba(239,68,68,0.2);color:#FCA5A5}
+.badge-doc{background:rgba(59,130,246,0.2);color:#93C5FD}
+.badge-xls{background:rgba(16,185,129,0.2);color:var(--accent)}
+.badge-img{background:rgba(168,85,247,0.2);color:#D8B4FE}
+.badge-other{background:rgba(100,116,139,0.2);color:var(--text-muted)}
+.empty{
+  text-align:center;
+  padding:4rem;
+  color:var(--text-muted);
+  font-size:14px;
+}
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.7);
+  backdrop-filter:blur(8px);
+  z-index:200;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:1rem;
+}
+.overlay.open{display:flex}
+.modal{
+  background:var(--bg-secondary);
+  border-radius:16px;
+  padding:2rem;
+  width:100%;
+  max-width:500px;
+  box-shadow:0 24px 80px rgba(0,0,0,0.5);
+  border:1px solid var(--border);
+}
+.modal h2{
+  font-size:20px;
+  font-weight:700;
+  margin-bottom:20px;
+  color:var(--text-primary);
+}
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  margin-bottom:16px;
+}
+.field label{
+  font-size:12px;
+  font-weight:600;
+  color:var(--text-secondary);
+  text-transform:uppercase;
+  letter-spacing:0.05em;
+}
+.field input,.field select{
+  font-size:14px;
+  font-family:'Inter',sans-serif;
+  padding:11px 14px;
+  border-radius:var(--radius-sm);
+  border:1px solid var(--border-light);
+  background:var(--bg-tertiary);
+  color:var(--text-primary);
+  width:100%;
+  transition:all 0.2s;
+}
+.field input:focus,.field select:focus{
+  outline:none;
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(16,185,129,0.15);
+}
+.modal-actions{
+  display:flex;
+  gap:10px;
+  justify-content:flex-end;
+  margin-top:24px;
+  padding-top:20px;
+  border-top:1px solid var(--border);
+}
+.btn{
+  padding:11px 22px;
+  border-radius:var(--radius-sm);
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  border:1px solid var(--border-light);
+  background:var(--bg-tertiary);
+  color:var(--text-primary);
+  transition:all 0.2s;
+  text-transform:uppercase;
+  letter-spacing:0.05em;
+}
+.btn:hover{
+  background:var(--bg-card);
+  border-color:var(--accent);
+}
+.btn.primary{
+  background:linear-gradient(135deg,var(--accent),#059669);
+  color:#fff;
+  border:none;
+  box-shadow:0 4px 12px rgba(16,185,129,0.3);
+}
+.btn.primary:hover{
+  box-shadow:0 6px 20px rgba(16,185,129,0.4);
+  transform:translateY(-2px);
+}
+.btn.danger{
+  background:var(--danger);
+  color:#fff;
+  border:none;
+}
+.btn.danger:hover{
+  background:#DC2626;
+}
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .main-content{margin-left:0}
+  .docs-grid{grid-template-columns:1fr}
+}
+/* --- Integração Google Drive: status, progresso, seletor de pasta --- */
+.drive-status{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:8px 14px;border-radius:999px;font-size:12px;font-weight:600;
+  border:1px solid var(--border-light);background:var(--bg-tertiary);
+  color:var(--text-secondary);transition:all .2s;
+}
+.drive-status.online{
+  background:rgba(16,185,129,.12);color:var(--accent);border-color:rgba(16,185,129,.4);
+}
+.drive-status.offline{
+  background:rgba(239,68,68,.12);color:#FCA5A5;border-color:rgba(239,68,68,.4);
+}
+.drive-status .dot{width:8px;height:8px;border-radius:50%;background:currentColor}
+.toolbar-row{
+  display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-bottom:20px;
+}
+.subfolder-select{
+  display:flex;align-items:center;gap:8px;
+}
+.subfolder-select label{
+  font-size:12px;font-weight:600;color:var(--text-secondary);
+  text-transform:uppercase;letter-spacing:.05em;
+}
+.subfolder-select select{
+  font-family:'Inter',sans-serif;font-size:13px;font-weight:600;
+  padding:8px 14px;border-radius:var(--radius-sm);
+  background:var(--bg-tertiary);border:1px solid var(--border-light);
+  color:var(--text-primary);cursor:pointer;transition:all .2s;
+}
+.subfolder-select select:hover{border-color:var(--accent)}
+.subfolder-select select:focus{
+  outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(16,185,129,.15);
+}
+.progress-wrap{
+  background:var(--bg-secondary);border:1px solid var(--border);
+  border-radius:var(--radius);padding:18px 20px;margin-bottom:20px;display:none;
+}
+.progress-wrap.show{display:block}
+.progress-title{
+  font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:10px;
+  display:flex;align-items:center;gap:8px;
+}
+.progress-bar{
+  height:8px;background:var(--bg-tertiary);border-radius:999px;overflow:hidden;
+}
+.progress-bar > span{
+  display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--accent),#059669);
+  transition:width .25s ease;
+}
+.progress-list{margin-top:10px;font-size:12px;color:var(--text-secondary);max-height:120px;overflow:auto}
+.progress-list .ok{color:var(--accent)}
+.progress-list .fail{color:#FCA5A5}
+.loading-grid{
+  text-align:center;padding:3rem;color:var(--text-muted);font-size:14px;
+}
+.loading-grid::before{
+  content:'';display:inline-block;width:18px;height:18px;
+  border:2px solid var(--border-light);border-top-color:var(--accent);
+  border-radius:50%;animation:rspin .8s linear infinite;margin-right:10px;vertical-align:-3px;
+}
+@keyframes rspin{to{transform:rotate(360deg)}}
+.doc-card.local::after{
+  content:'LOCAL';position:absolute;top:14px;right:14px;
+  font-size:9px;font-weight:700;letter-spacing:.1em;
+  padding:3px 7px;border-radius:6px;color:var(--warning);
+  background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);
+}
+.doc-card{position:relative}
+</style>
+</head>
+<body>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">
+        <img src="../logo-rompex-white.png" alt="ROMPEX">
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <div class="nav-section-title">Principal</div>
+        <a href="../dashboard.html" class="nav-item">
+          <svg viewBox="0 0 24 24">
+            <rect x="3" y="3" width="7" height="9" rx="1"/>
+            <rect x="14" y="3" width="7" height="5" rx="1"/>
+            <rect x="14" y="12" width="7" height="9" rx="1"/>
+            <rect x="3" y="16" width="7" height="5" rx="1"/>
+          </svg>
+          <span>Início</span>
+        </a>
+        <div class="nav-item">
+          <svg viewBox="0 0 24 24">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          <span>Avisos</span>
+          <span class="nav-badge">3</span>
+        </div>
+        <a href="atualizacoes.html" class="nav-item">
+          <svg viewBox="0 0 24 24">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+          <span>Atualizações</span>
+        </a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">Automações</div>
+        <div class="nav-item" onclick="toggleSubmenu('automacoes',event)">
+          <svg viewBox="0 0 24 24">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          </svg>
+          <span>Automações</span>
+          <svg class="nav-expand-icon" viewBox="0 0 24 24">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </div>
+        <div class="nav-submenu" id="submenu-automacoes">
+          <div class="nav-item" onclick="toggleSubmenu('compras',event)">
+            <svg viewBox="0 0 24 24">
+              <circle cx="9" cy="21" r="1"/>
+              <circle cx="20" cy="21" r="1"/>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+            </svg>
+            <span>Compras</span>
+            <svg class="nav-expand-icon" viewBox="0 0 24 24">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </div>
+          <div class="nav-submenu" id="submenu-compras">
+            <a href="compras.html" class="nav-item">
+              <svg viewBox="0 0 24 24">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              <span>Lançamento de Compras</span>
+            </a>
+          </div>
+
+          <div class="nav-item" onclick="toggleSubmenu('financeiro',event)">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+            <span>Financeiro</span>
+            <svg class="nav-expand-icon" viewBox="0 0 24 24">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </div>
+          <div class="nav-submenu" id="submenu-financeiro">
+            <a href="relacao-compras.html" class="nav-item">
+              <svg viewBox="0 0 24 24">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+              </svg>
+              <span>Relação de Compras</span>
+            </a>
+            <a href="financeiro.html" class="nav-item">
+              <svg viewBox="0 0 24 24">
+                <line x1="12" y1="1" x2="12" y2="23"/>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+              </svg>
+              <span>Dashboard</span>
+            </a>
+          </div>
+
+          <div class="nav-item">
+            <svg viewBox="0 0 24 24">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+              <line x1="12" y1="22.08" x2="12" y2="12"/>
+            </svg>
+            <span>Estoque</span>
+          </div>
+          <div class="nav-item">
+            <svg viewBox="0 0 24 24">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+            <span>RH</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">Sistema</div>
+        <a href="documentos.html" class="nav-item active">
+          <svg viewBox="0 0 24 24">
+            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
+            <polyline points="13 2 13 9 20 9"/>
+          </svg>
+          <span>Documentos</span>
+        </a>
+        <a href="usuarios.html" class="nav-item">
+          <svg viewBox="0 0 24 24">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="8.5" cy="7" r="4"/>
+            <line x1="20" y1="8" x2="20" y2="14"/>
+            <line x1="23" y1="11" x2="17" y2="11"/>
+          </svg>
+          <span>Usuários</span>
+        </a>
+        <a href="atualizacoes.html" class="nav-item">
+          <svg viewBox="0 0 24 24">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+          <span>Atualizações</span>
+        </a>
+        <div class="nav-item">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          <span>Configurações</span>
+        </div>
+      </div>
+    </nav>
+
+    <div class="sidebar-user">
+      <div class="user-avatar" id="user-avatar">AD</div>
+      <div class="user-info">
+        <div class="user-name" id="user-name">Admin</div>
+        <div class="user-role" id="user-role">Administrador</div>
+      </div>
+      <div class="user-menu" onclick="fazerLogout()">
+        <svg viewBox="0 0 24 24">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <header class="topbar">
+      <div>
+        <div class="page-title">Gestão de Documentos</div>
+        <div class="page-subtitle">Armazenamento seguro na nuvem</div>
+      </div>
+      <div class="topbar-right">
+        <button class="topbar-btn" onclick="abrirGoogleDrive()">
+          <svg viewBox="0 0 24 24">
+            <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
+          </svg>
+          Abrir Google Drive
+        </button>
+      </div>
+    </header>
+
+    <main class="content">
+      <div class="toolbar-row">
+        <div class="drive-status" id="drive-status">
+          <span class="dot"></span>
+          <span id="drive-status-text">Verificando conexão...</span>
+        </div>
+        <div class="subfolder-select">
+          <label for="subpasta-select">Pasta</label>
+          <select id="subpasta-select" onchange="trocarSubpasta(this.value)">
+            <option value="Documentos">📂 Documentos</option>
+            <option value="Compras">🛒 Compras</option>
+            <option value="RH">👥 RH</option>
+            <option value="Financeiro">💰 Financeiro</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="alert info" id="alert-modo">
+        <svg viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="16" x2="12" y2="12"/>
+          <line x1="12" y1="8" x2="12.01" y2="8"/>
+        </svg>
+        <div id="alert-modo-text">
+          <strong>💡 Armazenamento em Nuvem:</strong> Os documentos são salvos automaticamente no Google Drive da empresa.
+        </div>
+      </div>
+
+      <div class="upload-area" id="upload-area" onclick="document.getElementById('file-input').click()">
+        <input type="file" id="file-input" multiple onchange="handleFiles(this.files)">
+        <div class="upload-icon">📄</div>
+        <h3>Enviar Documentos</h3>
+        <p>Clique para selecionar ou arraste arquivos aqui<br>
+        <strong>PDF, DOC, XLS, IMG</strong> • Máx. 50MB por arquivo</p>
+      </div>
+
+      <div class="progress-wrap" id="progress-wrap">
+        <div class="progress-title" id="progress-title">Enviando para o Drive...</div>
+        <div class="progress-bar"><span id="progress-bar-fill"></span></div>
+        <div class="progress-list" id="progress-list"></div>
+      </div>
+
+      <div class="filters">
+        <button class="filter-btn active" data-filtro="todos" onclick="filtrarDocs('todos', event)">📂 Todos</button>
+        <button class="filter-btn" data-filtro="pdf" onclick="filtrarDocs('pdf', event)">📕 PDF</button>
+        <button class="filter-btn" data-filtro="doc" onclick="filtrarDocs('doc', event)">📘 Documentos</button>
+        <button class="filter-btn" data-filtro="xls" onclick="filtrarDocs('xls', event)">📗 Planilhas</button>
+        <button class="filter-btn" data-filtro="img" onclick="filtrarDocs('img', event)">🖼️ Imagens</button>
+      </div>
+
+      <div class="docs-grid" id="docs-grid">
+        <!-- Preenchido por JS -->
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- MODAL EXCLUIR -->
+<div class="overlay" id="modal-delete">
+  <div class="modal">
+    <h2>Confirmar Exclusão</h2>
+    <p style="color:var(--text-secondary);margin:16px 0">Tem certeza que deseja excluir este documento? Esta ação não pode ser desfeita.</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeDelete()">Cancelar</button>
+      <button class="btn danger" onclick="confirmarExclusao()">Excluir</button>
+    </div>
+  </div>
+</div>
+
+<script src="../auth.js"></script>
+<script>
+const sessao = verificarAutenticacao();
+if (sessao) {
+  document.getElementById('user-name').textContent = sessao.nome;
+  document.getElementById('user-role').textContent = sessao.perfil;
+  document.getElementById('user-avatar').textContent = sessao.nome.substring(0, 2).toUpperCase();
+}
+iniciarMonitoramentoSessao();
+
+/* =============================================================================
+   Estado da página
+   - documentos[] : lista atualmente exibida (vinda do Drive OU do localStorage).
+   - filtroAtual  : todos | pdf | doc | xls | img
+   - subpastaAtual: pasta sendo visualizada/usada como destino de upload.
+   - driveOnline  : status da última verificação de conexão com a API.
+   ============================================================================= */
+let documentos = [];
+let filtroAtual = 'todos';
+let subpastaAtual = 'Documentos';
+let driveOnline = false;
+let excluindoId = null;
+
+/* Chave do localStorage por subpasta — assim a UI continua coerente offline
+   mesmo ao alternar entre Documentos/Compras/RH/Financeiro. */
+function chaveLocal(pasta) { return 'rompex_documentos_' + pasta; }
+
+/* --------------------------- Persistência local --------------------------- */
+function loadLocalDocs(pasta) {
+  try {
+    return JSON.parse(localStorage.getItem(chaveLocal(pasta)) || '[]');
+  } catch(e) {
+    return [];
+  }
+}
+function saveLocalDocs(pasta, lista) {
+  localStorage.setItem(chaveLocal(pasta), JSON.stringify(lista));
+}
+
+/* --------------------------- Helpers de exibição -------------------------- */
+function getTipoCategoria(nomeOuMime) {
+  // Aceita tanto extensão (a partir do nome) quanto MIME para classificar.
+  const s = String(nomeOuMime || '').toLowerCase();
+  if (s.indexOf('pdf') >= 0) return 'pdf';
+  if (s.indexOf('image/') === 0 || /\.(jpg|jpeg|png|gif|svg|webp|bmp)$/.test(s)) return 'img';
+  if (s.indexOf('spreadsheet') >= 0 || s.indexOf('excel') >= 0 || /\.(xls|xlsx|csv)$/.test(s)) return 'xls';
+  if (s.indexOf('word') >= 0 || s.indexOf('document') >= 0 || /\.(doc|docx|txt|odt)$/.test(s)) return 'doc';
+  return 'other';
+}
+function getFileBadge(tipo) {
+  return {pdf:'badge-pdf',doc:'badge-doc',xls:'badge-xls',img:'badge-img',other:'badge-other'}[tipo] || 'badge-other';
+}
+function fmtData(d) {
+  // A API pode devolver ISO; o localStorage guarda dd/mm/aaaa. Padroniza.
+  if (!d) return '';
+  if (/^\d{2}\/\d{2}\/\d{4}/.test(d)) return d;
+  const dt = new Date(d);
+  return isNaN(dt) ? String(d) : dt.toLocaleDateString('pt-BR');
+}
+function escapeHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+/* --------------------------- Status do Drive (badge) --------------------- */
+async function atualizarStatusDrive() {
+  const statusEl = document.getElementById('drive-status');
+  const textEl = document.getElementById('drive-status-text');
+  const alertModo = document.getElementById('alert-modo');
+  const alertText = document.getElementById('alert-modo-text');
+
+  // Sem URL configurada — modo local explícito.
+  if (!window.ROMPEX_DRIVE_API_URL) {
+    driveOnline = false;
+    statusEl.classList.remove('online');
+    statusEl.classList.add('offline');
+    textEl.textContent = 'Drive não configurado ❌ (modo local)';
+    alertModo.classList.remove('info');
+    alertModo.classList.add('warning');
+    alertText.innerHTML = '<strong>⚠️ Modo Local:</strong> URL do Apps Script não configurada. Arquivos serão salvos apenas neste navegador.';
+    return;
+  }
+
+  const r = await testarConexao();
+  if (r && r.status === 'online') {
+    driveOnline = true;
+    statusEl.classList.remove('offline');
+    statusEl.classList.add('online');
+    textEl.textContent = 'Drive conectado ✅';
+    alertModo.classList.remove('warning');
+    alertModo.classList.add('info');
+    alertText.innerHTML = '<strong>💡 Armazenamento em Nuvem:</strong> Os documentos são salvos no Google Drive (pasta <b>' + subpastaAtual + '</b>).';
+  } else {
+    driveOnline = false;
+    statusEl.classList.remove('online');
+    statusEl.classList.add('offline');
+    textEl.textContent = 'Drive offline ❌ (usando dados locais)';
+    alertModo.classList.remove('info');
+    alertModo.classList.add('warning');
+    alertText.innerHTML = '<strong>⚠️ Drive Offline:</strong> Não foi possível conectar — usando armazenamento local como fallback.';
+  }
+}
+
+/* --------------------------- Renderização --------------------------------- */
+function renderDocs() {
+  const grid = document.getElementById('docs-grid');
+  let filtered = documentos;
+
+  if (filtroAtual !== 'todos') {
+    filtered = documentos.filter(d => d.tipo === filtroAtual);
+  }
+
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="empty">Nenhum documento encontrado nesta pasta.</div>';
+    return;
+  }
+
+  let html = '';
+  filtered.forEach(doc => {
+    // doc.mimeType existe quando vem do Drive; doc.tipo é a categoria UI.
+    const icon = doc.mimeType ? getIconePorTipo(doc.mimeType) : ({pdf:'📕',doc:'📘',xls:'📗',img:'🖼️'}[doc.tipo] || '📄');
+    const badge = getFileBadge(doc.tipo);
+    const isLocal = !doc.url; // sem URL pública = somente localStorage
+    const idStr = JSON.stringify(String(doc.id));
+    const urlAbrir = doc.url || '';
+    const urlBaixar = doc.urlDownload || doc.url || '';
+
+    html += '<div class="doc-card ' + (isLocal ? 'local' : '') + '">' +
+      '<div class="doc-icon">' + icon + '</div>' +
+      '<div class="doc-name" title="' + escapeHtml(doc.nome) + '">' + escapeHtml(doc.nome) + '</div>' +
+      '<div class="doc-meta">' +
+        '<span>' + formatarTamanho(doc.tamanho) + '</span>' +
+        '<span>' + escapeHtml(fmtData(doc.data)) + '</span>' +
+      '</div>' +
+      '<span class="badge ' + badge + '">' + doc.tipo.toUpperCase() + '</span>' +
+      '<div class="doc-actions" style="margin-top:12px">' +
+        (urlAbrir
+          ? '<a class="btn-sm" href="' + escapeHtml(urlAbrir) + '" target="_blank" rel="noopener">' +
+              '<svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' +
+              'Abrir</a>'
+          : '') +
+        (urlBaixar
+          ? '<a class="btn-sm" href="' + escapeHtml(urlBaixar) + '" target="_blank" rel="noopener">' +
+              '<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' +
+              'Baixar</a>'
+          : '') +
+        '<button class="btn-sm danger" onclick="excluirDoc(' + idStr + ')">' +
+          '<svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>' +
+        '</button>' +
+      '</div>' +
+    '</div>';
+  });
+
+  grid.innerHTML = html;
+}
+
+/* --------------------------- Carregar lista ------------------------------- */
+async function carregarDocs() {
+  const grid = document.getElementById('docs-grid');
+  grid.innerHTML = '<div class="loading-grid">Carregando documentos...</div>';
+
+  // Estratégia: tenta Drive; se falhar, usa localStorage como fallback.
+  if (driveOnline) {
+    try {
+      const remotos = await listarArquivos(subpastaAtual);
+      documentos = remotos.map(function(r) {
+        return {
+          id: r.id,
+          nome: r.nome,
+          tipo: getTipoCategoria(r.tipo || r.mimeType || r.nome),
+          mimeType: r.tipo || r.mimeType || '',
+          tamanho: r.tamanho || 0,
+          url: r.url || '',
+          urlDownload: r.urlDownload || r.url || '',
+          data: r.data || ''
+        };
+      });
+      renderDocs();
+      return;
+    } catch (err) {
+      console.warn('[Drive] Falha ao listar — caindo para localStorage:', err);
+      // segue para o fallback abaixo
+    }
+  }
+  documentos = loadLocalDocs(subpastaAtual);
+  renderDocs();
+}
+
+/* --------------------------- Upload --------------------------------------- */
+async function handleFiles(files) {
+  if (!files || !files.length) return;
+
+  // Validação rápida do tamanho antes de mostrar progresso.
+  const arquivos = Array.from(files).filter(function(f) {
+    if (f.size > 50 * 1024 * 1024) {
+      alert('⚠️ Arquivo "' + f.name + '" excede o limite de 50 MB e foi ignorado.');
+      return false;
+    }
+    return true;
+  });
+  if (!arquivos.length) { document.getElementById('file-input').value = ''; return; }
+
+  const progressWrap = document.getElementById('progress-wrap');
+  const progressTitle = document.getElementById('progress-title');
+  const progressFill = document.getElementById('progress-bar-fill');
+  const progressList = document.getElementById('progress-list');
+  progressWrap.classList.add('show');
+  progressList.innerHTML = '';
+  progressFill.style.width = '0%';
+
+  let sucesso = 0, falhas = 0;
+
+  for (let i = 0; i < arquivos.length; i++) {
+    const file = arquivos[i];
+    progressTitle.innerHTML = '⏳ Enviando para o Drive... (' + (i + 1) + '/' + arquivos.length + ') <b>' + escapeHtml(file.name) + '</b>';
+
+    if (driveOnline) {
+      // Caminho online: envia para o Apps Script e guarda referência localmente.
+      try {
+        const res = await uploadArquivo(file, file.name, file.type, subpastaAtual);
+        const ref = {
+          id: res.id,
+          nome: res.nome || file.name,
+          tipo: getTipoCategoria(res.tipo || file.type || file.name),
+          mimeType: res.tipo || file.type || '',
+          tamanho: res.tamanho || file.size,
+          url: res.url || '',
+          urlDownload: res.urlDownload || res.url || '',
+          data: res.data || new Date().toISOString()
+        };
+        const locais = loadLocalDocs(subpastaAtual);
+        locais.push(ref);
+        saveLocalDocs(subpastaAtual, locais);
+        progressList.insertAdjacentHTML('beforeend', '<div class="ok">✅ ' + escapeHtml(file.name) + ' — enviado</div>');
+        sucesso++;
+      } catch (err) {
+        progressList.insertAdjacentHTML('beforeend', '<div class="fail">❌ ' + escapeHtml(file.name) + ' — ' + escapeHtml(err.message || 'falha') + '</div>');
+        falhas++;
+      }
+    } else {
+      // Caminho offline: salva metadado apenas no localStorage (sem URL pública).
+      const locais = loadLocalDocs(subpastaAtual);
+      locais.push({
+        id: 'local-' + Date.now() + '-' + i,
+        nome: file.name,
+        tipo: getTipoCategoria(file.type || file.name),
+        mimeType: file.type || '',
+        tamanho: file.size,
+        url: '',
+        urlDownload: '',
+        data: new Date().toISOString()
+      });
+      saveLocalDocs(subpastaAtual, locais);
+      progressList.insertAdjacentHTML('beforeend', '<div class="ok">💾 ' + escapeHtml(file.name) + ' — salvo localmente (Drive offline)</div>');
+      sucesso++;
+    }
+
+    progressFill.style.width = (((i + 1) / arquivos.length) * 100) + '%';
+  }
+
+  progressTitle.innerHTML = '✅ Concluído: ' + sucesso + ' enviado(s)' + (falhas ? ' • ❌ ' + falhas + ' falha(s)' : '');
+  document.getElementById('file-input').value = '';
+  await carregarDocs();
+  // Esconde a barra após uns segundos para não poluir.
+  setTimeout(function() { progressWrap.classList.remove('show'); }, 4000);
+}
+
+/* --------------------------- Filtros e subpasta --------------------------- */
+function filtrarDocs(tipo, ev) {
+  filtroAtual = tipo;
+  document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+  const alvo = ev && ev.target ? ev.target : document.querySelector('.filter-btn[data-filtro="' + tipo + '"]');
+  if (alvo) alvo.classList.add('active');
+  renderDocs();
+}
+async function trocarSubpasta(pasta) {
+  subpastaAtual = pasta;
+  // Atualiza o texto do alerta com a pasta atual.
+  await atualizarStatusDrive();
+  await carregarDocs();
+}
+
+/* --------------------------- Excluir -------------------------------------- */
+function excluirDoc(id) {
+  excluindoId = id;
+  document.getElementById('modal-delete').classList.add('open');
+}
+async function confirmarExclusao() {
+  if (excluindoId == null) { closeDelete(); return; }
+  const doc = documentos.find(function(d) { return String(d.id) === String(excluindoId); });
+  const isRemoto = doc && doc.url && driveOnline;
+
+  if (isRemoto) {
+    try {
+      await deletarArquivo(doc.id);
+    } catch (err) {
+      alert('❌ Falha ao excluir do Drive: ' + (err.message || 'erro desconhecido'));
+      closeDelete();
+      return;
+    }
+  }
+  // Remove também do cache local (sempre).
+  const locais = loadLocalDocs(subpastaAtual).filter(function(d) { return String(d.id) !== String(excluindoId); });
+  saveLocalDocs(subpastaAtual, locais);
+
+  excluindoId = null;
+  closeDelete();
+  await carregarDocs();
+  alert('✅ Documento excluído com sucesso!');
+}
+function closeDelete() {
+  document.getElementById('modal-delete').classList.remove('open');
+}
+
+/* --------------------------- Outros --------------------------------------- */
+function abrirGoogleDrive() {
+  // Sem ID da pasta no front; apenas direciona para o Drive.
+  window.open('https://drive.google.com/drive/my-drive', '_blank');
+}
+
+// Drag and drop
+const uploadArea = document.getElementById('upload-area');
+uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+uploadArea.addEventListener('dragleave', () => { uploadArea.classList.remove('dragover'); });
+uploadArea.addEventListener('drop', (e) => {
+  e.preventDefault();
+  uploadArea.classList.remove('dragover');
+  handleFiles(e.dataTransfer.files);
+});
+
+function toggleSubmenu(id, event) {
+  if (event) event.stopPropagation();
+  const submenu = document.getElementById('submenu-' + id);
+  const item = event ? event.currentTarget : document.querySelector('[onclick*="' + id + '"]');
+  if (submenu) {
+    const isOpen = submenu.classList.contains('open');
+    if (isOpen) {
+      submenu.classList.remove('open');
+      if (item) item.classList.remove('expanded');
+    } else {
+      submenu.classList.add('open');
+      if (item) item.classList.add('expanded');
+    }
+  }
+}
+
+/* --------------------------- Inicialização -------------------------------- */
+(async function init() {
+  await atualizarStatusDrive();
+  await carregarDocs();
+})();
+</script>
+
+</body>
+</html>
