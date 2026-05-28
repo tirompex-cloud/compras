@@ -134,6 +134,13 @@ function aplicarPermissoesMenu() {
     if (href.includes('lancar-avisos.html') && !temPermissao('avisos')) {
       item.style.display = 'none';
     }
+    // Módulos Fiscal e Técnicos — usam as permissões antigas estoque/rh por compat.
+    if (href.includes('fiscal.html') && !temPermissao('estoque')) {
+      item.style.display = 'none';
+    }
+    if (href.includes('certificados.html') && !temPermissao('rh')) {
+      item.style.display = 'none';
+    }
   });
   
   // Esconder itens sem href mas com texto específico.

@@ -3,9 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ROMPEX • Relação de Compras</title>
+<title>ROMPEX • Fiscal</title>
 <link rel="icon" type="image/png" href="../Rompex_Favicon_Transparente.png">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -87,11 +92,7 @@ body{
   height:100%;
   object-fit:contain;
 }
-.sidebar-nav{
-  flex:1;
-  padding:16px;
-  overflow-y:auto;
-}
+.sidebar-nav{flex:1;padding:16px;overflow-y:auto}
 .nav-section{margin-bottom:24px}
 .nav-section-title{
   font-size:11px;
@@ -126,10 +127,15 @@ body{
   fill:none;
   flex-shrink:0;
 }
-.nav-item:hover{
-  background:rgba(16,185,129,0.08);
-  color:var(--text-primary);
+.nav-icon-img{
+  width:20px;
+  height:20px;
+  object-fit:contain;
+  flex-shrink:0;
+  filter:brightness(0) invert(1);
 }
+html[data-theme="light"] .nav-icon-img{filter:none}
+.nav-item:hover{background:rgba(16,185,129,0.08);color:var(--text-primary)}
 .nav-item.active{
   background:var(--accent-light);
   color:var(--accent);
@@ -152,30 +158,15 @@ body{
   height:16px;
   transition:transform 0.2s;
 }
-.nav-item.expanded .nav-expand-icon{
-  transform:rotate(90deg);
-}
-.nav-icon-img{
-  width:20px;
-  height:20px;
-  object-fit:contain;
-  flex-shrink:0;
-  filter:brightness(0) invert(1);
-}
-html[data-theme="light"] .nav-icon-img{filter:none}
+.nav-item.expanded .nav-expand-icon{transform:rotate(90deg)}
 .nav-submenu{
   max-height:0;
   overflow:hidden;
   transition:max-height 0.3s ease;
   padding-left:32px;
 }
-.nav-submenu.open{
-  max-height:500px;
-}
-.nav-submenu .nav-item{
-  font-size:13px;
-  padding:10px 12px;
-}
+.nav-submenu.open{max-height:500px}
+.nav-submenu .nav-item{font-size:13px;padding:10px 12px}
 .sidebar-user{
   padding:20px;
   border-top:1px solid var(--border);
@@ -187,7 +178,7 @@ html[data-theme="light"] .nav-icon-img{filter:none}
   width:42px;
   height:42px;
   border-radius:50%;
-  background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+  background:linear-gradient(135deg,#667eea,#764ba2);
   display:flex;
   align-items:center;
   justify-content:center;
@@ -228,146 +219,157 @@ html[data-theme="light"] .nav-icon-img{filter:none}
   color:var(--text-muted);
   margin-top:2px;
 }
-.content{
-  padding:32px;
-  flex:1;
-}
-.metrics{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:20px;
+.content{padding:32px;flex:1;max-width:1100px;width:100%}
+.hero-section{
+  background:linear-gradient(135deg,var(--accent),#059669);
+  border-radius:var(--radius);
+  padding:40px;
+  text-align:center;
   margin-bottom:32px;
 }
-.metric-card{
-  background:var(--bg-secondary);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:24px;
-  position:relative;
-  overflow:hidden;
-}
-.metric-card::before{
-  content:'';
-  position:absolute;
-  top:0;
-  left:0;
-  right:0;
-  height:4px;
-  background:linear-gradient(90deg,var(--accent),#059669);
-}
-.metric-value{
-  font-size:32px;
-  font-weight:800;
-  color:var(--text-primary);
-  margin-bottom:8px;
-}
-.metric-label{
-  font-size:13px;
-  color:var(--text-muted);
-  text-transform:uppercase;
-  letter-spacing:0.05em;
-  font-weight:600;
-}
+.hero-icon{font-size:48px;margin-bottom:12px}
+.hero-title{font-size:26px;font-weight:800;color:#fff;margin-bottom:6px}
+.hero-subtitle{font-size:15px;color:rgba(255,255,255,0.92);max-width:640px;margin:0 auto}
 .card{
   background:var(--bg-secondary);
   border:1px solid var(--border);
   border-radius:var(--radius);
   padding:24px;
   margin-bottom:24px;
-}
-.card-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:20px;
-  padding-bottom:16px;
-  border-bottom:1px solid var(--border);
+  box-shadow:var(--shadow);
 }
 .card-title{
-  font-size:18px;
-  font-weight:700;
-  color:var(--text-primary);
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-.filters{
-  display:flex;
-  gap:12px;
-  margin-bottom:20px;
-}
-.filter-select{
-  padding:10px 14px;
-  border-radius:var(--radius-sm);
-  background:var(--bg-tertiary);
-  border:1px solid var(--border-light);
-  color:var(--text-primary);
-  font-size:13px;
-  font-weight:600;
-  cursor:pointer;
-}
-.table-container{
-  overflow-x:auto;
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  background:var(--bg-tertiary);
-}
-table{
-  width:100%;
-  border-collapse:collapse;
-  font-size:13px;
-}
-thead{
-  background:var(--bg-secondary);
-}
-th{
-  padding:14px 16px;
-  text-align:left;
+  font-size:14px;
   font-weight:700;
   color:var(--accent);
-  font-size:11px;
   text-transform:uppercase;
   letter-spacing:0.1em;
+  padding-bottom:14px;
   border-bottom:1px solid var(--border);
+  margin-bottom:18px;
+  display:flex;
+  align-items:center;
+  gap:8px;
 }
-td{
-  padding:14px 16px;
-  color:var(--text-primary);
-  border-bottom:1px solid var(--border);
+.steps{display:flex;flex-direction:column;gap:14px}
+.step{
+  display:flex;
+  gap:14px;
+  padding:14px;
+  background:var(--bg-tertiary);
+  border-radius:var(--radius-sm);
+  border:1px solid var(--border);
 }
-tr:last-child td{
-  border-bottom:none;
-}
-tr:hover td{
-  background:rgba(16,185,129,0.04);
-}
-.badge{
-  display:inline-flex;
-  padding:4px 10px;
-  border-radius:20px;
-  font-size:11px;
+.step-num{
+  width:32px;
+  height:32px;
+  min-width:32px;
+  border-radius:50%;
+  background:var(--accent);
+  color:#fff;
   font-weight:700;
-  text-transform:uppercase;
-  letter-spacing:0.05em;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:14px;
 }
-.b-online{background:rgba(16,185,129,0.2);color:var(--accent)}
-.b-obras{background:rgba(245,158,11,0.2);color:#FCD34D}
-.b-geral{background:rgba(59,130,246,0.2);color:#93C5FD}
-.b-passagens{background:rgba(168,85,247,0.2);color:#D8B4FE}
-.b-hospedagens{background:rgba(236,72,153,0.2);color:#F9A8D4}
-.b-seguro{background:rgba(239,68,68,0.2);color:#FCA5A5}
-.empty{
-  text-align:center;
-  padding:3rem;
+.step-body strong{color:var(--text-primary);font-weight:600}
+.step-body{color:var(--text-secondary);font-size:14px;line-height:1.6}
+.step-body code{
+  background:var(--bg-secondary);
+  padding:2px 6px;
+  border-radius:4px;
+  font-family:'Courier New',monospace;
+  font-size:12px;
+  color:var(--accent);
+}
+.downloads{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:14px;
+}
+.download-btn{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:18px 20px;
+  background:linear-gradient(135deg,var(--accent),#059669);
+  color:#fff;
+  border-radius:var(--radius-sm);
+  text-decoration:none;
+  font-weight:600;
+  transition:all 0.2s;
+  box-shadow:0 4px 16px rgba(16,185,129,0.3);
+}
+.download-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(16,185,129,0.4);
+}
+.download-btn.secondary{
+  background:var(--bg-tertiary);
+  color:var(--text-primary);
+  border:1px solid var(--border-light);
+  box-shadow:none;
+}
+.download-btn.secondary:hover{
+  background:var(--bg-card);
+  border-color:var(--accent);
+}
+.download-btn svg{
+  width:28px;
+  height:28px;
+  stroke:currentColor;
+  stroke-width:2;
+  fill:none;
+  flex-shrink:0;
+}
+.download-btn .dl-title{font-size:15px;font-weight:700;display:block}
+.download-btn .dl-sub{font-size:12px;opacity:0.85;font-weight:500}
+.info-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:14px;
+}
+.info-item{
+  padding:14px;
+  background:var(--bg-tertiary);
+  border-radius:var(--radius-sm);
+  border:1px solid var(--border);
+}
+.info-item .lbl{
+  font-size:11px;
   color:var(--text-muted);
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  font-weight:600;
+  margin-bottom:6px;
 }
-@media(max-width:1024px){
-  .metrics{grid-template-columns:repeat(2,1fr)}
+.info-item .val{font-size:13px;color:var(--text-primary)}
+.alert{
+  padding:14px 18px;
+  border-radius:var(--radius-sm);
+  border:1px solid;
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  font-size:13px;
+  line-height:1.6;
+  margin-bottom:20px;
 }
+.alert.info{
+  background:rgba(59,130,246,0.1);
+  border-color:rgba(59,130,246,0.3);
+  color:#93C5FD;
+}
+.alert.warning{
+  background:rgba(245,158,11,0.1);
+  border-color:rgba(245,158,11,0.3);
+  color:#FCD34D;
+}
+.alert strong{font-weight:700}
 @media(max-width:768px){
   .sidebar{transform:translateX(-100%)}
   .main-content{margin-left:0}
-  .metrics{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -410,14 +412,14 @@ tr:hover td{
 
       <div class="nav-section">
         <div class="nav-section-title">Módulos</div>
-        <div class="nav-item" onclick="toggleSubmenu('modulos',event)">
+        <div class="nav-item expanded" onclick="toggleSubmenu('modulos',event)">
           <img src="../icone-modulos.png" alt="" class="nav-icon-img">
           <span>Módulos</span>
           <svg class="nav-expand-icon" viewBox="0 0 24 24">
             <polyline points="9 18 15 12 9 6"/>
           </svg>
         </div>
-        <div class="nav-submenu" id="submenu-modulos">
+        <div class="nav-submenu open" id="submenu-modulos">
           <div class="nav-item" onclick="toggleSubmenu('compras',event)">
             <svg viewBox="0 0 24 24">
               <circle cx="9" cy="21" r="1"/>
@@ -438,7 +440,7 @@ tr:hover td{
               <span>Lançamento de Compras</span>
             </a>
           </div>
-          
+
           <div class="nav-item" onclick="toggleSubmenu('financeiro',event)">
             <svg viewBox="0 0 24 24">
               <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
@@ -449,13 +451,10 @@ tr:hover td{
             </svg>
           </div>
           <div class="nav-submenu" id="submenu-financeiro">
-            <a href="relacao-compras.html" class="nav-item active">
+            <a href="relacao-compras.html" class="nav-item">
               <svg viewBox="0 0 24 24">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                 <polyline points="14 2 14 8 20 8"/>
-                <line x1="16" y1="13" x2="8" y2="13"/>
-                <line x1="16" y1="17" x2="8" y2="17"/>
-                <polyline points="10 9 9 9 8 9"/>
               </svg>
               <span>Relação de Compras</span>
             </a>
@@ -467,8 +466,8 @@ tr:hover td{
               <span>Dashboard</span>
             </a>
           </div>
-          
-          <a href="fiscal.html" class="nav-item">
+
+          <a href="fiscal.html" class="nav-item active">
             <svg viewBox="0 0 24 24">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
               <polyline points="14 2 14 8 20 8"/>
@@ -544,83 +543,153 @@ tr:hover td{
   <div class="main-content">
     <header class="topbar">
       <div>
-        <div class="page-title">💰 Relação de Compras</div>
-        <div class="page-subtitle">Dashboard financeiro do mês</div>
+        <div class="page-title">📋 Fiscal · Download de NFS-e</div>
+        <div class="page-subtitle">Automação para baixar notas e gerar planilha consolidada</div>
       </div>
     </header>
 
     <main class="content">
-      <div class="metrics">
-        <div class="metric-card">
-          <div class="metric-value" id="total-compras">R$ 0,00</div>
-          <div class="metric-label">Total em Compras</div>
+      <div class="hero-section">
+        <div class="hero-icon">📥</div>
+        <div class="hero-title">Automação NFS-e + Planilha</div>
+        <div class="hero-subtitle">
+          Baixa todos os PDFs e XMLs do período escolhido direto do portal nfse.gov.br
+          e gera uma planilha Excel consolidada — em um único comando.
         </div>
-        <div class="metric-card">
-          <div class="metric-value" id="total-economia">R$ 0,00</div>
-          <div class="metric-label">Economia Total</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-value" id="total-lancamentos">0</div>
-          <div class="metric-label">Lançamentos</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-value" id="ticket-medio">R$ 0,00</div>
-          <div class="metric-label">Ticket Médio</div>
+      </div>
+
+      <div class="alert info">
+        <strong>ℹ️ Como funciona:</strong> A automação roda no <strong>seu computador</strong>
+        porque usa o certificado digital instalado no Chrome. Os arquivos vão para a sua
+        área de trabalho (pasta <code>NFS_Downloads</code>) e a planilha final pode ser enviada
+        para <strong>Documentos → Fiscal</strong> aqui na intranet para manter o histórico do time.
+      </div>
+
+      <div class="card">
+        <div class="card-title">⬇ Downloads</div>
+        <div class="downloads">
+          <a href="../automacoes/fiscal/instalar.bat" download class="download-btn">
+            <svg viewBox="0 0 24 24">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <span>
+              <span class="dl-title">1) Instalador</span>
+              <span class="dl-sub">instalar.bat — rode 1 vez por PC</span>
+            </span>
+          </a>
+          <a href="../automacoes/fiscal/baixar_nfse.py" download class="download-btn">
+            <svg viewBox="0 0 24 24">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <span>
+              <span class="dl-title">2) Automação</span>
+              <span class="dl-sub">baixar_nfse.py — rode todo mês</span>
+            </span>
+          </a>
+          <a href="../automacoes/fiscal/LEIA-ME.txt" download class="download-btn secondary">
+            <svg viewBox="0 0 24 24">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+            </svg>
+            <span>
+              <span class="dl-title">LEIA-ME</span>
+              <span class="dl-sub">Instruções resumidas em txt</span>
+            </span>
+          </a>
         </div>
       </div>
 
       <div class="card">
-        <div class="card-header">
-          <div class="card-title">📊 Compras do Mês</div>
+        <div class="card-title">📖 Como usar</div>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <strong>Tenha Python instalado.</strong> Se ainda não tem, baixe em
+              <code>python.org/downloads</code> e marque <em>"Add Python to PATH"</em> durante a instalação.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <strong>Rode o instalador.</strong> Baixe <code>instalar.bat</code> acima, dê dois cliques
+              e aguarde. Isso só precisa ser feito uma vez por computador.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <strong>Confirme o certificado digital.</strong> Seu certificado A1/A3 precisa
+              estar instalado no Chrome do seu computador para o login no gov.br funcionar.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <strong>Rode a automação.</strong> Dê dois cliques em <code>baixar_nfse.py</code>.
+              Informe a data inicial e final, faça login no Chrome quando ele abrir, e volte
+              ao terminal para pressionar Enter.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">5</div>
+            <div class="step-body">
+              <strong>Pegue a planilha.</strong> Tudo fica em
+              <code>C:\Users\&lt;Você&gt;\Desktop\NFS_Downloads\NFS_MM_YYYY\</code>.
+              A planilha final é <code>Planilha_NFS_-_MM_YYYY.xlsx</code>.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">6</div>
+            <div class="step-body">
+              <strong>Centralize o histórico.</strong> Envie a planilha para
+              <a href="documentos.html?pasta=Documentos" style="color:var(--accent);font-weight:600">Documentos</a>
+              (você pode criar uma pasta "Fiscal" no Drive da empresa) para deixar disponível ao time.
+            </div>
+          </div>
         </div>
-        
-        <div class="filters">
-          <select class="filter-select" id="filter-mes" onchange="filtrarDados()">
-            <option value="">Todos os meses</option>
-            <option value="Janeiro">Janeiro</option>
-            <option value="Fevereiro">Fevereiro</option>
-            <option value="Março">Março</option>
-            <option value="Abril">Abril</option>
-            <option value="Maio">Maio</option>
-            <option value="Junho">Junho</option>
-            <option value="Julho">Julho</option>
-            <option value="Agosto">Agosto</option>
-            <option value="Setembro">Setembro</option>
-            <option value="Outubro">Outubro</option>
-            <option value="Novembro">Novembro</option>
-            <option value="Dezembro">Dezembro</option>
-          </select>
-          
-          <select class="filter-select" id="filter-categoria" onchange="filtrarDados()">
-            <option value="">Todas as categorias</option>
-            <option value="online">Online</option>
-            <option value="obras">Obras</option>
-            <option value="geral">Geral</option>
-            <option value="passagens">Passagens</option>
-            <option value="hospedagens">Hospedagens</option>
-            <option value="seguro">Seguro</option>
-          </select>
-        </div>
+      </div>
 
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Mês</th>
-                <th>Categoria</th>
-                <th>Item</th>
-                <th>Solicitante</th>
-                <th>Fornecedor</th>
-                <th>Valor Total</th>
-                <th>Economia</th>
-                <th>Data</th>
-              </tr>
-            </thead>
-            <tbody id="tbody-compras">
-              <tr><td colspan="8" class="empty">Nenhuma compra registrada</td></tr>
-            </tbody>
-          </table>
+      <div class="card">
+        <div class="card-title">🔍 Detalhes técnicos</div>
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="lbl">Linguagem</div>
+            <div class="val">Python 3.10+</div>
+          </div>
+          <div class="info-item">
+            <div class="lbl">Dependências</div>
+            <div class="val">playwright, openpyxl, chromium</div>
+          </div>
+          <div class="info-item">
+            <div class="lbl">Portal alvo</div>
+            <div class="val">nfse.gov.br (Emissor Nacional)</div>
+          </div>
+          <div class="info-item">
+            <div class="lbl">Autenticação</div>
+            <div class="val">Certificado digital A1/A3 (Chrome)</div>
+          </div>
+          <div class="info-item">
+            <div class="lbl">Saída</div>
+            <div class="val">PDFs + XMLs + planilha Excel</div>
+          </div>
+          <div class="info-item">
+            <div class="lbl">Onde roda</div>
+            <div class="val">No PC do usuário (não no servidor)</div>
+          </div>
         </div>
+      </div>
+
+      <div class="alert warning">
+        <strong>⚠️ Importante:</strong> a automação <strong>NÃO</strong> sobe nenhum dado da Rompex
+        para a internet — tudo fica no computador onde foi executada. O envio para Documentos
+        é manual, sob sua responsabilidade.
       </div>
     </main>
   </div>
@@ -633,89 +702,14 @@ if (sessao) {
   document.getElementById('user-name').textContent = sessao.nome;
   document.getElementById('user-role').textContent = sessao.perfil;
   document.getElementById('user-avatar').textContent = sessao.nome.substring(0, 2).toUpperCase();
+
+  // Sem permissão Fiscal? Redireciona para o início.
+  if (!temPermissao('estoque')) {
+    alert('⚠️ Você não tem permissão para acessar o módulo Fiscal.');
+    window.location.href = '../dashboard.html';
+  }
 }
 iniciarMonitoramentoSessao();
-
-let compras = [];
-
-function loadCompras() {
-  // compras_v4 é um array plano onde cada entrada tem .cat — alinhar com compras.html.
-  try {
-    const db = JSON.parse(localStorage.getItem('compras_v4') || '[]');
-    compras = Array.isArray(db)
-      ? db.map(item => ({ ...item, categoria: item.cat || item.categoria || 'geral' }))
-      : [];
-  } catch(e) {
-    compras = [];
-  }
-}
-
-function calcularMetricas(dados) {
-  const total = dados.reduce((sum, c) => sum + (parseFloat(c.vtotal) || 0), 0);
-  const economia = dados.reduce((sum, c) => sum + (parseFloat(c.economia) || 0), 0);
-  const ticketMedio = dados.length ? total / dados.length : 0;
-  
-  document.getElementById('total-compras').textContent = 'R$ ' + total.toFixed(2).replace('.',',');
-  document.getElementById('total-economia').textContent = 'R$ ' + economia.toFixed(2).replace('.',',');
-  document.getElementById('total-lancamentos').textContent = dados.length;
-  document.getElementById('ticket-medio').textContent = 'R$ ' + ticketMedio.toFixed(2).replace('.',',');
-}
-
-function getBadgeClass(cat) {
-  const classes = {
-    online: 'b-online',
-    obras: 'b-obras',
-    geral: 'b-geral',
-    passagens: 'b-passagens',
-    hospedagens: 'b-hospedagens',
-    seguro: 'b-seguro'
-  };
-  return classes[cat] || 'b-geral';
-}
-
-function renderTabela(dados) {
-  const tbody = document.getElementById('tbody-compras');
-  
-  if (!dados.length) {
-    tbody.innerHTML = '<tr><td colspan="8" class="empty">Nenhuma compra encontrada</td></tr>';
-    return;
-  }
-  
-  let html = '';
-  dados.forEach(c => {
-    const badgeClass = getBadgeClass(c.categoria);
-    html += `<tr>
-      <td>${c.mes || '-'}</td>
-      <td><span class="badge ${badgeClass}">${c.categoria}</span></td>
-      <td><strong>${c.item || '-'}</strong></td>
-      <td>${c.solicitante || '-'}</td>
-      <td>${c.fornecedor || '-'}</td>
-      <td><strong>R$ ${(parseFloat(c.vtotal) || 0).toFixed(2).replace('.',',')}</strong></td>
-      <td style="color:var(--accent)"><strong>R$ ${(parseFloat(c.economia) || 0).toFixed(2).replace('.',',')}</strong></td>
-      <td>${c.data || '-'}</td>
-    </tr>`;
-  });
-  
-  tbody.innerHTML = html;
-}
-
-function filtrarDados() {
-  const mes = document.getElementById('filter-mes').value;
-  const categoria = document.getElementById('filter-categoria').value;
-  
-  let filtrados = compras;
-  
-  if (mes) {
-    filtrados = filtrados.filter(c => c.mes === mes);
-  }
-  
-  if (categoria) {
-    filtrados = filtrados.filter(c => c.categoria === categoria);
-  }
-  
-  calcularMetricas(filtrados);
-  renderTabela(filtrados);
-}
 
 function toggleSubmenu(id, event) {
   if (event) event.stopPropagation();
@@ -732,17 +726,6 @@ function toggleSubmenu(id, event) {
     }
   }
 }
-
-// Carregar e exibir dados
-loadCompras();
-calcularMetricas(compras);
-renderTabela(compras);
-
-// Selecionar mês atual
-const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-const mesAtual = meses[new Date().getMonth()];
-document.getElementById('filter-mes').value = mesAtual;
-filtrarDados();
 </script>
 <script src="../theme.js"></script>
 

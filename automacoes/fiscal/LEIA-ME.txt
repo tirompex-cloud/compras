@@ -1,0 +1,56 @@
+================================================================
+  AUTOMACAO FISCAL ROMPEX - DOWNLOAD DE NFS-e
+================================================================
+
+O que essa automacao faz:
+- Abre o portal nfse.gov.br
+- Voce faz login com seu certificado digital
+- Ela baixa automaticamente todos os PDFs e XMLs do periodo
+- Gera uma planilha Excel consolidada com os dados
+
+================================================================
+  COMO USAR PELA PRIMEIRA VEZ
+================================================================
+
+1) Garanta que voce tem Python instalado no computador.
+   Se nao tiver, baixe em: https://www.python.org/downloads/
+   Durante a instalacao, marque "Add Python to PATH".
+
+2) De 2 cliques em "instalar.bat" e aguarde terminar.
+   (Isso so precisa ser feito uma unica vez.)
+
+3) Garanta que seu certificado digital esta instalado no Chrome.
+
+4) De 2 cliques em "baixar_nfse.py" para rodar a automacao.
+
+5) Informe a data inicial e final que voce quer baixar.
+
+6) Faca o login com o certificado digital quando o Chrome abrir.
+
+7) Volte ao terminal e pressione Enter para iniciar os downloads.
+
+================================================================
+  ONDE OS ARQUIVOS SAO SALVOS
+================================================================
+
+Tudo fica em:
+    C:\Users\<SeuUsuario>\Desktop\NFS_Downloads\NFS_MM_YYYY\
+
+Dentro dessa pasta voce vai encontrar:
+- PDFs de cada nota (NF_0001.pdf, NF_0002.pdf, ...)
+- XMLs de cada nota (NF_0001.xml, NF_0002.xml, ...)
+- Planilha_NFS_-_MM_YYYY.xlsx com o consolidado
+
+================================================================
+  DICA: ENVIE A PLANILHA PARA A INTRANET
+================================================================
+
+Depois que a planilha for gerada, voce pode envia-la para a
+Intranet Rompex (modulo Documentos -> pasta Fiscal) para deixar
+o historico centralizado e acessivel para o time.
+
+================================================================
+  PRECISA DE AJUDA?
+================================================================
+
+Fale com o time de TI.
