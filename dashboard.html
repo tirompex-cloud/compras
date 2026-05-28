@@ -587,6 +587,93 @@ html[data-theme="light"] .nav-icon-img{filter:none}
   border-radius:var(--radius);
   border:1px dashed var(--border-light);
 }
+.aviso-board-card{cursor:pointer}
+.aviso-board-card .open-hint{
+  font-size:10px;
+  color:var(--text-muted);
+  text-transform:uppercase;
+  letter-spacing:0.05em;
+  padding:3px 8px;
+  background:var(--bg-secondary);
+  border-radius:10px;
+  display:inline-block;
+}
+/* Modal de expandir aviso */
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.75);
+  backdrop-filter:blur(8px);
+  z-index:300;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+.modal-overlay.open{display:flex}
+.modal-aviso{
+  background:var(--bg-secondary);
+  border:1px solid var(--border-light);
+  border-radius:16px;
+  width:100%;
+  max-width:640px;
+  max-height:90vh;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  box-shadow:0 24px 80px rgba(0,0,0,0.6);
+}
+.modal-aviso-img{
+  width:100%;
+  max-height:360px;
+  object-fit:contain;
+  background:var(--bg-tertiary);
+  border-radius:16px 16px 0 0;
+}
+.modal-aviso-body{padding:24px;display:flex;flex-direction:column;gap:12px}
+.modal-aviso-title{font-size:22px;font-weight:700;color:var(--text-primary)}
+.modal-aviso-meta{font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em}
+.modal-aviso-msg{font-size:15px;color:var(--text-secondary);line-height:1.7;white-space:pre-wrap;word-break:break-word}
+.modal-aviso-actions{
+  display:flex;
+  gap:10px;
+  justify-content:space-between;
+  align-items:center;
+  padding-top:16px;
+  border-top:1px solid var(--border);
+  margin-top:8px;
+  flex-wrap:wrap;
+}
+.modal-close{
+  cursor:pointer;
+  background:var(--bg-tertiary);
+  border:1px solid var(--border-light);
+  color:var(--text-secondary);
+  padding:8px 16px;
+  border-radius:var(--radius-sm);
+  font-size:13px;
+  font-weight:600;
+  transition:0.2s;
+}
+.modal-close:hover{background:var(--bg-card);color:var(--text-primary)}
+.btn-download{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:8px 14px;
+  border-radius:var(--radius-sm);
+  background:rgba(16,185,129,0.12);
+  border:1px solid rgba(16,185,129,0.4);
+  color:var(--accent);
+  font-size:13px;
+  font-weight:600;
+  text-decoration:none;
+  transition:all 0.2s;
+}
+.btn-download:hover{
+  background:rgba(16,185,129,0.2);
+  transform:translateY(-1px);
+}
 @media(max-width:1024px){
   .sidebar{
     transform:translateX(-100%);
@@ -647,7 +734,7 @@ html[data-theme="light"] .nav-icon-img{filter:none}
 
       <div class="nav-section">
         <div class="nav-section-title">Módulos</div>
-        <div class="nav-item" onclick="toggleSubmenu('modulos')">
+        <div class="nav-item" onclick="toggleSubmenu('modulos',event)">
           <img src="icone-modulos.png" alt="" class="nav-icon-img">
           <span>Módulos</span>
           <svg class="nav-expand-icon" viewBox="0 0 24 24">
@@ -750,7 +837,7 @@ html[data-theme="light"] .nav-icon-img{filter:none}
             </svg>
             <span>Usuários</span>
           </a>
-          <a href="modulos/avisos.html" class="nav-item">
+          <a href="modulos/lancar-avisos.html" class="nav-item">
             <svg viewBox="0 0 24 24">
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
               <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
@@ -933,6 +1020,21 @@ html[data-theme="light"] .nav-icon-img{filter:none}
   </div>
 </div>
 
+<div class="modal-overlay" id="modal-aviso-overlay" onclick="fecharModalAviso(event)">
+  <div class="modal-aviso" id="modal-aviso-content">
+    <img id="modal-aviso-img" class="modal-aviso-img" alt="" style="display:none">
+    <div class="modal-aviso-body">
+      <div id="modal-aviso-titulo" class="modal-aviso-title"></div>
+      <div id="modal-aviso-meta" class="modal-aviso-meta"></div>
+      <div id="modal-aviso-msg" class="modal-aviso-msg"></div>
+      <div class="modal-aviso-actions">
+        <span id="modal-aviso-download"></span>
+        <button class="modal-close" onclick="fecharModalAviso()">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="auth.js"></script>
 <script>
 // Versionamento para forçar atualização (anti-cache)
@@ -1017,51 +1119,72 @@ function carregarMotivacao() {
 }
 
 /* ============================================================================
-   Cotações USD/BRL e EUR/BRL via awesomeapi (sem auth, suporta CORS).
-   Cacheia por 10 minutos no localStorage para não bater no endpoint a cada
-   abertura da página.
+   Cotações USD/BRL e EUR/BRL via API pública do Banco Central (SGS).
+   - USD: série 1 (Dólar comercial - venda)
+   - EUR: série 21619 (Euro venda)
+   Pega os 2 últimos pontos para calcular variação. Cache de 30 min porque
+   o BCB atualiza apenas em dias úteis.
    ============================================================================ */
-const COTACAO_URL = 'https://economia.awesomeapi.com.br/json/last/USD-BRL,EUR-BRL';
-const COTACAO_CACHE_KEY = 'rompex_cotacoes_cache';
-const COTACAO_CACHE_MS = 10 * 60 * 1000;
+const BCB_URL = function(serie) {
+  return 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.' + serie + '/dados/ultimos/2?formato=json';
+};
+const COTACAO_CACHE_KEY = 'rompex_cotacoes_bcb_cache';
+const COTACAO_CACHE_MS = 30 * 60 * 1000;
 
-function renderCotacao(prefix, dados) {
-  if (!dados) return;
-  const bid = parseFloat(dados.bid);
-  const pct = parseFloat(dados.pctChange);
+function renderCotacao(prefix, pontos) {
+  // pontos: [{data:"dd/mm/yyyy", valor:"5.43"}, ...] em ordem cronológica
+  if (!Array.isArray(pontos) || !pontos.length) return;
+  const atual = pontos[pontos.length - 1];
+  const anterior = pontos.length > 1 ? pontos[pontos.length - 2] : null;
+  const bid = parseFloat(atual.valor);
   const valEl = document.getElementById(prefix + '-value');
   const trendEl = document.getElementById(prefix + '-trend');
+  const labelEl = document.querySelector('#' + prefix + '-value ~ .stat-label');
+
   if (!isNaN(bid)) {
     valEl.textContent = 'R$ ' + bid.toFixed(4).replace('.', ',');
   }
-  if (!isNaN(pct)) {
-    trendEl.classList.remove('up', 'down');
-    trendEl.classList.add(pct >= 0 ? 'up' : 'down');
-    trendEl.innerHTML = '<span>' + (pct >= 0 ? '▲ ' : '▼ ') + pct.toFixed(2).replace('.', ',') + '%</span>';
+  if (anterior) {
+    const ant = parseFloat(anterior.valor);
+    if (!isNaN(ant) && ant !== 0) {
+      const pct = ((bid - ant) / ant) * 100;
+      trendEl.classList.remove('up', 'down');
+      trendEl.classList.add(pct >= 0 ? 'up' : 'down');
+      trendEl.innerHTML = '<span>' + (pct >= 0 ? '▲ ' : '▼ ') + Math.abs(pct).toFixed(2).replace('.', ',') + '%</span>';
+    }
+  }
+  if (labelEl && atual.data) {
+    const base = labelEl.dataset.base || labelEl.textContent;
+    labelEl.dataset.base = base;
+    labelEl.textContent = base + ' · ' + atual.data;
   }
 }
 
 async function carregarCotacoes() {
-  // 1) Tentar cache válido
+  // 1) Cache válido?
   try {
     const cache = JSON.parse(localStorage.getItem(COTACAO_CACHE_KEY) || 'null');
     if (cache && (Date.now() - cache.ts) < COTACAO_CACHE_MS) {
-      renderCotacao('usd', cache.dados.USDBRL);
-      renderCotacao('eur', cache.dados.EURBRL);
+      renderCotacao('usd', cache.usd);
+      renderCotacao('eur', cache.eur);
       return;
     }
   } catch(e) { /* ignora cache corrompido */ }
 
-  // 2) Buscar online
+  // 2) Buscar dois fetches em paralelo (BCB é separado por série).
   try {
-    const resp = await fetch(COTACAO_URL);
-    if (!resp.ok) throw new Error('HTTP ' + resp.status);
-    const dados = await resp.json();
-    renderCotacao('usd', dados.USDBRL);
-    renderCotacao('eur', dados.EURBRL);
-    localStorage.setItem(COTACAO_CACHE_KEY, JSON.stringify({ ts: Date.now(), dados: dados }));
+    const [respUsd, respEur] = await Promise.all([
+      fetch(BCB_URL(1)),
+      fetch(BCB_URL(21619))
+    ]);
+    if (!respUsd.ok || !respEur.ok) throw new Error('HTTP ' + respUsd.status + '/' + respEur.status);
+    const usd = await respUsd.json();
+    const eur = await respEur.json();
+    renderCotacao('usd', usd);
+    renderCotacao('eur', eur);
+    localStorage.setItem(COTACAO_CACHE_KEY, JSON.stringify({ ts: Date.now(), usd: usd, eur: eur }));
   } catch(err) {
-    console.warn('[Cotacoes] Falha ao buscar:', err);
+    console.warn('[Cotacoes BCB] Falha ao buscar:', err);
     document.getElementById('usd-value').textContent = 'indisponível';
     document.getElementById('eur-value').textContent = 'indisponível';
   }
@@ -1083,32 +1206,68 @@ function fmtDataAviso(iso) {
   return isNaN(d) ? '' : d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
 }
 
+// Lista cacheada para o modal acessar pelo índice.
+let _avisosCache = [];
+
 function carregarAvisos() {
-  let lista = [];
-  try { lista = JSON.parse(localStorage.getItem('rompex_avisos') || '[]'); }
-  catch(e) { lista = []; }
+  try { _avisosCache = JSON.parse(localStorage.getItem('rompex_avisos') || '[]'); }
+  catch(e) { _avisosCache = []; }
 
   const wrap = document.getElementById('avisos-kanban');
-  if (!lista.length) {
+  if (!_avisosCache.length) {
     wrap.innerHTML = '<div class="avisos-empty">📭 Nenhum aviso publicado.<br><small>Publique avisos em Configurações → Lançar Avisos.</small></div>';
     return;
   }
 
   let html = '<div class="avisos-board">';
-  lista.forEach(function(a) {
+  _avisosCache.forEach(function(a, i) {
     const img = a.imagemUrl || a.imagemDataUrl;
-    html += '<div class="aviso-board-card">' +
+    html += '<div class="aviso-board-card" onclick="abrirModalAviso(' + i + ')">' +
       (img
         ? '<img class="aviso-board-img" src="' + escapeHtml(img) + '" alt="">'
         : '<div class="aviso-board-noimg">📢</div>') +
       '<div class="aviso-board-body">' +
         '<div class="aviso-board-title">' + escapeHtml(a.titulo) + '</div>' +
         '<div class="aviso-board-msg">' + escapeHtml(a.mensagem) + '</div>' +
-        '<div class="aviso-board-meta">' + escapeHtml(fmtDataAviso(a.dataPublicacao)) + ' · ' + escapeHtml(a.autor || '') + '</div>' +
+        '<div class="aviso-board-meta">' +
+          '<span>' + escapeHtml(fmtDataAviso(a.dataPublicacao)) + ' · ' + escapeHtml(a.autor || '') + '</span>' +
+          '<span class="open-hint" style="float:right">clique para abrir</span>' +
+        '</div>' +
       '</div>' +
     '</div>';
   });
   wrap.innerHTML = html + '</div>';
+}
+
+/* ---------- Modal de expandir aviso ---------- */
+function abrirModalAviso(idx) {
+  const a = _avisosCache[idx];
+  if (!a) return;
+  const img = a.imagemUrl || a.imagemDataUrl;
+  const imgEl = document.getElementById('modal-aviso-img');
+  if (img) { imgEl.src = img; imgEl.style.display = 'block'; }
+  else { imgEl.removeAttribute('src'); imgEl.style.display = 'none'; }
+  document.getElementById('modal-aviso-titulo').textContent = a.titulo;
+  document.getElementById('modal-aviso-meta').textContent = fmtDataAviso(a.dataPublicacao) + ' · ' + (a.autor || '');
+  document.getElementById('modal-aviso-msg').textContent = a.mensagem;
+  const downloadEl = document.getElementById('modal-aviso-download');
+  if (a.permitirDownload && a.documentoId) {
+    downloadEl.innerHTML = '<a class="btn-download" href="modulos/documentos.html?pasta=Avisos">' +
+      '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+        '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>' +
+        '<polyline points="7 10 12 15 17 10"/>' +
+        '<line x1="12" y1="15" x2="12" y2="3"/>' +
+      '</svg>' +
+      'Baixar em Documentos</a>';
+  } else {
+    downloadEl.innerHTML = '';
+  }
+  document.getElementById('modal-aviso-overlay').classList.add('open');
+}
+
+function fecharModalAviso(ev) {
+  if (ev && ev.target.id !== 'modal-aviso-overlay' && ev.target.tagName !== 'BUTTON') return;
+  document.getElementById('modal-aviso-overlay').classList.remove('open');
 }
 
 carregarMotivacao();

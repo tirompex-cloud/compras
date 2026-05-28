@@ -506,7 +506,7 @@ html[data-theme="light"] .nav-icon-img{filter:none}
             </svg>
             <span>Usuários</span>
           </a>
-          <a href="avisos.html" class="nav-item">
+          <a href="lancar-avisos.html" class="nav-item">
             <svg viewBox="0 0 24 24">
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
               <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
@@ -666,11 +666,16 @@ iniciarMonitoramentoSessao();
 function toggleSubmenu(id, event) {
   if (event) event.stopPropagation();
   const submenu = document.getElementById('submenu-' + id);
-  const item = event ? event.currentTarget : null;
+  const item = event ? event.currentTarget : document.querySelector('[onclick*="' + id + '"]');
   if (submenu) {
     const isOpen = submenu.classList.contains('open');
-    submenu.classList.toggle('open');
-    if (item) item.classList.toggle('expanded');
+    if (isOpen) {
+      submenu.classList.remove('open');
+      if (item) item.classList.remove('expanded');
+    } else {
+      submenu.classList.add('open');
+      if (item) item.classList.add('expanded');
+    }
   }
 }
 </script>

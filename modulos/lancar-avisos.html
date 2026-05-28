@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ROMPEX • Avisos</title>
+<title>ROMPEX • Lançar Avisos</title>
 <link rel="icon" type="image/png" href="../Rompex_Favicon_Transparente.png">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="../rompex-drive-api.js"></script>
@@ -435,96 +435,6 @@ html[data-theme="light"] .nav-icon-img{filter:none}
   background:rgba(16,185,129,0.2);
   transform:translateY(-1px);
 }
-.aviso-card{cursor:pointer}
-.aviso-card .open-hint{
-  font-size:10px;
-  color:var(--text-muted);
-  text-transform:uppercase;
-  letter-spacing:0.05em;
-  padding:4px 10px;
-  background:var(--bg-tertiary);
-  border-radius:12px;
-  display:inline-block;
-  margin-top:4px;
-}
-/* Modal de expandir aviso */
-.modal-overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.75);
-  backdrop-filter:blur(8px);
-  z-index:300;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-}
-.modal-overlay.open{display:flex}
-.modal-aviso{
-  background:var(--bg-secondary);
-  border:1px solid var(--border-light);
-  border-radius:16px;
-  width:100%;
-  max-width:640px;
-  max-height:90vh;
-  overflow-y:auto;
-  display:flex;
-  flex-direction:column;
-  box-shadow:0 24px 80px rgba(0,0,0,0.6);
-}
-.modal-aviso-img{
-  width:100%;
-  max-height:360px;
-  object-fit:contain;
-  background:var(--bg-tertiary);
-  border-radius:16px 16px 0 0;
-}
-.modal-aviso-body{
-  padding:24px;
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-}
-.modal-aviso-title{
-  font-size:22px;
-  font-weight:700;
-  color:var(--text-primary);
-}
-.modal-aviso-meta{
-  font-size:12px;
-  color:var(--text-muted);
-  text-transform:uppercase;
-  letter-spacing:0.05em;
-}
-.modal-aviso-msg{
-  font-size:15px;
-  color:var(--text-secondary);
-  line-height:1.7;
-  white-space:pre-wrap;
-  word-break:break-word;
-}
-.modal-aviso-actions{
-  display:flex;
-  gap:10px;
-  justify-content:space-between;
-  align-items:center;
-  padding-top:16px;
-  border-top:1px solid var(--border);
-  margin-top:8px;
-  flex-wrap:wrap;
-}
-.modal-close{
-  cursor:pointer;
-  background:var(--bg-tertiary);
-  border:1px solid var(--border-light);
-  color:var(--text-secondary);
-  padding:8px 16px;
-  border-radius:var(--radius-sm);
-  font-size:13px;
-  font-weight:600;
-  transition:0.2s;
-}
-.modal-close:hover{background:var(--bg-card);color:var(--text-primary)}
 .empty{
   text-align:center;
   padding:3rem;
@@ -574,7 +484,7 @@ html[data-theme="light"] .nav-icon-img{filter:none}
           </svg>
           <span>Início</span>
         </a>
-        <a href="avisos.html" class="nav-item active">
+        <a href="avisos.html" class="nav-item">
           <svg viewBox="0 0 24 24">
             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
             <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
@@ -672,7 +582,7 @@ html[data-theme="light"] .nav-icon-img{filter:none}
           </svg>
           <span>Documentos</span>
         </a>
-        <div class="nav-item" onclick="toggleSubmenu('configuracoes', event)">
+        <div class="nav-item expanded" onclick="toggleSubmenu('configuracoes', event)">
           <svg viewBox="0 0 24 24">
             <circle cx="12" cy="12" r="3"/>
             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
@@ -682,7 +592,7 @@ html[data-theme="light"] .nav-icon-img{filter:none}
             <polyline points="9 18 15 12 9 6"/>
           </svg>
         </div>
-        <div class="nav-submenu" id="submenu-configuracoes">
+        <div class="nav-submenu open" id="submenu-configuracoes">
           <a href="usuarios.html" class="nav-item">
             <svg viewBox="0 0 24 24">
               <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
@@ -692,7 +602,7 @@ html[data-theme="light"] .nav-icon-img{filter:none}
             </svg>
             <span>Usuários</span>
           </a>
-          <a href="lancar-avisos.html" class="nav-item">
+          <a href="lancar-avisos.html" class="nav-item active">
             <svg viewBox="0 0 24 24">
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
               <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
@@ -722,8 +632,8 @@ html[data-theme="light"] .nav-icon-img{filter:none}
   <div class="main-content">
     <header class="topbar">
       <div>
-        <div class="page-title">📢 Avisos</div>
-        <div class="page-subtitle">Comunicados publicados</div>
+        <div class="page-title">📢 Lançar Avisos</div>
+        <div class="page-subtitle">Publique comunicados visíveis no Início e em Avisos</div>
       </div>
     </header>
 
@@ -731,6 +641,53 @@ html[data-theme="light"] .nav-icon-img{filter:none}
       <div class="drive-status" id="drive-status">
         <span class="dot"></span>
         <span id="drive-status-text">Verificando integração com o Drive...</span>
+      </div>
+
+      <div class="card" id="card-novo-aviso">
+        <div class="card-title">📝 Novo Aviso</div>
+
+        <div class="field">
+          <label>Título</label>
+          <input type="text" id="aviso-titulo" maxlength="80" placeholder="Ex: Reunião geral na sexta-feira">
+        </div>
+
+        <div class="field">
+          <label>Mensagem</label>
+          <textarea id="aviso-mensagem" maxlength="500" placeholder="Conteúdo completo do aviso (até 500 caracteres)"></textarea>
+        </div>
+
+        <div class="field">
+          <label>Anexo (opcional · .png, .jpg, .jpeg · máx. 5MB)</label>
+          <div class="upload-zone" id="upload-zone" onclick="document.getElementById('img-input').click()">
+            <input type="file" id="img-input" accept=".png,.jpg,.jpeg,image/png,image/jpeg" style="display:none" onchange="selecionarImagem(this.files)">
+            <div id="upload-empty">
+              <div class="upload-icon">🖼️</div>
+              <h3>Anexar imagem</h3>
+              <p>Clique para selecionar · apenas <strong>.png, .jpg, .jpeg</strong></p>
+            </div>
+            <div id="upload-preview" style="display:none">
+              <img id="preview-img" alt="Pré-visualização">
+              <div class="preview-controls">
+                <span id="preview-nome"></span>
+                <span class="remove" onclick="event.stopPropagation();removerImagem()">remover</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field" id="campo-permitir-download" style="display:none">
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;text-transform:none;letter-spacing:0">
+            <input type="checkbox" id="aviso-permitir-download" style="width:18px;height:18px;cursor:pointer">
+            <span>Permitir que outros usuários baixem este anexo (cópia fica disponível em Documentos → Avisos)</span>
+          </label>
+        </div>
+
+        <div id="status-publicacao" class="status-box"></div>
+
+        <div class="actions">
+          <button class="btn" onclick="limparFormulario()">Limpar</button>
+          <button class="btn primary" id="btn-publicar" onclick="publicarAviso()">📢 Publicar Aviso</button>
+        </div>
       </div>
 
       <div class="card">
@@ -741,63 +698,220 @@ html[data-theme="light"] .nav-icon-img{filter:none}
   </div>
 </div>
 
-<div class="modal-overlay" id="modal-aviso-overlay" onclick="fecharModalAviso(event)">
-  <div class="modal-aviso" id="modal-aviso-content">
-    <img id="modal-aviso-img" class="modal-aviso-img" alt="" style="display:none">
-    <div class="modal-aviso-body">
-      <div id="modal-aviso-titulo" class="modal-aviso-title"></div>
-      <div id="modal-aviso-meta" class="modal-aviso-meta"></div>
-      <div id="modal-aviso-msg" class="modal-aviso-msg"></div>
-      <div class="modal-aviso-actions">
-        <span id="modal-aviso-download"></span>
-        <button class="modal-close" onclick="fecharModalAviso()">Fechar</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <script src="../auth.js"></script>
 <script>
 const sessao = verificarAutenticacao();
-var podeLancar = false;
+var podeLancar = true; // página só acessível a quem pode; senão redireciona
 if (sessao) {
   document.getElementById('user-name').textContent = sessao.nome;
   document.getElementById('user-role').textContent = sessao.perfil;
   document.getElementById('user-avatar').textContent = sessao.nome.substring(0, 2).toUpperCase();
-  podeLancar = temPermissao('avisos');
+
+  if (!temPermissao('avisos')) {
+    alert('⚠️ Você não tem permissão para lançar avisos.');
+    window.location.href = 'avisos.html';
+  }
 }
 iniciarMonitoramentoSessao();
 
-/* ---------- Storage (somente leitura nesta página) ---------- */
+/* ---------- Estado ---------- */
+var imagemSelecionada = null;   // { file, dataUrl, nome }
+var driveOnline = false;
+var EXTENSOES_PERMITIDAS = ['png', 'jpg', 'jpeg'];
+var TAMANHO_MAX = 5 * 1024 * 1024; // 5MB — limite menor para evitar estouro de localStorage no fallback.
+
+/* ---------- Storage ---------- */
 function carregarAvisos() {
   try { return JSON.parse(localStorage.getItem('rompex_avisos') || '[]'); }
   catch(e) { return []; }
 }
 function salvarAvisos(lista) {
-  try { localStorage.setItem('rompex_avisos', JSON.stringify(lista)); return true; }
-  catch(e) { alert('⚠️ Espaço local cheio.'); return false; }
+  try {
+    localStorage.setItem('rompex_avisos', JSON.stringify(lista));
+    return true;
+  } catch(e) {
+    // QuotaExceededError — provavelmente imagens grandes acumuladas em modo offline.
+    alert('⚠️ Não foi possível salvar: espaço local cheio. Exclua avisos antigos.');
+    return false;
+  }
 }
 
-/* ---------- Status Drive (apenas indicativo de origem das imagens) ---------- */
+/* ---------- Status Drive ---------- */
 async function atualizarStatusDrive() {
   var statusEl = document.getElementById('drive-status');
   var textEl = document.getElementById('drive-status-text');
   if (!window.ROMPEX_DRIVE_API_URL) {
+    driveOnline = false;
     statusEl.classList.add('offline');
-    textEl.textContent = '💾 Drive não configurado — exibindo avisos locais';
+    textEl.textContent = '💾 Drive não configurado — modo local';
     return;
   }
   var r = await testarConexao();
-  var online = r && r.status === 'online';
-  statusEl.classList.add(online ? 'online' : 'offline');
-  textEl.textContent = online ? '✅ Drive conectado' : '⚠️ Drive offline — exibindo avisos locais';
+  driveOnline = r && r.status === 'online';
+  statusEl.classList.remove('online', 'offline');
+  statusEl.classList.add(driveOnline ? 'online' : 'offline');
+  textEl.textContent = driveOnline
+    ? '✅ Drive conectado — imagens serão enviadas para a pasta Avisos'
+    : '⚠️ Drive offline — imagens ficarão somente neste navegador';
+}
+
+/* ---------- Validação e preview ---------- */
+function getExtensao(nome) {
+  var partes = String(nome || '').toLowerCase().split('.');
+  return partes.length > 1 ? partes.pop() : '';
+}
+
+function selecionarImagem(files) {
+  if (!files || !files.length) return;
+  var file = files[0];
+  var ext = getExtensao(file.name);
+  if (EXTENSOES_PERMITIDAS.indexOf(ext) < 0) {
+    alert('⚠️ Apenas arquivos .png, .jpg ou .jpeg são permitidos.');
+    document.getElementById('img-input').value = '';
+    return;
+  }
+  if (file.size > TAMANHO_MAX) {
+    alert('⚠️ Imagem excede 5 MB.');
+    document.getElementById('img-input').value = '';
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function() {
+    imagemSelecionada = { file: file, dataUrl: reader.result, nome: file.name };
+    document.getElementById('preview-img').src = reader.result;
+    document.getElementById('preview-nome').textContent = file.name;
+    document.getElementById('upload-empty').style.display = 'none';
+    document.getElementById('upload-preview').style.display = 'block';
+    document.getElementById('upload-zone').classList.add('has-preview');
+    // Só faz sentido oferecer download quando há anexo.
+    document.getElementById('campo-permitir-download').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+function removerImagem() {
+  imagemSelecionada = null;
+  document.getElementById('img-input').value = '';
+  document.getElementById('upload-empty').style.display = 'block';
+  document.getElementById('upload-preview').style.display = 'none';
+  document.getElementById('upload-zone').classList.remove('has-preview');
+  document.getElementById('campo-permitir-download').style.display = 'none';
+  document.getElementById('aviso-permitir-download').checked = false;
+}
+
+function limparFormulario() {
+  document.getElementById('aviso-titulo').value = '';
+  document.getElementById('aviso-mensagem').value = '';
+  document.getElementById('aviso-permitir-download').checked = false;
+  removerImagem();
+  esconderStatus();
+}
+
+/* Registra o anexo na lista de Documentos (subpasta 'Avisos') para que apareça
+   em modulos/documentos.html?pasta=Avisos. Garante que o ID seja o mesmo
+   referenciado pelo aviso, para que o link do aviso aponte corretamente. */
+function registrarEmDocumentos(docRef) {
+  var chave = 'rompex_documentos_Avisos';
+  var lista;
+  try { lista = JSON.parse(localStorage.getItem(chave) || '[]'); }
+  catch(e) { lista = []; }
+  // Evita duplicar se republicar o mesmo aviso.
+  if (lista.some(function(d) { return String(d.id) === String(docRef.id); })) return;
+  lista.push(docRef);
+  try { localStorage.setItem(chave, JSON.stringify(lista)); }
+  catch(e) { console.warn('[Avisos] Não foi possível registrar em Documentos:', e); }
+}
+
+function mostrarStatus(tipo, msg) {
+  var el = document.getElementById('status-publicacao');
+  el.className = 'status-box show ' + tipo;
+  el.textContent = msg;
+}
+function esconderStatus() {
+  document.getElementById('status-publicacao').classList.remove('show');
+}
+
+/* ---------- Publicação ---------- */
+async function publicarAviso() {
+  var titulo = document.getElementById('aviso-titulo').value.trim();
+  var mensagem = document.getElementById('aviso-mensagem').value.trim();
+  if (!titulo || !mensagem) {
+    alert('⚠️ Preencha título e mensagem.');
+    return;
+  }
+
+  var btn = document.getElementById('btn-publicar');
+  btn.disabled = true;
+  mostrarStatus('loading', '⏳ Publicando...');
+
+  var permitirDownload = document.getElementById('aviso-permitir-download').checked;
+
+  var aviso = {
+    id: 'aviso-' + Date.now(),
+    titulo: titulo,
+    mensagem: mensagem,
+    imagemUrl: '',         // URL pública (Drive) — usada como preview no card
+    imagemDataUrl: '',     // dataURL local (fallback de preview, sem URL pública)
+    imagemNome: '',
+    documentoId: '',       // id na lista rompex_documentos_Avisos (se permitir download)
+    permitirDownload: false,
+    autor: (sessao && sessao.nome) || 'Sistema',
+    dataPublicacao: new Date().toISOString()
+  };
+
+  // Upload + registro em Documentos quando aplicável.
+  if (imagemSelecionada) {
+    aviso.imagemNome = imagemSelecionada.nome;
+    var resDrive = null;
+    if (driveOnline) {
+      try {
+        resDrive = await uploadArquivo(imagemSelecionada.file, imagemSelecionada.nome, imagemSelecionada.file.type, 'Avisos');
+        aviso.imagemUrl = (resDrive && (resDrive.url || resDrive.urlDownload)) || '';
+      } catch (err) {
+        console.warn('[Avisos] Upload no Drive falhou — usando dataURL local:', err);
+      }
+    }
+    if (!aviso.imagemUrl) {
+      aviso.imagemDataUrl = imagemSelecionada.dataUrl;
+    }
+
+    // Se download permitido, materializa o anexo em Documentos (pasta Avisos).
+    if (permitirDownload) {
+      aviso.permitirDownload = true;
+      var docId = (resDrive && resDrive.id) || ('local-' + Date.now());
+      aviso.documentoId = docId;
+      registrarEmDocumentos({
+        id: docId,
+        nome: imagemSelecionada.nome,
+        tipo: getExtensao(imagemSelecionada.nome) === 'pdf' ? 'pdf' : 'img',
+        mimeType: imagemSelecionada.file.type || '',
+        tamanho: imagemSelecionada.file.size,
+        url: aviso.imagemUrl || '',
+        urlDownload: (resDrive && resDrive.urlDownload) || aviso.imagemUrl || aviso.imagemDataUrl || '',
+        data: aviso.dataPublicacao
+      });
+    }
+  }
+
+  var lista = carregarAvisos();
+  lista.unshift(aviso); // mais recente primeiro
+  if (!salvarAvisos(lista)) {
+    btn.disabled = false;
+    mostrarStatus('error', '❌ Falha ao salvar localmente.');
+    return;
+  }
+
+  btn.disabled = false;
+  mostrarStatus('success', '✅ Aviso publicado!');
+  limparFormulario();
+  renderAvisos();
 }
 
 function excluirAviso(id) {
   if (!confirm('Tem certeza que deseja excluir este aviso?')) return;
+  // Localiza para remover o anexo associado em Documentos (se houver).
   var todos = carregarAvisos();
   var alvo = todos.find(function(a) { return a.id === id; });
-  // Remove também o anexo registrado em Documentos.
   if (alvo && alvo.documentoId) {
     var chave = 'rompex_documentos_Avisos';
     try {
@@ -831,59 +945,35 @@ function renderAvisos() {
     return;
   }
   var html = '<div class="avisos-grid">';
-  lista.forEach(function(a, i) {
+  lista.forEach(function(a) {
     var img = a.imagemUrl || a.imagemDataUrl;
-    html += '<div class="aviso-card" onclick="abrirModalAviso(' + i + ')">' +
+    var linkDownload = '';
+    if (a.permitirDownload && a.documentoId) {
+      // Levamos para a aba Documentos na subpasta correta; o usuário baixa lá.
+      linkDownload = '<a class="btn-download" href="documentos.html?pasta=Avisos" title="Abrir em Documentos para baixar">' +
+        '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+          '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>' +
+          '<polyline points="7 10 12 15 17 10"/>' +
+          '<line x1="12" y1="15" x2="12" y2="3"/>' +
+        '</svg>' +
+        'Baixar em Documentos</a>';
+    }
+    html += '<div class="aviso-card">' +
       (img
         ? '<img class="aviso-img" src="' + escapeHtml(img) + '" alt="">'
         : '<div class="aviso-no-img">📢</div>') +
       '<div class="aviso-body">' +
         '<div class="aviso-title">' + escapeHtml(a.titulo) + '</div>' +
         '<div class="aviso-msg">' + escapeHtml(a.mensagem) + '</div>' +
+        (linkDownload ? '<div style="margin-top:6px">' + linkDownload + '</div>' : '') +
         '<div class="aviso-meta">' +
           '<span>' + escapeHtml(fmtData(a.dataPublicacao)) + ' · ' + escapeHtml(a.autor || '') + '</span>' +
-          (podeLancar
-            ? '<span class="del" onclick="event.stopPropagation();excluirAviso(\'' + a.id + '\')">excluir</span>'
-            : '<span class="open-hint">clique para abrir</span>') +
+          (podeLancar ? '<span class="del" onclick="excluirAviso(\'' + a.id + '\')">excluir</span>' : '') +
         '</div>' +
       '</div>' +
     '</div>';
   });
   wrap.innerHTML = html + '</div>';
-}
-
-/* ---------- Modal de expansão ---------- */
-function abrirModalAviso(idx) {
-  var lista = carregarAvisos();
-  var a = lista[idx];
-  if (!a) return;
-  var img = a.imagemUrl || a.imagemDataUrl;
-  var imgEl = document.getElementById('modal-aviso-img');
-  if (img) { imgEl.src = img; imgEl.style.display = 'block'; }
-  else { imgEl.removeAttribute('src'); imgEl.style.display = 'none'; }
-  document.getElementById('modal-aviso-titulo').textContent = a.titulo;
-  document.getElementById('modal-aviso-meta').textContent = fmtData(a.dataPublicacao) + ' · ' + (a.autor || '');
-  document.getElementById('modal-aviso-msg').textContent = a.mensagem;
-  // Botão de baixar — só quando download está liberado.
-  var downloadEl = document.getElementById('modal-aviso-download');
-  if (a.permitirDownload && a.documentoId) {
-    downloadEl.innerHTML = '<a class="btn-download" href="documentos.html?pasta=Avisos">' +
-      '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
-        '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>' +
-        '<polyline points="7 10 12 15 17 10"/>' +
-        '<line x1="12" y1="15" x2="12" y2="3"/>' +
-      '</svg>' +
-      'Baixar em Documentos</a>';
-  } else {
-    downloadEl.innerHTML = '';
-  }
-  document.getElementById('modal-aviso-overlay').classList.add('open');
-}
-
-function fecharModalAviso(ev) {
-  // Fecha só se clicou no overlay externo (não no conteúdo) ou no botão Fechar.
-  if (ev && ev.target.id !== 'modal-aviso-overlay' && ev.target.tagName !== 'BUTTON') return;
-  document.getElementById('modal-aviso-overlay').classList.remove('open');
 }
 
 function toggleSubmenu(id, event) {
