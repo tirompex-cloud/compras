@@ -1,0 +1,601 @@
+/* =============================================================================
+   ROMPEX • Sistema de Certificados — style.css (Fase 3)
+   Substitui o style.css legado por uma camada de compatibilidade que reusa os
+   tokens do rompex-design.css (mesmo visual da Intranet).
+   - Mantém as classes que os templates antigos usam (.card, .btn, .alert,
+     .form-group, .panel, .stat-card, .tab-button, .theme-toggle, etc.)
+   - Reaplica fontes, cores, espaçamento e sombras conforme o design system.
+   - Não exige tocar nos templates internos (consultar/renovacoes/index/etc).
+   ============================================================================= */
+
+@import url('rompex-design.css');
+
+/* ============ ALIASES DE VARIÁVEIS LEGADAS ============
+   O código antigo usava var(--bg), var(--ink), var(--panel) etc.
+   Mapeamos para os novos tokens. */
+:root {
+    --bg:           var(--bg-primary);
+    --bg-soft:      var(--bg-secondary);
+    --panel:        var(--bg-secondary);
+    --surface:      var(--bg-tertiary);
+    --ink:          var(--text-primary);
+    --ink-soft:     var(--text-secondary);
+    --ink-faint:    var(--text-muted);
+    --line:         var(--border);
+    --line-strong: var(--border-light);
+    --rompex:       var(--accent);
+    --rompex-soft:  var(--accent-light);
+    --rompex-dark:  var(--accent-hover);
+    --rompex-darker: var(--accent-hover);
+    --accent-soft:  rgba(245,158,11,0.1);
+    --good:         var(--accent);
+    --good-soft:    var(--accent-light);
+    --warn:         var(--warning);
+    --warn-soft:    rgba(245,158,11,0.1);
+    --err:          var(--danger);
+    --err-soft:     rgba(239,68,68,0.1);
+}
+
+/* ============ CONTAINER GERAL ============ */
+.container,
+.app-container,
+.section {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 32px;
+}
+
+@media (max-width: 768px) {
+    .container, .app-container, .section { padding: 0 16px; }
+}
+
+/* ============ CARD (legado) ============ */
+.card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow);
+}
+
+.panel {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+}
+
+.panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* ============ BOTÕES (legado) ============ */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 22px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--border-light);
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    font-family: inherit;
+    line-height: 1.2;
+}
+.btn:hover {
+    background: var(--bg-card);
+    border-color: var(--accent);
+    color: var(--text-primary);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+    color: #fff !important;
+    border: none;
+    box-shadow: var(--shadow-accent);
+}
+.btn-primary:hover {
+    box-shadow: 0 6px 20px rgba(16,185,129,0.4);
+    transform: translateY(-2px);
+    color: #fff;
+}
+
+.btn-secondary {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-light);
+}
+.btn-secondary:hover {
+    background: var(--bg-card);
+    border-color: var(--accent);
+}
+
+.btn-action {
+    padding: 6px 12px;
+    font-size: 12px;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.btn-lg { padding: 14px 28px; font-size: 15px; }
+.btn-block { display: flex; width: 100%; }
+
+.btn-login {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: var(--shadow-accent);
+    font-family: inherit;
+}
+.btn-login:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(16,185,129,0.4); }
+
+/* Variações por status (mantém compat) */
+.btn.danger, .btn-danger { background: var(--danger); color: #fff; border: none; }
+.btn.danger:hover, .btn-danger:hover { background: #DC2626; color: #fff; }
+
+.btn.warn, .btn-warn { background: var(--warning); color: #fff; border: none; }
+
+.btn:disabled, .btn[disabled] { opacity: 0.5; cursor: not-allowed; }
+
+/* ============ FORMULÁRIOS ============ */
+.field, .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+.label, .field label, .form-group label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+input[type="text"], input[type="email"], input[type="password"],
+input[type="number"], input[type="date"], input[type="search"],
+input[type="tel"], select, textarea {
+    font-size: 14px;
+    font-family: inherit;
+    padding: 11px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-light);
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    width: 100%;
+    transition: all 0.2s;
+}
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(16,185,129,0.15);
+}
+input::placeholder, textarea::placeholder { color: var(--text-muted); }
+textarea { min-height: 90px; resize: vertical; }
+
+input[type="checkbox"], input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--accent);
+}
+
+.hint {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+.error-msg, .erro {
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.3);
+    color: #FCA5A5;
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+/* ============ ALERTS ============ */
+.alert {
+    padding: 14px 18px;
+    border-radius: var(--radius-sm);
+    border: 1px solid;
+    margin-bottom: 16px;
+    font-size: 13px;
+    line-height: 1.6;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+.alert-info { background: rgba(59,130,246,0.1); border-color: rgba(59,130,246,0.3); color: #93C5FD; }
+.alert-warn { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.3); color: #FCD34D; }
+.alert-err  { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: #FCA5A5; }
+.alert-success, .alert.success { background: var(--accent-light); border-color: var(--accent-border); color: var(--accent); }
+
+/* ============ BADGES ============ */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.badge.valid, .badge.success     { background: rgba(16,185,129,0.2); color: var(--accent); }
+.badge.expired, .badge.warning   { background: rgba(245,158,11,0.2); color: #FCD34D; }
+.badge.invalid, .badge.danger,
+.badge.revogado                  { background: rgba(239,68,68,0.2); color: #FCA5A5; }
+.badge.info                      { background: rgba(59,130,246,0.2); color: #93C5FD; }
+
+.action-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    background: var(--accent-light);
+    color: var(--accent);
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/* ============ STATUS BANNER (validação pública) ============ */
+.status-banner {
+    padding: 24px;
+    border-radius: var(--radius);
+    text-align: center;
+    margin-bottom: 24px;
+    border: 1px solid;
+}
+.status-banner.valid {
+    background: var(--accent-light);
+    border-color: var(--accent-border);
+    color: var(--accent);
+}
+.status-banner.expired {
+    background: rgba(245,158,11,0.1);
+    border-color: rgba(245,158,11,0.3);
+    color: #FCD34D;
+}
+.status-banner.invalid, .status-banner.revogado {
+    background: rgba(239,68,68,0.1);
+    border-color: rgba(239,68,68,0.3);
+    color: #FCA5A5;
+}
+.status-icon { font-size: 48px; margin-bottom: 12px; }
+.status-title { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+.status-subtitle { font-size: 14px; opacity: 0.9; }
+
+/* ============ INFO GRID ============ */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin: 16px 0;
+}
+.info-item {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+}
+.info-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+.info-value, .value {
+    font-size: 14px;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+.mono { font-family: 'Courier New', monospace; font-size: 12px; color: var(--accent); }
+
+/* ============ STATS ============ */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+.stat-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+}
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--accent), #34D399);
+}
+.stat-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(16,185,129,0.2);
+}
+
+/* ============ TABELAS ============ */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+thead { background: var(--bg-secondary); }
+th {
+    padding: 14px 16px;
+    text-align: left;
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-bottom: 1px solid var(--border);
+}
+td {
+    padding: 14px 16px;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border);
+}
+tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: rgba(16,185,129,0.04); }
+
+/* ============ CERTIFICADO ITEM (consultar/renovacoes) ============ */
+.certificado-item {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    margin-bottom: 12px;
+    transition: all 0.2s;
+}
+.certificado-item:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(16,185,129,0.12);
+}
+.certificado-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.certificado-nome {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+.certificado-badge {
+    background: var(--accent);
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.certificado-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+.certificado-info strong {
+    color: var(--text-primary);
+    display: block;
+    font-size: 12px;
+    margin-bottom: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+.certificado-acoes {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+}
+
+/* ============ ACTION LOG (historico) ============ */
+.action-item {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.action-description {
+    color: var(--text-primary);
+    font-size: 13px;
+    flex: 1;
+}
+.action-time {
+    color: var(--text-muted);
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+/* ============ LOGIN (não usado pelo login_multi, mas mantemos compat) ============ */
+.login-container, .login-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
+    padding: 20px;
+}
+.login-box, .login-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: 20px;
+    box-shadow: var(--shadow-lg);
+    padding: 40px 32px;
+    max-width: 440px;
+    width: 100%;
+}
+
+/* ============ TAB BUTTONS (legado do base.html antigo) ============ */
+.tab-button {
+    padding: 10px 16px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-light);
+    border-bottom: none;
+    color: var(--text-secondary);
+    font-weight: 500;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: 8px 8px 0 0;
+    text-decoration: none;
+}
+.tab-button:hover { background: var(--bg-card); color: var(--text-primary); border-color: var(--accent); }
+.tab-button.active {
+    background: var(--bg-secondary);
+    color: var(--accent);
+    border-color: var(--border);
+}
+
+/* ============ THEME TOGGLE (legado e novo unificado) ============ */
+.theme-toggle {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    z-index: 9999;
+    background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+    color: #fff;
+    box-shadow: var(--shadow-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    transition: transform 0.25s, box-shadow 0.25s;
+}
+.theme-toggle:hover { transform: scale(1.1) rotate(15deg); box-shadow: 0 6px 24px rgba(16,185,129,0.6); }
+
+/* No base.html novo usamos .rx-theme-toggle, o que já tem estilo. Aqui só pro
+   caso de algum template antigo ainda chamar .sun/.moon. */
+.sun, .moon { display: inline-block; }
+html[data-theme="light"] .sun { display: none; }
+html[data-theme="dark"]  .moon { display: none; }
+
+/* ============ PÚBLICA (validar.html sem login) ============ */
+.public-page {
+    min-height: 100vh;
+    background: var(--bg-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.public-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 560px;
+    width: 100%;
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+}
+.public-brand {
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+.public-brand img { height: 48px; object-fit: contain; }
+.public-footer {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+/* ============ LOGO ANTIGA NO HEADER (caso ainda apareça) ============ */
+.logo, .logo-header { display: inline-flex; align-items: center; gap: 10px; }
+.logo img, .logo-header img { height: 32px; }
+
+/* ============ FOOTER / VERSION INFO ============ */
+.footer, .version-info {
+    text-align: center;
+    padding: 20px;
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+/* ============ HEADER TABS LEGADO (esconde quando estamos no base.html novo) ============
+   O novo base.html não usa .app-header-tabs. Se algum template tentar renderizar,
+   esta regra esconde para evitar duplicação visual. */
+.rx-layout .app-header-tabs { display: none !important; }
+.rx-layout #mainContent { margin-top: 0 !important; }
+
+/* ============ AJUSTES MENORES ============ */
+.subtitle { color: var(--text-secondary); font-size: 14px; margin-top: 4px; }
+.tipo-selecionado {
+    border-color: var(--accent) !important;
+    background: var(--accent-light) !important;
+    color: var(--accent) !important;
+}
