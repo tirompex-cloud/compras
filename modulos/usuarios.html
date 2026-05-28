@@ -65,8 +65,8 @@ body{
   justify-content:center;
 }
 .logo-icon{
-  width:120px;
-  height:120px;
+  width:180px;
+  height:180px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -550,6 +550,12 @@ tr:hover td{
           </svg>
           <span>Avisos</span>
         </div>
+        <a href="atualizacoes.html" class="nav-item">
+          <svg viewBox="0 0 24 24">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+          <span>Atualizações</span>
+        </a>
       </div>
 
       <div class="nav-section">
@@ -638,12 +644,6 @@ tr:hover td{
             </svg>
             <span>Usuários</span>
           </a>
-          <a href="atualizacoes.html" class="nav-item">
-            <svg viewBox="0 0 24 24">
-              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-            </svg>
-            <span>Atualizações</span>
-          </a>
         </div>
       </div>
     </nav>
@@ -727,7 +727,7 @@ tr:hover td{
     
     <div class="field">
       <label>Nome Completo</label>
-      <input type="text" id="user-name" placeholder="Ex: João Silva">
+      <input type="text" id="user-nome" placeholder="Ex: João Silva">
     </div>
     
     <div class="field">
@@ -874,7 +874,7 @@ function novoUsuario() {
   editandoId = null;
   document.getElementById('modal-title').textContent = 'Novo Usuário';
   document.getElementById('user-username').value = '';
-  document.getElementById('user-name').value = '';
+  document.getElementById('user-nome').value = '';
   document.getElementById('user-password').value = '';
   document.getElementById('user-perfil').value = 'compras';
   document.querySelectorAll('#modulos-group input[type="checkbox"]').forEach(cb => cb.checked = false);
@@ -888,7 +888,7 @@ function editarUsuario(id) {
   editandoId = id;
   document.getElementById('modal-title').textContent = 'Editar Usuário';
   document.getElementById('user-username').value = user.username;
-  document.getElementById('user-name').value = user.nome;
+  document.getElementById('user-nome').value = user.nome;
   document.getElementById('user-password').value = user.senha;
   document.getElementById('user-perfil').value = user.perfil;
   
@@ -901,7 +901,7 @@ function editarUsuario(id) {
 
 function salvarUsuario() {
   const username = document.getElementById('user-username').value.trim();
-  const nome = document.getElementById('user-name').value.trim();
+  const nome = document.getElementById('user-nome').value.trim();
   const senha = document.getElementById('user-password').value;
   const perfil = document.getElementById('user-perfil').value;
   

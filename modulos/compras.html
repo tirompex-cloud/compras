@@ -69,8 +69,8 @@ body{
   gap:14px;
 }
 .logo-icon{
-  width:120px;
-  height:120px;
+  width:180px;
+  height:180px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -820,12 +820,6 @@ tr:hover td{
             </svg>
             <span>Usuários</span>
           </a>
-          <a href="atualizacoes.html" class="nav-item">
-            <svg viewBox="0 0 24 24">
-              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-            </svg>
-            <span>Atualizações</span>
-          </a>
         </div>
       </div>
     </nav>
@@ -849,13 +843,13 @@ tr:hover td{
   <div class="main-content">
     <header class="topbar">
       <nav class="nav-tabs">
-        <button class="nav-tab active" onclick="switchTab('online')">💰 Online</button>
-        <button class="nav-tab" onclick="switchTab('obras')">🏗️ Obras</button>
-        <button class="nav-tab" onclick="switchTab('geral')">📦 Geral</button>
-        <button class="nav-tab" onclick="switchTab('passagens')">✈️ Passagens</button>
-        <button class="nav-tab" onclick="switchTab('hospedagens')">🏨 Hospedagens</button>
-        <button class="nav-tab" onclick="switchTab('seguro')">🛡️ Seguros</button>
-        <button class="nav-tab" onclick="switchTab('relatorio')">📊 Relatórios</button>
+        <button class="nav-tab active" onclick="switchTab('online', this)">💰 Online</button>
+        <button class="nav-tab" onclick="switchTab('obras', this)">🏗️ Obras</button>
+        <button class="nav-tab" onclick="switchTab('geral', this)">📦 Geral</button>
+        <button class="nav-tab" onclick="switchTab('passagens', this)">✈️ Passagens</button>
+        <button class="nav-tab" onclick="switchTab('hospedagens', this)">🏨 Hospedagens</button>
+        <button class="nav-tab" onclick="switchTab('seguro', this)">🛡️ Seguros</button>
+        <button class="nav-tab" onclick="switchTab('relatorio', this)">📊 Relatórios</button>
       </nav>
       
       <div class="topbar-actions">
@@ -1145,11 +1139,12 @@ function loadDB() {
 }
 function saveDB() { localStorage.setItem('compras_v4', JSON.stringify(db)); }
 
-function switchTab(tab) {
+function switchTab(tab, btn) {
   document.querySelectorAll('.nav-tab').forEach(function(b) { b.classList.remove('active'); });
-  event.target.classList.add('active');
+  if (btn) btn.classList.add('active');
   document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
-  document.getElementById('panel-' + tab).classList.add('active');
+  var painel = document.getElementById('panel-' + tab);
+  if (painel) painel.classList.add('active');
 }
 
 function toggleParcelas(cat) {
