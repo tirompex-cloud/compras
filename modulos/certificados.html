@@ -595,23 +595,26 @@ html[data-theme="light"] .nav-icon-img{filter:none}
         <div class="access-desc">
           O sistema completo abre em nova aba, mantendo sua sessão da intranet ativa.
         </div>
-        <a id="btn-abrir" class="btn-acessar disabled" href="#" onclick="abrirSistema(event)" target="_blank" rel="noopener">
+        <a id="btn-abrir" class="btn-acessar" href="#" onclick="abrirSistema(event)" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24">
             <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
             <polyline points="15 3 21 3 21 9"/>
             <line x1="10" y1="14" x2="21" y2="3"/>
           </svg>
-          <span id="btn-label">Configurar URL do sistema</span>
+          <span id="btn-label">Abrir Sistema de Certificados</span>
         </a>
+        <div style="margin-top:14px;font-size:12px;color:var(--text-muted)">
+          <a href="#" onclick="configurarURL(event)" style="color:var(--accent);text-decoration:none">⚙️ Alterar URL do sistema</a>
+          <span id="url-config-info" style="margin-left:10px"></span>
+        </div>
       </div>
 
-      <div class="alert warning" id="alerta-config">
-        <strong>⚙️ Hospedagem pendente:</strong> a URL pública do sistema de certificados
-        ainda não foi configurada. Quando estiver pronto, um administrador pode definir
-        a URL no console do navegador com:
-        <code style="display:block;margin-top:8px;padding:8px;background:rgba(0,0,0,0.3);border-radius:6px;font-family:'Courier New',monospace;font-size:12px;color:#FCD34D">
-          localStorage.setItem('rompex_certificados_url', 'https://sua-url.com.br'); location.reload();
-        </code>
+      <div class="alert warning" id="alerta-config" style="display:none">
+        <strong>⚙️ Configuração pendente:</strong> a URL do Sistema de Certificados ainda
+        não foi salva neste navegador. Clique no botão acima — ele vai pedir a URL.
+        <br><br>
+        Se você já hospedou no Render, a URL é algo como
+        <code style="padding:2px 6px;background:rgba(0,0,0,0.3);border-radius:4px;font-family:'Courier New',monospace;font-size:12px;color:#FCD34D">https://certificados-rompex.onrender.com</code>
       </div>
 
       <div class="card">
@@ -655,17 +658,39 @@ iniciarMonitoramentoSessao();
    URL do sistema de Certificados
    - Fica em localStorage para o admin trocar sem editar código quando hospedar.
    - Chave: rompex_certificados_url (ex.: 'https://certificados-rompex.onrender.com')
-   - Quando estiver vazia, mostra aviso de configuração pendente.
    ============================================================================ */
 function getCertificadosURL() {
   return (localStorage.getItem('rompex_certificados_url') || '').trim();
+}
+
+function configurarURL(ev) {
+  if (ev) ev.preventDefault();
+  const atual = getCertificadosURL();
+  const novo = prompt(
+    'Cole a URL do Sistema de Certificados (a URL pública do Render).\n' +
+    'Exemplo: https://certificados-rompex.onrender.com\n\n' +
+    '(Sem barra no final)',
+    atual
+  );
+  if (novo === null) return; // cancelou
+  let url = (novo || '').trim();
+  // Tira barra final pra evitar dupla barra ao montar /api/sso/login.
+  if (url.endsWith('/')) url = url.slice(0, -1);
+  if (url && !/^https?:\/\//i.test(url)) {
+    alert('⚠️ A URL precisa começar com https:// ou http://');
+    return;
+  }
+  localStorage.setItem('rompex_certificados_url', url);
+  alert('✅ URL salva!\n\n' + (url || '(em branco — botão vai pedir novamente)'));
+  location.reload();
 }
 
 async function abrirSistema(ev) {
   ev.preventDefault();
   const url = getCertificadosURL();
   if (!url) {
-    alert('⚠️ A URL do sistema ainda não foi configurada. Veja as instruções abaixo do botão.');
+    // Sem URL salva — pede agora em vez de exigir mexer no console.
+    configurarURL();
     return;
   }
   if (!sessao) {
@@ -729,11 +754,19 @@ async function abrirSistema(ev) {
   const btn = document.getElementById('btn-abrir');
   const lbl = document.getElementById('btn-label');
   const alerta = document.getElementById('alerta-config');
+  const info = document.getElementById('url-config-info');
   if (url) {
     btn.classList.remove('disabled');
     btn.href = url;
     lbl.textContent = 'Abrir Sistema de Certificados';
     alerta.style.display = 'none';
+    if (info) info.textContent = 'Atual: ' + url;
+  } else {
+    // Sem URL — botão fica ativo e ao clicar abre o diálogo de configuração.
+    btn.classList.remove('disabled');
+    lbl.textContent = 'Configurar URL do Sistema';
+    alerta.style.display = 'flex';
+    if (info) info.textContent = 'Nenhuma URL configurada';
   }
 })();
 
