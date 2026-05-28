@@ -130,7 +130,15 @@ function aplicarPermissoesMenu() {
     if (href.includes('usuarios.html') && !temPermissao('usuarios')) {
       item.style.display = 'none';
     }
-    if (href.includes('avisos.html') && !temPermissao('avisos')) {
+    // O link de Avisos no menu Principal é público (qualquer usuário visualiza);
+    // a versão de criação ("Lançar Avisos") fica em Configurações e é controlada
+    // pelo texto abaixo, não pelo href.
+  });
+
+  // "Lançar Avisos" (criação) — esconder se não tem permissão.
+  document.querySelectorAll('.nav-submenu .nav-item').forEach(item => {
+    const text = item.textContent.trim();
+    if (text === 'Lançar Avisos' && !temPermissao('avisos')) {
       item.style.display = 'none';
     }
   });

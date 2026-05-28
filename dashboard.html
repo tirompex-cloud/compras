@@ -629,14 +629,14 @@ html[data-theme="light"] .nav-icon-img{filter:none}
           </svg>
           <span>Início</span>
         </a>
-        <div class="nav-item">
+        <a href="modulos/avisos.html" class="nav-item">
           <svg viewBox="0 0 24 24">
             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
             <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
           </svg>
           <span>Avisos</span>
-          <span class="nav-badge">3</span>
-        </div>
+          <span class="nav-badge" id="avisos-badge" style="display:none">0</span>
+        </a>
         <a href="modulos/atualizacoes.html" class="nav-item">
           <svg viewBox="0 0 24 24">
             <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
@@ -706,17 +706,15 @@ html[data-theme="light"] .nav-icon-img{filter:none}
           
           <div class="nav-item">
             <svg viewBox="0 0 24 24">
-              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-              <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-              <line x1="12" y1="22.08" x2="12" y2="12"/>
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <polyline points="9 15 11 17 15 13"/>
             </svg>
             <span>Fiscal</span>
           </div>
           <div class="nav-item">
             <svg viewBox="0 0 24 24">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-              <circle cx="9" cy="7" r="4"/>
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+              <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
             </svg>
             <span>Técnicos</span>
           </div>
@@ -967,40 +965,40 @@ function toggleSubmenu(id, event) {
 
 /* ============================================================================
    Mensagem motivacional do dia
-   - 30 mensagens; escolhemos uma com base no dia do ano para variar diariamente
-     sem precisar de back-end nem de seed aleatório por sessão.
+   - Frases de filósofos e pensadores com foco empresarial/liderança/disciplina.
+   - Selecionada pelo dia do ano para variar diariamente sem aleatoriedade.
    ============================================================================ */
 const MENSAGENS_MOTIVACAO = [
-  'Grandes conquistas começam com pequenos passos diários.',
-  'Acredite no processo. Cada esforço conta.',
-  'Disciplina é fazer o que precisa ser feito, mesmo sem vontade.',
-  'O sucesso é a soma de pequenos esforços repetidos.',
-  'Foque no progresso, não na perfeição.',
-  'Hoje é uma nova oportunidade de ser melhor que ontem.',
-  'A jornada é tão importante quanto o destino.',
-  'Persistência transforma o ordinário em extraordinário.',
-  'Cada desafio é uma chance de crescer.',
-  'Faça hoje o que outros não farão para ter amanhã o que outros não terão.',
-  'A diferença entre o possível e o impossível está na sua determinação.',
-  'Plante hoje a semente do seu sucesso futuro.',
-  'Quem não tenta, não falha — mas também não conquista.',
-  'O único limite real é aquele que você impõe a si mesmo.',
-  'A excelência não é um ato, é um hábito.',
-  'Trabalho em equipe faz o sonho funcionar.',
-  'Comprometimento é o que transforma promessas em realidade.',
-  'Aprenda, evolua e supere-se todos os dias.',
-  'Pequenos detalhes fazem grandes diferenças.',
-  'A atitude define a altitude.',
-  'Não espere por oportunidades, crie-as.',
-  'Foco, força e fé no que você faz.',
-  'O sucesso favorece quem está preparado.',
-  'Cada dia é uma página em branco da sua história.',
-  'Acredite no impossível e veja-o se tornar realidade.',
-  'A motivação te tira da cama; o hábito te mantém em movimento.',
-  'Comemore cada vitória, por menor que seja.',
-  'A consistência vence o talento quando o talento não é consistente.',
-  'Você é mais forte do que pensa.',
-  'O melhor momento para começar é agora.'
+  { frase: 'A qualidade não é um ato, é um hábito.', autor: 'Aristóteles' },
+  { frase: 'A melhor maneira de prever o futuro é criá-lo.', autor: 'Peter Drucker' },
+  { frase: 'Nenhum vento sopra a favor de quem não sabe para onde ir.', autor: 'Sêneca' },
+  { frase: 'A inovação distingue um líder de um seguidor.', autor: 'Steve Jobs' },
+  { frase: 'Quem move montanhas começa carregando pequenas pedras.', autor: 'Confúcio' },
+  { frase: 'O segredo do sucesso é a constância de propósito.', autor: 'Benjamin Disraeli' },
+  { frase: 'O que pode ser medido pode ser melhorado.', autor: 'Peter Drucker' },
+  { frase: 'Não é o mais forte que sobrevive, mas o que melhor se adapta às mudanças.', autor: 'Charles Darwin' },
+  { frase: 'Risco vem de não saber o que se está fazendo.', autor: 'Warren Buffett' },
+  { frase: 'Comece fazendo o necessário, depois o possível, e de repente estará fazendo o impossível.', autor: 'São Francisco de Assis' },
+  { frase: 'Estratégia sem tática é o caminho mais lento para a vitória; tática sem estratégia é o ruído antes da derrota.', autor: 'Sun Tzu' },
+  { frase: 'Não basta saber, é preciso também aplicar; não basta querer, é preciso também agir.', autor: 'Goethe' },
+  { frase: 'Disciplina é a ponte entre objetivos e conquistas.', autor: 'Jim Rohn' },
+  { frase: 'Aquilo que você é fala tão alto que não consigo ouvir o que você diz.', autor: 'Ralph Waldo Emerson' },
+  { frase: 'Não tenha medo de desistir do bom para perseguir o ótimo.', autor: 'John D. Rockefeller' },
+  { frase: 'Faça o melhor que puder, com o que tiver, onde estiver.', autor: 'Theodore Roosevelt' },
+  { frase: 'O preço do sucesso é a dedicação, o trabalho árduo e uma incessante busca pela excelência.', autor: 'Vince Lombardi' },
+  { frase: 'O sucesso geralmente vem para aqueles que estão muito ocupados para procurá-lo.', autor: 'Henry David Thoreau' },
+  { frase: 'Conhece-te a ti mesmo.', autor: 'Sócrates' },
+  { frase: 'Cuide dos seus minutos e as horas cuidarão de si próprias.', autor: 'Lord Chesterfield' },
+  { frase: 'Tudo o que somos é resultado do que pensamos.', autor: 'Buda' },
+  { frase: 'Aquele que vence sem obstáculos triunfa sem glória.', autor: 'Pierre Corneille' },
+  { frase: 'Se você não está disposto a arriscar o usual, terá que se contentar com o ordinário.', autor: 'Jim Rohn' },
+  { frase: 'A vida é 10% o que acontece com você e 90% como você reage a isso.', autor: 'Charles R. Swindoll' },
+  { frase: 'A melhor preparação para amanhã é fazer hoje o seu melhor.', autor: 'H. Jackson Brown Jr.' },
+  { frase: 'O sucesso é ir de fracasso em fracasso sem perder entusiasmo.', autor: 'Winston Churchill' },
+  { frase: 'A imaginação é mais importante que o conhecimento.', autor: 'Albert Einstein' },
+  { frase: 'A maior glória em viver não está em nunca cair, mas em levantar-se sempre que caímos.', autor: 'Nelson Mandela' },
+  { frase: 'Não receie a perfeição: você nunca a alcançará.', autor: 'Salvador Dalí' },
+  { frase: 'Sua qualidade de vida será determinada pela qualidade do seu compromisso com a excelência.', autor: 'Vince Lombardi' }
 ];
 
 function diaDoAno() {
@@ -1012,7 +1010,10 @@ function diaDoAno() {
 
 function carregarMotivacao() {
   const idx = diaDoAno() % MENSAGENS_MOTIVACAO.length;
-  document.getElementById('motivacao-texto').textContent = '"' + MENSAGENS_MOTIVACAO[idx] + '"';
+  const item = MENSAGENS_MOTIVACAO[idx];
+  document.getElementById('motivacao-texto').innerHTML =
+    '"' + item.frase + '"' +
+    '<div style="font-size:13px;color:var(--text-muted);font-weight:600;margin-top:8px;font-style:italic">— ' + item.autor + '</div>';
 }
 
 /* ============================================================================

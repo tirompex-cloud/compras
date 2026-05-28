@@ -417,6 +417,24 @@ html[data-theme="light"] .nav-icon-img{filter:none}
   font-weight:600;
 }
 .aviso-meta .del:hover{text-decoration:underline}
+.btn-download{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 12px;
+  border-radius:var(--radius-sm);
+  background:rgba(16,185,129,0.12);
+  border:1px solid rgba(16,185,129,0.4);
+  color:var(--accent);
+  font-size:12px;
+  font-weight:600;
+  text-decoration:none;
+  transition:all 0.2s;
+}
+.btn-download:hover{
+  background:rgba(16,185,129,0.2);
+  transform:translateY(-1px);
+}
 .empty{
   text-align:center;
   padding:3rem;
@@ -466,13 +484,13 @@ html[data-theme="light"] .nav-icon-img{filter:none}
           </svg>
           <span>Início</span>
         </a>
-        <div class="nav-item">
+        <a href="avisos.html" class="nav-item active">
           <svg viewBox="0 0 24 24">
             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
             <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
           </svg>
           <span>Avisos</span>
-        </div>
+        </a>
         <a href="atualizacoes.html" class="nav-item">
           <svg viewBox="0 0 24 24">
             <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
@@ -540,17 +558,15 @@ html[data-theme="light"] .nav-icon-img{filter:none}
 
           <div class="nav-item">
             <svg viewBox="0 0 24 24">
-              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-              <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-              <line x1="12" y1="22.08" x2="12" y2="12"/>
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <polyline points="9 15 11 17 15 13"/>
             </svg>
             <span>Fiscal</span>
           </div>
           <div class="nav-item">
             <svg viewBox="0 0 24 24">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-              <circle cx="9" cy="7" r="4"/>
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+              <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
             </svg>
             <span>Técnicos</span>
           </div>
@@ -566,7 +582,7 @@ html[data-theme="light"] .nav-icon-img{filter:none}
           </svg>
           <span>Documentos</span>
         </a>
-        <div class="nav-item expanded" onclick="toggleSubmenu('configuracoes', event)">
+        <div class="nav-item" onclick="toggleSubmenu('configuracoes', event)">
           <svg viewBox="0 0 24 24">
             <circle cx="12" cy="12" r="3"/>
             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
@@ -576,7 +592,7 @@ html[data-theme="light"] .nav-icon-img{filter:none}
             <polyline points="9 18 15 12 9 6"/>
           </svg>
         </div>
-        <div class="nav-submenu open" id="submenu-configuracoes">
+        <div class="nav-submenu" id="submenu-configuracoes">
           <a href="usuarios.html" class="nav-item">
             <svg viewBox="0 0 24 24">
               <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
@@ -586,7 +602,7 @@ html[data-theme="light"] .nav-icon-img{filter:none}
             </svg>
             <span>Usuários</span>
           </a>
-          <a href="avisos.html" class="nav-item active">
+          <a href="avisos.html" class="nav-item">
             <svg viewBox="0 0 24 24">
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
               <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
@@ -627,7 +643,7 @@ html[data-theme="light"] .nav-icon-img{filter:none}
         <span id="drive-status-text">Verificando integração com o Drive...</span>
       </div>
 
-      <div class="card">
+      <div class="card" id="card-novo-aviso">
         <div class="card-title">📝 Novo Aviso</div>
 
         <div class="field">
@@ -641,7 +657,7 @@ html[data-theme="light"] .nav-icon-img{filter:none}
         </div>
 
         <div class="field">
-          <label>Imagem (opcional · .png, .jpg, .jpeg · máx. 5MB)</label>
+          <label>Anexo (opcional · .png, .jpg, .jpeg · máx. 5MB)</label>
           <div class="upload-zone" id="upload-zone" onclick="document.getElementById('img-input').click()">
             <input type="file" id="img-input" accept=".png,.jpg,.jpeg,image/png,image/jpeg" style="display:none" onchange="selecionarImagem(this.files)">
             <div id="upload-empty">
@@ -657,6 +673,13 @@ html[data-theme="light"] .nav-icon-img{filter:none}
               </div>
             </div>
           </div>
+        </div>
+
+        <div class="field" id="campo-permitir-download" style="display:none">
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;text-transform:none;letter-spacing:0">
+            <input type="checkbox" id="aviso-permitir-download" style="width:18px;height:18px;cursor:pointer">
+            <span>Permitir que outros usuários baixem este anexo (cópia fica disponível em Documentos → Avisos)</span>
+          </label>
         </div>
 
         <div id="status-publicacao" class="status-box"></div>
@@ -678,15 +701,20 @@ html[data-theme="light"] .nav-icon-img{filter:none}
 <script src="../auth.js"></script>
 <script>
 const sessao = verificarAutenticacao();
+var podeLancar = false;
 if (sessao) {
   document.getElementById('user-name').textContent = sessao.nome;
   document.getElementById('user-role').textContent = sessao.perfil;
   document.getElementById('user-avatar').textContent = sessao.nome.substring(0, 2).toUpperCase();
 
-  // Quem não tem permissão de 'avisos' não pode estar aqui — redireciona pro dashboard.
-  if (!temPermissao('avisos')) {
-    alert('⚠️ Você não tem permissão para lançar avisos.');
-    window.location.href = '../dashboard.html';
+  // Quem não tem permissão de 'avisos' vê apenas os avisos publicados (read-only).
+  podeLancar = temPermissao('avisos');
+  if (!podeLancar) {
+    document.getElementById('card-novo-aviso').style.display = 'none';
+    var subtitle = document.querySelector('.page-subtitle');
+    if (subtitle) subtitle.textContent = 'Comunicados publicados';
+    var pageTitle = document.querySelector('.page-title');
+    if (pageTitle) pageTitle.textContent = '📢 Avisos';
   }
 }
 iniciarMonitoramentoSessao();
@@ -760,6 +788,8 @@ function selecionarImagem(files) {
     document.getElementById('upload-empty').style.display = 'none';
     document.getElementById('upload-preview').style.display = 'block';
     document.getElementById('upload-zone').classList.add('has-preview');
+    // Só faz sentido oferecer download quando há anexo.
+    document.getElementById('campo-permitir-download').style.display = 'block';
   };
   reader.readAsDataURL(file);
 }
@@ -770,13 +800,31 @@ function removerImagem() {
   document.getElementById('upload-empty').style.display = 'block';
   document.getElementById('upload-preview').style.display = 'none';
   document.getElementById('upload-zone').classList.remove('has-preview');
+  document.getElementById('campo-permitir-download').style.display = 'none';
+  document.getElementById('aviso-permitir-download').checked = false;
 }
 
 function limparFormulario() {
   document.getElementById('aviso-titulo').value = '';
   document.getElementById('aviso-mensagem').value = '';
+  document.getElementById('aviso-permitir-download').checked = false;
   removerImagem();
   esconderStatus();
+}
+
+/* Registra o anexo na lista de Documentos (subpasta 'Avisos') para que apareça
+   em modulos/documentos.html?pasta=Avisos. Garante que o ID seja o mesmo
+   referenciado pelo aviso, para que o link do aviso aponte corretamente. */
+function registrarEmDocumentos(docRef) {
+  var chave = 'rompex_documentos_Avisos';
+  var lista;
+  try { lista = JSON.parse(localStorage.getItem(chave) || '[]'); }
+  catch(e) { lista = []; }
+  // Evita duplicar se republicar o mesmo aviso.
+  if (lista.some(function(d) { return String(d.id) === String(docRef.id); })) return;
+  lista.push(docRef);
+  try { localStorage.setItem(chave, JSON.stringify(lista)); }
+  catch(e) { console.warn('[Avisos] Não foi possível registrar em Documentos:', e); }
 }
 
 function mostrarStatus(tipo, msg) {
@@ -801,32 +849,52 @@ async function publicarAviso() {
   btn.disabled = true;
   mostrarStatus('loading', '⏳ Publicando...');
 
+  var permitirDownload = document.getElementById('aviso-permitir-download').checked;
+
   var aviso = {
     id: 'aviso-' + Date.now(),
     titulo: titulo,
     mensagem: mensagem,
-    imagemUrl: '',       // URL pública (Drive)
-    imagemDataUrl: '',   // dataURL local (fallback)
+    imagemUrl: '',         // URL pública (Drive) — usada como preview no card
+    imagemDataUrl: '',     // dataURL local (fallback de preview, sem URL pública)
     imagemNome: '',
+    documentoId: '',       // id na lista rompex_documentos_Avisos (se permitir download)
+    permitirDownload: false,
     autor: (sessao && sessao.nome) || 'Sistema',
     dataPublicacao: new Date().toISOString()
   };
 
-  // Tenta upload no Drive primeiro; se falhar/offline, guarda dataURL.
+  // Upload + registro em Documentos quando aplicável.
   if (imagemSelecionada) {
     aviso.imagemNome = imagemSelecionada.nome;
-    var enviouProDrive = false;
+    var resDrive = null;
     if (driveOnline) {
       try {
-        var res = await uploadArquivo(imagemSelecionada.file, imagemSelecionada.nome, imagemSelecionada.file.type, 'Avisos');
-        aviso.imagemUrl = res.url || res.urlDownload || '';
-        enviouProDrive = !!aviso.imagemUrl;
+        resDrive = await uploadArquivo(imagemSelecionada.file, imagemSelecionada.nome, imagemSelecionada.file.type, 'Avisos');
+        aviso.imagemUrl = (resDrive && (resDrive.url || resDrive.urlDownload)) || '';
       } catch (err) {
         console.warn('[Avisos] Upload no Drive falhou — usando dataURL local:', err);
       }
     }
-    if (!enviouProDrive) {
+    if (!aviso.imagemUrl) {
       aviso.imagemDataUrl = imagemSelecionada.dataUrl;
+    }
+
+    // Se download permitido, materializa o anexo em Documentos (pasta Avisos).
+    if (permitirDownload) {
+      aviso.permitirDownload = true;
+      var docId = (resDrive && resDrive.id) || ('local-' + Date.now());
+      aviso.documentoId = docId;
+      registrarEmDocumentos({
+        id: docId,
+        nome: imagemSelecionada.nome,
+        tipo: getExtensao(imagemSelecionada.nome) === 'pdf' ? 'pdf' : 'img',
+        mimeType: imagemSelecionada.file.type || '',
+        tamanho: imagemSelecionada.file.size,
+        url: aviso.imagemUrl || '',
+        urlDownload: (resDrive && resDrive.urlDownload) || aviso.imagemUrl || aviso.imagemDataUrl || '',
+        data: aviso.dataPublicacao
+      });
     }
   }
 
@@ -846,7 +914,18 @@ async function publicarAviso() {
 
 function excluirAviso(id) {
   if (!confirm('Tem certeza que deseja excluir este aviso?')) return;
-  var lista = carregarAvisos().filter(function(a) { return a.id !== id; });
+  // Localiza para remover o anexo associado em Documentos (se houver).
+  var todos = carregarAvisos();
+  var alvo = todos.find(function(a) { return a.id === id; });
+  if (alvo && alvo.documentoId) {
+    var chave = 'rompex_documentos_Avisos';
+    try {
+      var docs = JSON.parse(localStorage.getItem(chave) || '[]');
+      docs = docs.filter(function(d) { return String(d.id) !== String(alvo.documentoId); });
+      localStorage.setItem(chave, JSON.stringify(docs));
+    } catch(e) { /* ignore */ }
+  }
+  var lista = todos.filter(function(a) { return a.id !== id; });
   salvarAvisos(lista);
   renderAvisos();
 }
@@ -873,6 +952,17 @@ function renderAvisos() {
   var html = '<div class="avisos-grid">';
   lista.forEach(function(a) {
     var img = a.imagemUrl || a.imagemDataUrl;
+    var linkDownload = '';
+    if (a.permitirDownload && a.documentoId) {
+      // Levamos para a aba Documentos na subpasta correta; o usuário baixa lá.
+      linkDownload = '<a class="btn-download" href="documentos.html?pasta=Avisos" title="Abrir em Documentos para baixar">' +
+        '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+          '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>' +
+          '<polyline points="7 10 12 15 17 10"/>' +
+          '<line x1="12" y1="15" x2="12" y2="3"/>' +
+        '</svg>' +
+        'Baixar em Documentos</a>';
+    }
     html += '<div class="aviso-card">' +
       (img
         ? '<img class="aviso-img" src="' + escapeHtml(img) + '" alt="">'
@@ -880,9 +970,10 @@ function renderAvisos() {
       '<div class="aviso-body">' +
         '<div class="aviso-title">' + escapeHtml(a.titulo) + '</div>' +
         '<div class="aviso-msg">' + escapeHtml(a.mensagem) + '</div>' +
+        (linkDownload ? '<div style="margin-top:6px">' + linkDownload + '</div>' : '') +
         '<div class="aviso-meta">' +
           '<span>' + escapeHtml(fmtData(a.dataPublicacao)) + ' · ' + escapeHtml(a.autor || '') + '</span>' +
-          '<span class="del" onclick="excluirAviso(\'' + a.id + '\')">excluir</span>' +
+          (podeLancar ? '<span class="del" onclick="excluirAviso(\'' + a.id + '\')">excluir</span>' : '') +
         '</div>' +
       '</div>' +
     '</div>';
