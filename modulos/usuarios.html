@@ -58,7 +58,7 @@ body{
   flex-direction:column;
 }
 .sidebar-logo{
-  padding:24px;
+  padding:8px 24px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -570,6 +570,13 @@ tr:hover td{
           </svg>
           <span>Avisos</span>
         </a>
+        <a href="documentos.html" class="nav-item">
+          <svg viewBox="0 0 24 24">
+            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
+            <polyline points="13 2 13 9 20 9"/>
+          </svg>
+          <span>Documentos</span>
+        </a>
         <a href="atualizacoes.html" class="nav-item">
           <svg viewBox="0 0 24 24">
             <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
@@ -658,13 +665,6 @@ tr:hover td{
 
       <div class="nav-section">
         <div class="nav-section-title">Sistema</div>
-        <a href="documentos.html" class="nav-item">
-          <svg viewBox="0 0 24 24">
-            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
-            <polyline points="13 2 13 9 20 9"/>
-          </svg>
-          <span>Documentos</span>
-        </a>
         <div class="nav-item expanded" onclick="toggleSubmenu('configuracoes', event)">
           <svg viewBox="0 0 24 24">
             <circle cx="12" cy="12" r="3"/>
@@ -846,6 +846,34 @@ tr:hover td{
     <div class="modal-actions">
       <button class="btn" onclick="closeModal()">Cancelar</button>
       <button class="btn primary" onclick="salvarUsuario()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SINCRONIZAR CERTIFICADOS -->
+<div class="overlay" id="modal-sync" onclick="maybeCloseSync(event)">
+  <div class="modal" style="max-width:600px">
+    <h2>☁️ Sincronizar com Sistema de Certificados</h2>
+    <p style="color:var(--text-secondary);margin:12px 0 6px;font-size:14px">
+      Selecione quais usuários da intranet poderão usar o Sistema de Certificados.
+      Os marcados terão login/senha replicados lá.
+    </p>
+    <p style="color:var(--text-muted);font-size:12px;margin-bottom:14px">
+      💡 Quem tem permissão <strong>Técnicos</strong> ou perfil <strong>admin</strong> já vem pré-marcado.
+    </p>
+
+    <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap">
+      <button class="btn" onclick="marcarTodosSync(true)" style="padding:6px 12px;font-size:12px">✓ Marcar todos</button>
+      <button class="btn" onclick="marcarTodosSync(false)" style="padding:6px 12px;font-size:12px">✗ Desmarcar todos</button>
+      <button class="btn" onclick="marcarPorPermissao()" style="padding:6px 12px;font-size:12px">🛠️ Só Técnicos+Admin</button>
+      <span id="sync-count" style="margin-left:auto;align-self:center;font-size:12px;color:var(--text-muted)"></span>
+    </div>
+
+    <div id="lista-sync" style="max-height:340px;overflow-y:auto;border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 14px"></div>
+
+    <div class="modal-actions">
+      <button class="btn" onclick="closeSync()">Cancelar</button>
+      <button class="btn primary" id="btn-confirmar-sync" onclick="confirmarSincronizacao()">Sincronizar selecionados</button>
     </div>
   </div>
 </div>
@@ -1061,7 +1089,15 @@ function configurarSync() {
   alert('✅ Chave salva neste navegador.\n\nAgora você pode clicar em "Sincronizar Certificados".');
 }
 
-async function sincronizarCertificados() {
+/* Helper — decide quem fica pré-marcado na lista de sincronização.
+   Critério: admin OU tem módulo 'rh' (rótulo "Técnicos") na lista de permissões. */
+function _isElegivelTecnicos(u) {
+  if (!u) return false;
+  if (u.perfil === 'admin') return true;
+  return Array.isArray(u.modulos) && u.modulos.includes('rh');
+}
+
+function sincronizarCertificados() {
   const url = getCertificadosURL();
   if (!url) {
     alert('⚠️ A URL do Sistema de Certificados não foi configurada.\n\n' +
@@ -1078,10 +1114,82 @@ async function sincronizarCertificados() {
     alert('⚠️ Não há usuários para sincronizar.');
     return;
   }
-  if (!confirm('Vai enviar ' + usuarios.length + ' usuário(s) para o Sistema de Certificados.\n' +
-               'Usuários novos serão criados; existentes terão senha/nome atualizados.\n\nContinuar?')) {
+
+  // Monta a lista com checkboxes pré-marcados nos elegíveis.
+  const lista = document.getElementById('lista-sync');
+  let html = '';
+  usuarios.forEach(u => {
+    const elegivel = _isElegivelTecnicos(u);
+    const ativo = u.ativo !== false; // default true se não definido
+    const nomeUsuario = (u.nome || u.username || '').replace(/</g, '&lt;');
+    const username = (u.username || '').replace(/</g, '&lt;');
+    const perfil = (u.perfil || '').replace(/</g, '&lt;');
+    const tag = elegivel
+      ? '<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:rgba(16,185,129,0.15);color:var(--accent);margin-left:8px">elegível</span>'
+      : '';
+    html += '<label style="display:flex;align-items:center;gap:12px;padding:10px 0;cursor:pointer;border-bottom:1px solid var(--border)' +
+              (ativo ? '' : ';opacity:0.5') + '">' +
+              '<input type="checkbox" class="sync-user" data-userid="' + u.id + '" ' +
+                (elegivel && ativo ? 'checked' : '') +
+                ' style="width:18px;height:18px;cursor:pointer" onchange="atualizarContadorSync()">' +
+              '<span style="flex:1">' +
+                '<strong>' + nomeUsuario + '</strong>' + tag +
+                '<br><span style="font-size:12px;color:var(--text-muted)">@' + username + ' · perfil ' + perfil +
+                (ativo ? '' : ' · inativo') + '</span>' +
+              '</span>' +
+            '</label>';
+  });
+  lista.innerHTML = html;
+  document.getElementById('modal-sync').classList.add('open');
+  atualizarContadorSync();
+}
+
+function closeSync() {
+  document.getElementById('modal-sync').classList.remove('open');
+}
+
+function maybeCloseSync(e) {
+  if (e.target.id === 'modal-sync') closeSync();
+}
+
+function marcarTodosSync(marcar) {
+  document.querySelectorAll('.sync-user').forEach(cb => { cb.checked = !!marcar; });
+  atualizarContadorSync();
+}
+
+function marcarPorPermissao() {
+  document.querySelectorAll('.sync-user').forEach(cb => {
+    const id = parseInt(cb.dataset.userid, 10);
+    const u = usuarios.find(x => x.id === id);
+    cb.checked = _isElegivelTecnicos(u);
+  });
+  atualizarContadorSync();
+}
+
+function atualizarContadorSync() {
+  const total = document.querySelectorAll('.sync-user').length;
+  const marcados = document.querySelectorAll('.sync-user:checked').length;
+  const el = document.getElementById('sync-count');
+  if (el) el.textContent = marcados + ' de ' + total + ' selecionado(s)';
+}
+
+async function confirmarSincronizacao() {
+  const ids = Array.from(document.querySelectorAll('.sync-user:checked'))
+    .map(cb => parseInt(cb.dataset.userid, 10));
+
+  if (!ids.length) {
+    alert('⚠️ Marque pelo menos um usuário antes de sincronizar.');
     return;
   }
+
+  const url = getCertificadosURL();
+  const syncKey = (localStorage.getItem('rompex_certificados_sync_key') || '').trim();
+  const selecionados = usuarios.filter(u => ids.includes(u.id));
+
+  const btn = document.getElementById('btn-confirmar-sync');
+  btn.disabled = true;
+  const labelOriginal = btn.textContent;
+  btn.textContent = 'Enviando...';
 
   try {
     const resp = await fetch(url + '/api/sso/sync', {
@@ -1091,7 +1199,7 @@ async function sincronizarCertificados() {
         'X-Sync-Key': syncKey
       },
       body: JSON.stringify({
-        usuarios: usuarios.map(u => ({
+        usuarios: selecionados.map(u => ({
           username: u.username,
           nome: u.nome,
           senha: u.senha,
@@ -1105,16 +1213,20 @@ async function sincronizarCertificados() {
       let msg = '✅ Sincronização concluída!\n\n' +
                 '• ' + data.criados + ' criado(s)\n' +
                 '• ' + data.atualizados + ' atualizado(s)\n' +
-                '• Total enviado: ' + data.total;
+                '• Enviados: ' + data.total + ' usuário(s)';
       if (data.erros && data.erros.length) {
         msg += '\n\n⚠️ Erros:\n' + data.erros.join('\n');
       }
       alert(msg);
+      closeSync();
     } else {
       alert('⚠️ Falha na sincronização: ' + (data.erro || ('HTTP ' + resp.status)));
     }
   } catch(err) {
     alert('⚠️ Erro de conexão com o Sistema de Certificados:\n' + (err.message || err));
+  } finally {
+    btn.disabled = false;
+    btn.textContent = labelOriginal;
   }
 }
 
