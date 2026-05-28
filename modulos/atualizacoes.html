@@ -58,10 +58,19 @@ body{
 }
 .sidebar-logo{
   padding:24px;
-  border-bottom:1px solid var(--border);
   display:flex;
   align-items:center;
   justify-content:center;
+  position:relative;
+}
+.sidebar-logo::after{
+  content:'';
+  position:absolute;
+  bottom:0;
+  left:25%;
+  width:50%;
+  height:1px;
+  background:var(--border);
 }
 .logo-icon{
   width:180px;
@@ -69,6 +78,9 @@ body{
   display:flex;
   align-items:center;
   justify-content:center;
+  text-decoration:none;
+  color:inherit;
+  cursor:pointer;
 }
 .logo-icon img{
   width:100%;
@@ -329,9 +341,9 @@ html[data-theme="light"] .nav-icon-img{filter:none}
 <div class="layout">
   <aside class="sidebar">
     <div class="sidebar-logo">
-      <div class="logo-icon">
+      <a href="../dashboard.html" class="logo-icon" title="Ir para o Início">
         <img src="../logo-rompex-white.png" alt="ROMPEX">
-      </div>
+      </a>
     </div>
 
     <nav class="sidebar-nav">
