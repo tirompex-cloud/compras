@@ -515,6 +515,78 @@ tr:hover td{
 .badge-warning{background:rgba(245,158,11,0.2);color:#FCD34D}
 .badge-danger{background:rgba(239,68,68,0.2);color:#FCA5A5}
 .badge-info{background:rgba(59,130,246,0.2);color:#93C5FD}
+.stat-trend.up{background:rgba(16,185,129,0.15);color:var(--accent)}
+.stat-trend.down{background:rgba(239,68,68,0.15);color:#FCA5A5}
+.nav-icon-img{
+  width:20px;
+  height:20px;
+  object-fit:contain;
+  flex-shrink:0;
+  filter:brightness(0) invert(1);
+}
+html[data-theme="light"] .nav-icon-img{filter:none}
+.avisos-board{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:16px;
+}
+.aviso-board-card{
+  background:var(--bg-tertiary);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  transition:all 0.2s;
+}
+.aviso-board-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.aviso-board-img{
+  width:100%;
+  height:140px;
+  object-fit:cover;
+  background:var(--bg-secondary);
+  border-bottom:1px solid var(--border);
+}
+.aviso-board-noimg{
+  width:100%;
+  height:140px;
+  background:linear-gradient(135deg,rgba(16,185,129,0.1),rgba(59,130,246,0.1));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:40px;
+  border-bottom:1px solid var(--border);
+}
+.aviso-board-body{padding:14px;flex:1;display:flex;flex-direction:column;gap:6px}
+.aviso-board-title{font-size:14px;font-weight:700;color:var(--text-primary)}
+.aviso-board-msg{
+  font-size:12px;
+  color:var(--text-secondary);
+  line-height:1.5;
+  display:-webkit-box;
+  -webkit-line-clamp:4;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+  white-space:pre-wrap;
+}
+.aviso-board-meta{
+  font-size:10px;
+  color:var(--text-muted);
+  text-transform:uppercase;
+  letter-spacing:0.05em;
+  padding-top:8px;
+  border-top:1px solid var(--border);
+  margin-top:auto;
+}
+.avisos-empty{
+  text-align:center;
+  padding:2.5rem;
+  color:var(--text-muted);
+  font-size:14px;
+  background:var(--bg-tertiary);
+  border-radius:var(--radius);
+  border:1px dashed var(--border-light);
+}
 @media(max-width:1024px){
   .sidebar{
     transform:translateX(-100%);
@@ -576,9 +648,7 @@ tr:hover td{
       <div class="nav-section">
         <div class="nav-section-title">Módulos</div>
         <div class="nav-item" onclick="toggleSubmenu('modulos')">
-          <svg viewBox="0 0 24 24">
-            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-          </svg>
+          <img src="icone-modulos.png" alt="" class="nav-icon-img">
           <span>Módulos</span>
           <svg class="nav-expand-icon" viewBox="0 0 24 24">
             <polyline points="9 18 15 12 9 6"/>
@@ -640,7 +710,7 @@ tr:hover td{
               <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
               <line x1="12" y1="22.08" x2="12" y2="12"/>
             </svg>
-            <span>Estoque</span>
+            <span>Fiscal</span>
           </div>
           <div class="nav-item">
             <svg viewBox="0 0 24 24">
@@ -648,7 +718,7 @@ tr:hover td{
               <circle cx="9" cy="7" r="4"/>
               <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
             </svg>
-            <span>RH</span>
+            <span>Técnicos</span>
           </div>
         </div>
       </div>
@@ -681,6 +751,13 @@ tr:hover td{
               <line x1="23" y1="11" x2="17" y2="11"/>
             </svg>
             <span>Usuários</span>
+          </a>
+          <a href="modulos/avisos.html" class="nav-item">
+            <svg viewBox="0 0 24 24">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+            <span>Lançar Avisos</span>
           </a>
         </div>
       </div>
@@ -718,13 +795,6 @@ tr:hover td{
           </svg>
           Buscar
         </button>
-        <a href="modulos/compras.html" class="topbar-btn primary">
-          <svg viewBox="0 0 24 24">
-            <line x1="12" y1="5" x2="12" y2="19"/>
-            <line x1="5" y1="12" x2="19" y2="12"/>
-          </svg>
-          Nova Compra
-        </a>
       </div>
     </header>
 
@@ -734,77 +804,45 @@ tr:hover td{
           <div class="stat-header">
             <div class="stat-icon">
               <svg viewBox="0 0 24 24">
-                <circle cx="9" cy="21" r="1"/>
-                <circle cx="20" cy="21" r="1"/>
-                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="2" y1="12" x2="22" y2="12"/>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
               </svg>
             </div>
-            <div class="stat-trend">
-              <svg viewBox="0 0 24 24">
-                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-              </svg>
-              +12.5%
+            <div class="stat-trend" id="usd-trend">
+              <span>--</span>
             </div>
           </div>
-          <div class="stat-value">R$ 24.8K</div>
-          <div class="stat-label">Total em Compras</div>
+          <div class="stat-value" id="usd-value">R$ --</div>
+          <div class="stat-label">Dólar (USD/BRL)</div>
         </div>
 
         <div class="stat-card">
           <div class="stat-header">
             <div class="stat-icon">
               <svg viewBox="0 0 24 24">
-                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M15 8a4 4 0 1 0 0 8M7 10h6M7 14h6"/>
               </svg>
             </div>
-            <div class="stat-trend">
-              <svg viewBox="0 0 24 24">
-                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-              </svg>
-              +8.2%
+            <div class="stat-trend" id="eur-trend">
+              <span>--</span>
             </div>
           </div>
-          <div class="stat-value">R$ 5.2K</div>
-          <div class="stat-label">Economia Total</div>
+          <div class="stat-value" id="eur-value">R$ --</div>
+          <div class="stat-label">Euro (EUR/BRL)</div>
         </div>
 
-        <div class="stat-card">
+        <div class="stat-card" id="motivacao-card">
           <div class="stat-header">
             <div class="stat-icon">
               <svg viewBox="0 0 24 24">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
               </svg>
-            </div>
-            <div class="stat-trend">
-              <svg viewBox="0 0 24 24">
-                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-              </svg>
-              +15%
             </div>
           </div>
-          <div class="stat-value">142</div>
-          <div class="stat-label">Lançamentos Este Mês</div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-header">
-            <div class="stat-icon">
-              <svg viewBox="0 0 24 24">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                <circle cx="9" cy="7" r="4"/>
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
-              </svg>
-            </div>
-            <div class="stat-trend">
-              <svg viewBox="0 0 24 24">
-                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-              </svg>
-              +2
-            </div>
-          </div>
-          <div class="stat-value">24</div>
-          <div class="stat-label">Usuários Ativos</div>
+          <div class="stat-value" id="motivacao-texto" style="font-size:18px;line-height:1.4">Carregando...</div>
+          <div class="stat-label">Mensagem do dia</div>
         </div>
       </div>
 
@@ -885,48 +923,13 @@ tr:hover td{
         <div class="card-header">
           <div class="card-title">
             <svg viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="10"/>
-              <polyline points="12 6 12 12 16 14"/>
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
             </svg>
-            Atividades Recentes
+            Avisos
           </div>
         </div>
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Tipo</th>
-                <th>Descrição</th>
-                <th>Usuário</th>
-                <th>Data</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><span class="badge badge-success">Compra</span></td>
-                <td>Notebook Dell Inspiron 15</td>
-                <td>João Silva</td>
-                <td>Hoje, 14:30</td>
-                <td><span class="badge badge-success">Aprovado</span></td>
-              </tr>
-              <tr>
-                <td><span class="badge badge-info">Documento</span></td>
-                <td>Contrato Fornecedor XYZ</td>
-                <td>Maria Santos</td>
-                <td>Hoje, 12:15</td>
-                <td><span class="badge badge-warning">Pendente</span></td>
-              </tr>
-              <tr>
-                <td><span class="badge badge-success">Compra</span></td>
-                <td>Material de Escritório</td>
-                <td>Carlos Oliveira</td>
-                <td>Ontem, 16:45</td>
-                <td><span class="badge badge-success">Concluído</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <div id="avisos-kanban"></div>
       </div>
     </main>
   </div>
@@ -961,6 +964,155 @@ function toggleSubmenu(id, event) {
     }
   }
 }
+
+/* ============================================================================
+   Mensagem motivacional do dia
+   - 30 mensagens; escolhemos uma com base no dia do ano para variar diariamente
+     sem precisar de back-end nem de seed aleatório por sessão.
+   ============================================================================ */
+const MENSAGENS_MOTIVACAO = [
+  'Grandes conquistas começam com pequenos passos diários.',
+  'Acredite no processo. Cada esforço conta.',
+  'Disciplina é fazer o que precisa ser feito, mesmo sem vontade.',
+  'O sucesso é a soma de pequenos esforços repetidos.',
+  'Foque no progresso, não na perfeição.',
+  'Hoje é uma nova oportunidade de ser melhor que ontem.',
+  'A jornada é tão importante quanto o destino.',
+  'Persistência transforma o ordinário em extraordinário.',
+  'Cada desafio é uma chance de crescer.',
+  'Faça hoje o que outros não farão para ter amanhã o que outros não terão.',
+  'A diferença entre o possível e o impossível está na sua determinação.',
+  'Plante hoje a semente do seu sucesso futuro.',
+  'Quem não tenta, não falha — mas também não conquista.',
+  'O único limite real é aquele que você impõe a si mesmo.',
+  'A excelência não é um ato, é um hábito.',
+  'Trabalho em equipe faz o sonho funcionar.',
+  'Comprometimento é o que transforma promessas em realidade.',
+  'Aprenda, evolua e supere-se todos os dias.',
+  'Pequenos detalhes fazem grandes diferenças.',
+  'A atitude define a altitude.',
+  'Não espere por oportunidades, crie-as.',
+  'Foco, força e fé no que você faz.',
+  'O sucesso favorece quem está preparado.',
+  'Cada dia é uma página em branco da sua história.',
+  'Acredite no impossível e veja-o se tornar realidade.',
+  'A motivação te tira da cama; o hábito te mantém em movimento.',
+  'Comemore cada vitória, por menor que seja.',
+  'A consistência vence o talento quando o talento não é consistente.',
+  'Você é mais forte do que pensa.',
+  'O melhor momento para começar é agora.'
+];
+
+function diaDoAno() {
+  const hoje = new Date();
+  const inicio = new Date(hoje.getFullYear(), 0, 0);
+  const diff = hoje - inicio;
+  return Math.floor(diff / (1000 * 60 * 60 * 24));
+}
+
+function carregarMotivacao() {
+  const idx = diaDoAno() % MENSAGENS_MOTIVACAO.length;
+  document.getElementById('motivacao-texto').textContent = '"' + MENSAGENS_MOTIVACAO[idx] + '"';
+}
+
+/* ============================================================================
+   Cotações USD/BRL e EUR/BRL via awesomeapi (sem auth, suporta CORS).
+   Cacheia por 10 minutos no localStorage para não bater no endpoint a cada
+   abertura da página.
+   ============================================================================ */
+const COTACAO_URL = 'https://economia.awesomeapi.com.br/json/last/USD-BRL,EUR-BRL';
+const COTACAO_CACHE_KEY = 'rompex_cotacoes_cache';
+const COTACAO_CACHE_MS = 10 * 60 * 1000;
+
+function renderCotacao(prefix, dados) {
+  if (!dados) return;
+  const bid = parseFloat(dados.bid);
+  const pct = parseFloat(dados.pctChange);
+  const valEl = document.getElementById(prefix + '-value');
+  const trendEl = document.getElementById(prefix + '-trend');
+  if (!isNaN(bid)) {
+    valEl.textContent = 'R$ ' + bid.toFixed(4).replace('.', ',');
+  }
+  if (!isNaN(pct)) {
+    trendEl.classList.remove('up', 'down');
+    trendEl.classList.add(pct >= 0 ? 'up' : 'down');
+    trendEl.innerHTML = '<span>' + (pct >= 0 ? '▲ ' : '▼ ') + pct.toFixed(2).replace('.', ',') + '%</span>';
+  }
+}
+
+async function carregarCotacoes() {
+  // 1) Tentar cache válido
+  try {
+    const cache = JSON.parse(localStorage.getItem(COTACAO_CACHE_KEY) || 'null');
+    if (cache && (Date.now() - cache.ts) < COTACAO_CACHE_MS) {
+      renderCotacao('usd', cache.dados.USDBRL);
+      renderCotacao('eur', cache.dados.EURBRL);
+      return;
+    }
+  } catch(e) { /* ignora cache corrompido */ }
+
+  // 2) Buscar online
+  try {
+    const resp = await fetch(COTACAO_URL);
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const dados = await resp.json();
+    renderCotacao('usd', dados.USDBRL);
+    renderCotacao('eur', dados.EURBRL);
+    localStorage.setItem(COTACAO_CACHE_KEY, JSON.stringify({ ts: Date.now(), dados: dados }));
+  } catch(err) {
+    console.warn('[Cotacoes] Falha ao buscar:', err);
+    document.getElementById('usd-value').textContent = 'indisponível';
+    document.getElementById('eur-value').textContent = 'indisponível';
+  }
+}
+
+/* ============================================================================
+   Avisos publicados — vêm de localStorage 'rompex_avisos' (alimentado pelo
+   módulo modulos/avisos.html).
+   ============================================================================ */
+function escapeHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function fmtDataAviso(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  return isNaN(d) ? '' : d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+}
+
+function carregarAvisos() {
+  let lista = [];
+  try { lista = JSON.parse(localStorage.getItem('rompex_avisos') || '[]'); }
+  catch(e) { lista = []; }
+
+  const wrap = document.getElementById('avisos-kanban');
+  if (!lista.length) {
+    wrap.innerHTML = '<div class="avisos-empty">📭 Nenhum aviso publicado.<br><small>Publique avisos em Configurações → Lançar Avisos.</small></div>';
+    return;
+  }
+
+  let html = '<div class="avisos-board">';
+  lista.forEach(function(a) {
+    const img = a.imagemUrl || a.imagemDataUrl;
+    html += '<div class="aviso-board-card">' +
+      (img
+        ? '<img class="aviso-board-img" src="' + escapeHtml(img) + '" alt="">'
+        : '<div class="aviso-board-noimg">📢</div>') +
+      '<div class="aviso-board-body">' +
+        '<div class="aviso-board-title">' + escapeHtml(a.titulo) + '</div>' +
+        '<div class="aviso-board-msg">' + escapeHtml(a.mensagem) + '</div>' +
+        '<div class="aviso-board-meta">' + escapeHtml(fmtDataAviso(a.dataPublicacao)) + ' · ' + escapeHtml(a.autor || '') + '</div>' +
+      '</div>' +
+    '</div>';
+  });
+  wrap.innerHTML = html + '</div>';
+}
+
+carregarMotivacao();
+carregarCotacoes();
+carregarAvisos();
 
 // 🔥 PROTEÇÃO ANTI-CACHE: Adiciona timestamp em todos os links
 document.addEventListener('DOMContentLoaded', function() {

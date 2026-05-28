@@ -18,8 +18,10 @@ const ROMPEX_DRIVE_API_URL = 'https://script.google.com/macros/s/AKfycbw4myH1zNP
 /* Limite de tamanho aceito pela API (mesmo limite informado ao usuário). */
 const ROMPEX_DRIVE_MAX_BYTES = 50 * 1024 * 1024; // 50 MB
 
-/* Subpastas permitidas — devem bater com o que o Apps Script reconhece. */
-const ROMPEX_DRIVE_SUBPASTAS = ['Documentos', 'Compras', 'RH', 'Financeiro'];
+/* Subpastas permitidas — devem bater com o que o Apps Script reconhece.
+   'Avisos' pode ainda não existir no Apps Script publicado; se o upload falhar,
+   o módulo de avisos cai automaticamente para localStorage (sem URL pública). */
+const ROMPEX_DRIVE_SUBPASTAS = ['Documentos', 'Compras', 'RH', 'Financeiro', 'Avisos'];
 
 /* =============================================================================
    Helpers internos

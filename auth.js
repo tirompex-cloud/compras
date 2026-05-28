@@ -130,15 +130,20 @@ function aplicarPermissoesMenu() {
     if (href.includes('usuarios.html') && !temPermissao('usuarios')) {
       item.style.display = 'none';
     }
-  });
-  
-  // Esconder itens sem href mas com texto específico
-  document.querySelectorAll('.nav-item').forEach(item => {
-    const text = item.textContent.trim();
-    if (text === 'Estoque' && !temPermissao('estoque')) {
+    if (href.includes('avisos.html') && !temPermissao('avisos')) {
       item.style.display = 'none';
     }
-    if (text === 'RH' && !temPermissao('rh')) {
+  });
+  
+  // Esconder itens sem href mas com texto específico.
+  // Mantemos as chaves internas antigas ('estoque'/'rh') para compatibilidade
+  // com sessões/usuários já salvos no localStorage — só os rótulos mudaram.
+  document.querySelectorAll('.nav-item').forEach(item => {
+    const text = item.textContent.trim();
+    if (text === 'Fiscal' && !temPermissao('estoque')) {
+      item.style.display = 'none';
+    }
+    if (text === 'Técnicos' && !temPermissao('rh')) {
       item.style.display = 'none';
     }
     if (text === 'Configurações' && !temPermissao('config')) {
