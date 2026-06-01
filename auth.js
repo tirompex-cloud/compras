@@ -55,6 +55,30 @@ function fazerLogin(username, senha) {
 
 // Função de logout
 function fazerLogout() {
+  // Dispara logout no Sistema de Certificados também (single sign-out).
+  // Best-effort: se o browser bloquear cookies third-party, a sessão lá expira
+  // naturalmente ou no próximo logout manual.
+  try {
+    const certUrl = (localStorage.getItem('rompex_certificados_url') || '').trim();
+    if (certUrl) {
+      // fetch com keepalive sobrevive ao navigate. Se CORS falhar, ignora silenciosamente.
+      fetch(certUrl.replace(/\/$/, '') + '/api/sso/logout', {
+        method: 'POST',
+        credentials: 'include',
+        keepalive: true
+      }).catch(() => {});
+      // Backup via iframe oculto — garante que a requisição é first-party
+      // pro cert origin, mesmo com cookies third-party bloqueados no fetch.
+      try {
+        const f = document.createElement('iframe');
+        f.style.display = 'none';
+        f.src = certUrl.replace(/\/$/, '') + '/logout';
+        document.body.appendChild(f);
+        setTimeout(() => { try { f.remove(); } catch(e){} }, 1500);
+      } catch(e) {}
+    }
+  } catch(e) {}
+
   localStorage.removeItem('sessao_rompex');
   window.location.href = window.location.href.includes('/modulos/') ? '../index.html' : 'index.html';
 }
