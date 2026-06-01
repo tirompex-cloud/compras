@@ -740,27 +740,34 @@ async function abrirSistema(ev) {
   try {
     const resp = await fetch(url + '/api/sso/login', {
       method: 'POST',
-      credentials: 'include', // envia e recebe cookies do Sistema de Certificados
+      credentials: 'include',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({username: sessao.usuario, senha: senha})
+      body: JSON.stringify({
+        username: sessao.usuario,
+        senha: senha,
+        nome: sessao.nome || sessao.usuario
+      })
     });
     const data = await resp.json().catch(() => ({}));
 
-    if (resp.ok && data.ok) {
-      // Login automático OK — abre o painel já autenticado.
+    if (resp.ok && data.ok && data.sso_token) {
+      // Abre via /sso/enter — cria o cookie em first-party (não bloqueado).
+      // O cert system cria o usuário automaticamente se ainda não existe.
+      window.open(url + '/sso/enter?token=' + encodeURIComponent(data.sso_token),
+                  '_blank', 'noopener');
+    } else if (resp.ok && data.ok) {
+      // Resposta antiga (sem token) — fallback abre direto.
       window.open(url, '_blank', 'noopener');
     } else {
-      // Usuário ainda não cadastrado no Sistema de Certificados.
-      const motivo = data.erro || 'usuário não cadastrado no Sistema de Certificados';
-      alert('⚠️ Não foi possível fazer login automático:\n' + motivo +
-            '\n\nVai abrir a tela de login do Sistema para você digitar manualmente.' +
-            '\n\nPeça para um administrador clicar em "Sincronizar Certificados" no painel de Usuários.');
+      const motivo = data.erro || 'erro desconhecido';
+      alert('⚠️ Login automático falhou:\n' + motivo +
+            '\n\nAbrindo a tela de login do sistema. Use o mesmo usuário e senha da Intranet.');
       window.open(url + '/login', '_blank', 'noopener');
     }
   } catch(err) {
     alert('⚠️ Erro de conexão com o Sistema de Certificados:\n' + (err.message || err) +
-          '\n\nVai abrir a tela do sistema para você logar manualmente.');
-    window.open(url, '_blank', 'noopener');
+          '\n\nAbrindo a tela de login para você entrar manualmente.');
+    window.open(url + '/login', '_blank', 'noopener');
   } finally {
     lbl.textContent = textoOriginal;
     btn.classList.remove('disabled');
