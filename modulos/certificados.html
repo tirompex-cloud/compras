@@ -32,7 +32,7 @@
   --radius:14px;
   --radius-sm:10px;
   --shadow:0 4px 24px rgba(0,0,0,0.4);
-  --sidebar-width:280px;
+  --sidebar-width:220px;
 }
 body{
   font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
@@ -78,8 +78,8 @@ body{
   background:var(--border);
 }
 .logo-icon{
-  width:180px;
-  height:180px;
+  width:120px;
+  height:120px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -380,6 +380,13 @@ html[data-theme="light"] .nav-icon-img{filter:none}
           </svg>
           <span>Documentos</span>
         </a>
+        <a href="lancar-avisos.html" class="nav-item">
+          <svg viewBox="0 0 24 24">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          <span>Lançar Avisos</span>
+        </a>
         <a href="atualizacoes.html" class="nav-item">
           <svg viewBox="0 0 24 24">
             <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
@@ -500,6 +507,13 @@ html[data-theme="light"] .nav-icon-img{filter:none}
           </svg>
         </div>
         <div class="nav-submenu" id="submenu-configuracoes">
+          <a href="meu-perfil.html" class="nav-item">
+            <svg viewBox="0 0 24 24">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            <span>Meu Perfil</span>
+          </a>
           <a href="usuarios.html" class="nav-item">
             <svg viewBox="0 0 24 24">
               <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
@@ -509,24 +523,17 @@ html[data-theme="light"] .nav-icon-img{filter:none}
             </svg>
             <span>Usuários</span>
           </a>
-          <a href="lancar-avisos.html" class="nav-item">
-            <svg viewBox="0 0 24 24">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-            </svg>
-            <span>Lançar Avisos</span>
-          </a>
         </div>
       </div>
     </nav>
 
-    <div class="sidebar-user">
+    <a href="meu-perfil.html" class="sidebar-user" title="Meu Perfil">
       <div class="user-avatar" id="user-avatar">AD</div>
       <div class="user-info">
         <div class="user-name" id="user-name">Admin</div>
         <div class="user-role" id="user-role">Administrador</div>
       </div>
-      <div class="user-menu" onclick="fazerLogout()">
+      <div class="user-menu" onclick="event.preventDefault(); event.stopPropagation(); fazerLogout()" title="Sair">
         <svg viewBox="0 0 24 24">
           <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
           <polyline points="16 17 21 12 16 7"/>
@@ -603,18 +610,6 @@ html[data-theme="light"] .nav-icon-img{filter:none}
           </svg>
           <span id="btn-label">Abrir Sistema de Certificados</span>
         </a>
-        <div style="margin-top:14px;font-size:12px;color:var(--text-muted)">
-          <a href="#" onclick="configurarURL(event)" style="color:var(--accent);text-decoration:none">⚙️ Alterar URL do sistema</a>
-          <span id="url-config-info" style="margin-left:10px"></span>
-        </div>
-      </div>
-
-      <div class="alert warning" id="alerta-config" style="display:none">
-        <strong>⚙️ Configuração pendente:</strong> a URL do Sistema de Certificados ainda
-        não foi salva neste navegador. Clique no botão acima — ele vai pedir a URL.
-        <br><br>
-        Se você já hospedou no Render, a URL é algo como
-        <code style="padding:2px 6px;background:rgba(0,0,0,0.3);border-radius:4px;font-family:'Courier New',monospace;font-size:12px;color:#FCD34D">https://certificados-rompex.onrender.com</code>
       </div>
 
       <div class="card">
@@ -672,45 +667,15 @@ if (sessao) {
 }
 iniciarMonitoramentoSessao();
 
-/* ============================================================================
-   URL do sistema de Certificados
-   - Fica em localStorage para o admin trocar sem editar código quando hospedar.
-   - Chave: rompex_certificados_url (ex.: 'https://certificados-rompex.onrender.com')
-   ============================================================================ */
-function getCertificadosURL() {
-  return (localStorage.getItem('rompex_certificados_url') || '').trim();
-}
-
-function configurarURL(ev) {
-  if (ev) ev.preventDefault();
-  const atual = getCertificadosURL();
-  const novo = prompt(
-    'Cole a URL do Sistema de Certificados (a URL pública do Render).\n' +
-    'Exemplo: https://certificados-rompex.onrender.com\n\n' +
-    '(Sem barra no final)',
-    atual
-  );
-  if (novo === null) return; // cancelou
-  let url = (novo || '').trim();
-  // Tira barra final pra evitar dupla barra ao montar /api/sso/login.
-  if (url.endsWith('/')) url = url.slice(0, -1);
-  if (url && !/^https?:\/\//i.test(url)) {
-    alert('⚠️ A URL precisa começar com https:// ou http://');
-    return;
-  }
-  localStorage.setItem('rompex_certificados_url', url);
-  alert('✅ URL salva!\n\n' + (url || '(em branco — botão vai pedir novamente)'));
-  location.reload();
-}
+/* URL do sistema de Certificados — fixa.
+   Também é salva no localStorage pra que o auth.js consiga disparar
+   o single sign-out no logout. */
+const CERTIFICADOS_URL = 'https://certificados-rompex.onrender.com';
+localStorage.setItem('rompex_certificados_url', CERTIFICADOS_URL);
 
 async function abrirSistema(ev) {
   ev.preventDefault();
-  const url = getCertificadosURL();
-  if (!url) {
-    // Sem URL salva — pede agora em vez de exigir mexer no console.
-    configurarURL();
-    return;
-  }
+  const url = CERTIFICADOS_URL;
   if (!sessao) {
     alert('⚠️ Sessão expirada. Faça login novamente.');
     return;
@@ -775,24 +740,13 @@ async function abrirSistema(ev) {
 }
 
 (function aplicarConfig() {
-  const url = getCertificadosURL();
   const btn = document.getElementById('btn-abrir');
   const lbl = document.getElementById('btn-label');
-  const alerta = document.getElementById('alerta-config');
-  const info = document.getElementById('url-config-info');
-  if (url) {
+  if (btn) {
     btn.classList.remove('disabled');
-    btn.href = url;
-    lbl.textContent = 'Abrir Sistema de Certificados';
-    alerta.style.display = 'none';
-    if (info) info.textContent = 'Atual: ' + url;
-  } else {
-    // Sem URL — botão fica ativo e ao clicar abre o diálogo de configuração.
-    btn.classList.remove('disabled');
-    lbl.textContent = 'Configurar URL do Sistema';
-    alerta.style.display = 'flex';
-    if (info) info.textContent = 'Nenhuma URL configurada';
+    btn.href = CERTIFICADOS_URL;
   }
+  if (lbl) lbl.textContent = 'Abrir Sistema de Certificados';
 })();
 
 function toggleSubmenu(id, event) {
