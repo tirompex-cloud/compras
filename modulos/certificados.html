@@ -683,6 +683,28 @@ iniciarMonitoramentoSessao();
 const CERTIFICADOS_URL = 'https://certificados-rompex.onrender.com';
 localStorage.setItem('rompex_certificados_url', CERTIFICADOS_URL);
 
+// Pinga /health até o Render acordar (Free Tier dorme depois de 15min).
+// Cold start leva até ~60s. Mostra o progresso pro usuário não achar que travou.
+async function acordarServidor(url, atualizarTexto) {
+  const inicio = Date.now();
+  const limite = inicio + 90000; // 90s max
+  let tentativa = 0;
+  while (Date.now() < limite) {
+    tentativa++;
+    try {
+      const ctrl = new AbortController();
+      const tm = setTimeout(() => ctrl.abort(), 5000);
+      const r = await fetch(url + '/health', { signal: ctrl.signal, cache: 'no-store' });
+      clearTimeout(tm);
+      if (r.ok) return true;
+    } catch(e) {}
+    const seg = Math.round((Date.now() - inicio) / 1000);
+    if (atualizarTexto) atualizarTexto('Acordando o servidor... ' + seg + 's');
+    await new Promise(r => setTimeout(r, 2000));
+  }
+  return false;
+}
+
 async function abrirSistema(ev) {
   ev.preventDefault();
   const url = CERTIFICADOS_URL;
@@ -692,7 +714,6 @@ async function abrirSistema(ev) {
   }
 
   // Pega a senha do usuário atual no localStorage para fazer o auto-login.
-  // (Mesma fonte que a Intranet usa para autenticar localmente.)
   let senha = '';
   try {
     const todos = JSON.parse(localStorage.getItem('rompex_usuarios') || '[]');
@@ -700,19 +721,28 @@ async function abrirSistema(ev) {
     if (me) senha = me.senha;
   } catch(e) {}
 
-  // Sem senha disponível → não dá pra auto-logar; cai pro login manual.
-  if (!senha) {
-    window.open(url + '/login', '_blank', 'noopener');
-    return;
-  }
-
   const btn = document.getElementById('btn-abrir');
   const lbl = document.getElementById('btn-label');
   const textoOriginal = lbl.textContent;
-  lbl.textContent = 'Conectando...';
   btn.classList.add('disabled');
 
   try {
+    // Etapa 1: acorda o Render se estiver dormindo (não abre aba ainda).
+    lbl.textContent = 'Acordando o servidor...';
+    const acordou = await acordarServidor(url, (t) => { lbl.textContent = t; });
+    if (!acordou) {
+      alert('⚠️ O servidor não respondeu em 90s. Tente de novo em alguns segundos — pode estar acordando ainda.');
+      return;
+    }
+
+    // Etapa 2: se não tem senha, abre login manual
+    if (!senha) {
+      window.open(url + '/login', '_blank', 'noopener');
+      return;
+    }
+
+    // Etapa 3: SSO POST → token first-party
+    lbl.textContent = 'Conectando...';
     const resp = await fetch(url + '/api/sso/login', {
       method: 'POST',
       credentials: 'include',
@@ -726,23 +756,18 @@ async function abrirSistema(ev) {
     const data = await resp.json().catch(() => ({}));
 
     if (resp.ok && data.ok && data.sso_token) {
-      // Abre via /sso/enter — cria o cookie em first-party (não bloqueado).
-      // O cert system cria o usuário automaticamente se ainda não existe.
       window.open(url + '/sso/enter?token=' + encodeURIComponent(data.sso_token),
                   '_blank', 'noopener');
     } else if (resp.ok && data.ok) {
-      // Resposta antiga (sem token) — fallback abre direto.
       window.open(url, '_blank', 'noopener');
     } else {
       const motivo = data.erro || 'erro desconhecido';
       alert('⚠️ Login automático falhou:\n' + motivo +
-            '\n\nAbrindo a tela de login do sistema. Use o mesmo usuário e senha da Intranet.');
+            '\n\nAbrindo a tela de login. Use os mesmos dados da Intranet.');
       window.open(url + '/login', '_blank', 'noopener');
     }
   } catch(err) {
-    alert('⚠️ Erro de conexão com o Sistema de Certificados:\n' + (err.message || err) +
-          '\n\nAbrindo a tela de login para você entrar manualmente.');
-    window.open(url + '/login', '_blank', 'noopener');
+    alert('⚠️ Erro: ' + (err.message || err));
   } finally {
     lbl.textContent = textoOriginal;
     btn.classList.remove('disabled');
