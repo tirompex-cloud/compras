@@ -190,7 +190,12 @@ html[data-theme="light"] .nav-icon-img{filter:none}
   display:flex;
   align-items:center;
   gap:12px;
+  text-decoration:none;
+  color:inherit;
+  cursor:pointer;
+  transition:background 0.2s;
 }
+.sidebar-user:hover{background:var(--bg-tertiary)}
 .user-avatar{
   width:42px;
   height:42px;
@@ -709,7 +714,7 @@ tr:hover td{
           <line x1="21" y1="12" x2="9" y2="12"/>
         </svg>
       </div>
-    </div>
+    </a>
   </aside>
 
   <div class="main-content">
