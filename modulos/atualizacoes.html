@@ -8,6 +8,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:var(--bg-primary)}
+::-webkit-scrollbar-thumb{background:var(--border-light);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+html{scrollbar-width:thin;scrollbar-color:var(--border-light) var(--bg-primary)}
 :root{
   --bg-primary:#0A0E1A;
   --bg-secondary:#0F172A;
@@ -384,12 +389,6 @@ html[data-theme="light"] .nav-icon-img{filter:none}
           </svg>
           <span>Lançar Avisos</span>
         </a>
-        <a href="atualizacoes.html" class="nav-item active">
-          <svg viewBox="0 0 24 24">
-            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-          </svg>
-          <span>Atualizações</span>
-        </a>
       </div>
 
       <div class="nav-section">
@@ -522,6 +521,12 @@ html[data-theme="light"] .nav-icon-img{filter:none}
             </svg>
             <span>Usuários</span>
           </a>
+          <a href="atualizacoes.html" class="nav-item active">
+            <svg viewBox="0 0 24 24">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+            <span>Atualizações</span>
+          </a>
         </div>
       </div>
     </nav>
@@ -552,7 +557,112 @@ html[data-theme="light"] .nav-icon-img{filter:none}
 
     <main class="content">
       <div class="timeline">
-        
+
+        <div class="version">
+          <div class="version-header">
+            <div class="version-title">🚀 Versão 4.2.0</div>
+            <div class="version-date">02 de Junho de 2026</div>
+          </div>
+
+          <div class="changes-group">
+            <div class="group-title">🆕 NOVIDADES</div>
+            <div class="change-item">
+              <strong>Página "Meu Perfil":</strong> nova área pessoal — troca de senha + lista visual de todas as suas permissões com explicação de cada uma. Acessível pelo nome no canto inferior esquerdo ou via Configurações → Meu Perfil.
+            </div>
+            <div class="change-item">
+              <strong>Aba lateral mais compacta:</strong> largura da sidebar reduzida (280px → 220px) e logo menor. Abre espaço pra novos módulos no futuro.
+            </div>
+            <div class="change-item">
+              <strong>Lançar Avisos no menu Principal:</strong> saiu de Configurações e ficou abaixo de Documentos, mais fácil de achar.
+            </div>
+            <div class="change-item">
+              <strong>Frase do dia aleatória:</strong> a citação motivacional do dashboard agora muda a cada acesso/recarga.
+            </div>
+          </div>
+
+          <div class="changes-group">
+            <div class="group-title">⚡ MELHORIAS</div>
+            <div class="change-item">
+              <strong>Scrollbar com tema escuro:</strong> a barra de rolagem branca padrão do navegador foi substituída por uma versão fina e escura, combinando com o sistema.
+            </div>
+            <div class="change-item">
+              <strong>Página Atualizações em Configurações:</strong> reorganizado pra ficar agrupado com Usuários e Meu Perfil.
+            </div>
+            <div class="change-item">
+              <strong>Dashboard de Buscar removido:</strong> ícone que não tinha função foi tirado do topbar.
+            </div>
+            <div class="change-item">
+              <strong>"Sincronizar Certificados" removido:</strong> não precisa mais — o Sistema de Certificados cria a conta sozinho no primeiro acesso via SSO.
+            </div>
+          </div>
+        </div>
+
+        <div class="version">
+          <div class="version-header">
+            <div class="version-title">🔒 Versão 4.1.0</div>
+            <div class="version-date">30 de Maio de 2026</div>
+          </div>
+
+          <div class="changes-group">
+            <div class="group-title">🆕 NOVIDADES</div>
+            <div class="change-item">
+              <strong>Single Sign-Out:</strong> deslogou na Intranet, desloga automaticamente no Sistema de Certificados também.
+            </div>
+            <div class="change-item">
+              <strong>SSO com auto-criação:</strong> usuário novo da Intranet entra direto no Sistema de Certificados na primeira tentativa, sem precisar de sincronização manual.
+            </div>
+            <div class="change-item">
+              <strong>Senha sincronizada automaticamente:</strong> trocou a senha na Intranet? O Sistema de Certificados puxa a nova sozinho no próximo login.
+            </div>
+          </div>
+
+          <div class="changes-group">
+            <div class="group-title">🛡️ SEGURANÇA</div>
+            <div class="change-item">
+              <strong>Acesso ao Sistema de Certificados travado:</strong> antes a URL era pública. Agora exige autenticação em todas as páginas (exceto validação por QR Code).
+            </div>
+            <div class="change-item">
+              <strong>Sessão expira por inatividade:</strong> 15 min sem uso desloga. Navegador fechado sem logout: 5 min de tolerância. Atividade renova automaticamente.
+            </div>
+            <div class="change-item">
+              <strong>SSO com token assinado:</strong> sobrevive a reinícios e múltiplos workers, sem depender de cookies third-party (que Chrome anda bloqueando).
+            </div>
+          </div>
+        </div>
+
+        <div class="version">
+          <div class="version-header">
+            <div class="version-title">📜 Versão 4.0.0</div>
+            <div class="version-date">28 de Maio de 2026</div>
+          </div>
+
+          <div class="changes-group">
+            <div class="group-title">🆕 NOVIDADES</div>
+            <div class="change-item">
+              <strong>Sistema de Certificados integrado:</strong> emissão de certificados de treinamento numerados, com QR Code e validação pública. Acesse pelo módulo Técnicos → Certificados.
+            </div>
+            <div class="change-item">
+              <strong>Backup automático no Google Drive:</strong> PDFs dos certificados são salvos no Drive da empresa em background — sobrevivem a restart do servidor.
+            </div>
+            <div class="change-item">
+              <strong>Exclusão individual por admin:</strong> certificados podem ser excluídos um a um pela página Consultar (só pra admins).
+            </div>
+            <div class="change-item">
+              <strong>Histórico por usuário:</strong> cada operador vê só as próprias ações; admin vê tudo e pode "limpar" o histórico visível.
+            </div>
+          </div>
+
+          <div class="changes-group">
+            <div class="group-title">🎨 DESIGN</div>
+            <div class="change-item">
+              <strong>Visual unificado:</strong> Sistema de Certificados ganhou o mesmo tema escuro da Intranet (verde Rompex, fontes Inter, mesma estrutura de cards).
+            </div>
+            <div class="change-item">
+              <strong>Logo no QR Code corrigida:</strong> a página de validação pública agora mostra a logo Rompex completa em vez do quadrado bugado.
+            </div>
+          </div>
+        </div>
+
         <div class="version">
           <div class="version-header">
             <div class="version-title">📦 Versão 3.0.0</div>

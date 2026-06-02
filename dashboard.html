@@ -14,6 +14,11 @@
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:var(--bg-primary)}
+::-webkit-scrollbar-thumb{background:var(--border-light);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+html{scrollbar-width:thin;scrollbar-color:var(--border-light) var(--bg-primary)}
 :root{
   --bg-primary:#0A0E1A;
   --bg-secondary:#0F172A;
@@ -755,12 +760,6 @@ html[data-theme="light"] .nav-icon-img{filter:none}
           </svg>
           <span>Lançar Avisos</span>
         </a>
-        <a href="modulos/atualizacoes.html" class="nav-item">
-          <svg viewBox="0 0 24 24">
-            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-          </svg>
-          <span>Atualizações</span>
-        </a>
       </div>
 
       <div class="nav-section">
@@ -892,6 +891,12 @@ html[data-theme="light"] .nav-icon-img{filter:none}
               <line x1="23" y1="11" x2="17" y2="11"/>
             </svg>
             <span>Usuários</span>
+          </a>
+          <a href="modulos/atualizacoes.html" class="nav-item">
+            <svg viewBox="0 0 24 24">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+            <span>Atualizações</span>
           </a>
         </div>
       </div>
@@ -1143,15 +1148,14 @@ const MENSAGENS_MOTIVACAO = [
   { frase: 'Sua qualidade de vida será determinada pela qualidade do seu compromisso com a excelência.', autor: 'Vince Lombardi' }
 ];
 
-function diaDoAno() {
-  const hoje = new Date();
-  const inicio = new Date(hoje.getFullYear(), 0, 0);
-  const diff = hoje - inicio;
-  return Math.floor(diff / (1000 * 60 * 60 * 24));
-}
-
 function carregarMotivacao() {
-  const idx = diaDoAno() % MENSAGENS_MOTIVACAO.length;
+  // Sorteia uma frase aleatória a cada carregamento (evita repetir a anterior)
+  const ultimoIdx = parseInt(sessionStorage.getItem('rompex_ultima_frase') || '-1', 10);
+  let idx;
+  do {
+    idx = Math.floor(Math.random() * MENSAGENS_MOTIVACAO.length);
+  } while (MENSAGENS_MOTIVACAO.length > 1 && idx === ultimoIdx);
+  sessionStorage.setItem('rompex_ultima_frase', String(idx));
   const item = MENSAGENS_MOTIVACAO[idx];
   document.getElementById('motivacao-texto').innerHTML =
     '"' + item.frase + '"' +

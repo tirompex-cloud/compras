@@ -8,6 +8,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:var(--bg-primary)}
+::-webkit-scrollbar-thumb{background:var(--border-light);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+html{scrollbar-width:thin;scrollbar-color:var(--border-light) var(--bg-primary)}
 :root{
   --bg-primary:#0A0E1A;
   --bg-secondary:#0F172A;
@@ -589,12 +594,6 @@ tr:hover td{
           </svg>
           <span>Lançar Avisos</span>
         </a>
-        <a href="atualizacoes.html" class="nav-item">
-          <svg viewBox="0 0 24 24">
-            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-          </svg>
-          <span>Atualizações</span>
-        </a>
       </div>
 
       <div class="nav-section">
@@ -627,12 +626,33 @@ tr:hover td{
               <span>Lançamento de Compras</span>
             </a>
           </div>
-          <a href="financeiro.html" class="nav-item">
+          <div class="nav-item" onclick="toggleSubmenu('financeiro',event)">
             <svg viewBox="0 0 24 24">
               <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
             </svg>
             <span>Financeiro</span>
-          </a>
+            <svg class="nav-expand-icon" viewBox="0 0 24 24">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </div>
+          <div class="nav-submenu" id="submenu-financeiro">
+            <a href="relacao-compras.html" class="nav-item">
+              <svg viewBox="0 0 24 24">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+              </svg>
+              <span>Relação de Compras</span>
+            </a>
+            <a href="financeiro.html" class="nav-item">
+              <svg viewBox="0 0 24 24">
+                <line x1="12" y1="1" x2="12" y2="23"/>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+              </svg>
+              <span>Dashboard</span>
+            </a>
+          </div>
           <div class="nav-item" onclick="toggleSubmenu('fiscal',event)">
             <svg viewBox="0 0 24 24">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -688,6 +708,13 @@ tr:hover td{
           </svg>
         </div>
         <div class="nav-submenu open" id="submenu-configuracoes">
+          <a href="meu-perfil.html" class="nav-item">
+            <svg viewBox="0 0 24 24">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            <span>Meu Perfil</span>
+          </a>
           <a href="usuarios.html" class="nav-item active">
             <svg viewBox="0 0 24 24">
               <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
@@ -696,6 +723,12 @@ tr:hover td{
               <line x1="23" y1="11" x2="17" y2="11"/>
             </svg>
             <span>Usuários</span>
+          </a>
+          <a href="atualizacoes.html" class="nav-item">
+            <svg viewBox="0 0 24 24">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+            <span>Atualizações</span>
           </a>
         </div>
       </div>

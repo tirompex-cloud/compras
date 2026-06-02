@@ -13,6 +13,11 @@
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:var(--bg-primary)}
+::-webkit-scrollbar-thumb{background:var(--border-light);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+html{scrollbar-width:thin;scrollbar-color:var(--border-light) var(--bg-primary)}
 :root{
   --bg-primary:#0A0E1A;
   --bg-secondary:#0F172A;
@@ -426,12 +431,6 @@ html[data-theme="light"] .nav-icon-img{filter:none}
           </svg>
           <span>Lançar Avisos</span>
         </a>
-        <a href="atualizacoes.html" class="nav-item">
-          <svg viewBox="0 0 24 24">
-            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-          </svg>
-          <span>Atualizações</span>
-        </a>
       </div>
 
       <div class="nav-section">
@@ -561,6 +560,12 @@ html[data-theme="light"] .nav-icon-img{filter:none}
               <line x1="23" y1="11" x2="17" y2="11"/>
             </svg>
             <span>Usuários</span>
+          </a>
+          <a href="atualizacoes.html" class="nav-item">
+            <svg viewBox="0 0 24 24">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+            <span>Atualizações</span>
           </a>
         </div>
       </div>
