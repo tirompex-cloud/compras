@@ -1,762 +1,638 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ROMPEX Intranet • Dashboard</title>
 <link rel="icon" type="image/png" href="Rompex_Favicon_Transparente.png">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-<!-- 🔥 ANTI-CACHE: Force navegador a recarregar sempre -->
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 
+<script>
+(function(){try{var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-::-webkit-scrollbar{width:8px;height:8px}
-::-webkit-scrollbar-track{background:var(--bg-primary)}
-::-webkit-scrollbar-thumb{background:var(--border-light);border-radius:4px}
-::-webkit-scrollbar-thumb:hover{background:var(--accent)}
-html{scrollbar-width:thin;scrollbar-color:var(--border-light) var(--bg-primary)}
 :root{
-  --bg-primary:#0A0E1A;
-  --bg-secondary:#0F172A;
-  --bg-tertiary:#1E293B;
-  --bg-card:#1E3A52;
+  --bg:#EEF2F8;
+  --bg-deep:#E4EAF4;
+  --surface:#FFFFFF;
+  --surface-2:#F8FAFD;
+  --surface-glass:rgba(255,255,255,0.72);
+  --border:#E2E8F0;
+  --border-strong:#CBD5E1;
+  --border-soft:#EFF2F8;
+
+  --ink:#0B1426;
+  --ink-2:#3B4A63;
+  --ink-3:#6B7A93;
+  --ink-4:#9AA6BC;
+
   --accent:#10B981;
-  --accent-hover:#059669;
-  --accent-light:rgba(16,185,129,0.1);
-  --text-primary:#F8FAFC;
-  --text-secondary:#94A3B8;
-  --text-muted:#64748B;
-  --border:#1E293B;
-  --border-light:#334155;
+  --accent-2:#059669;
+  --accent-3:#34D399;
+  --accent-4:#6EE7B7;
+  --accent-glow:rgba(16,185,129,0.35);
+  --accent-soft:rgba(16,185,129,0.10);
+  --accent-tint:rgba(16,185,129,0.06);
+
   --danger:#EF4444;
   --warning:#F59E0B;
-  --info:#3B82F6;
-  --purple:#A855F7;
+  --info:#0EA5E9;
+
+  --radius-xl:22px;
+  --radius-lg:18px;
   --radius:14px;
   --radius-sm:10px;
-  --shadow:0 4px 24px rgba(0,0,0,0.4);
-  --shadow-lg:0 10px 50px rgba(0,0,0,0.6);
-  --sidebar-width:200px;
+
+  --sh-card:0 1px 1px rgba(11,20,38,0.04),0 4px 14px -4px rgba(11,20,38,0.08),0 24px 48px -24px rgba(11,20,38,0.10);
+  --sh-card-hover:0 1px 1px rgba(11,20,38,0.04),0 8px 24px -6px rgba(11,20,38,0.12),0 32px 64px -16px rgba(16,185,129,0.18);
+  --sh-inset:inset 0 1px 0 rgba(255,255,255,0.6);
+
+  --grid:rgba(16,185,129,0.05);
+  --grid-strong:rgba(16,185,129,0.08);
+
+  --sidebar-width:240px;
+  --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
 }
+html[data-theme="dark"]{
+  --bg:#070C19;
+  --bg-deep:#040812;
+  --surface:#0F172A;
+  --surface-2:#131C2F;
+  --surface-glass:rgba(15,23,42,0.65);
+  --border:#1F2A40;
+  --border-strong:#2A3650;
+  --border-soft:#172033;
+  --ink:#F1F5F9;
+  --ink-2:#CBD5E1;
+  --ink-3:#94A3B8;
+  --ink-4:#64748B;
+  --accent-soft:rgba(16,185,129,0.16);
+  --accent-tint:rgba(16,185,129,0.10);
+  --grid:rgba(16,185,129,0.06);
+  --grid-strong:rgba(16,185,129,0.10);
+  --sh-card:0 1px 1px rgba(0,0,0,0.4),0 8px 24px -6px rgba(0,0,0,0.5),0 32px 64px -24px rgba(16,185,129,0.20);
+  --sh-card-hover:0 1px 1px rgba(0,0,0,0.4),0 12px 32px -8px rgba(0,0,0,0.6),0 32px 80px -16px rgba(16,185,129,0.30);
+  --sh-inset:inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:8px}
+::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+
+html,body{background:var(--bg);min-height:100vh}
 body{
-  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
-  background:var(--bg-primary);
-  color:var(--text-primary);
-  font-size:14px;
-  min-height:100vh;
-  line-height:1.6;
-  overflow-x:hidden;
+  font-family:var(--font);
+  color:var(--ink);
+  font-size:14px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  position:relative;overflow-x:hidden;
 }
-.layout{display:flex;min-height:100vh}
+
+/* Background atmospheric layers */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(900px circle at 10% 0%, rgba(16,185,129,0.10), transparent 55%),
+    radial-gradient(700px circle at 100% 30%, rgba(14,165,233,0.06), transparent 55%),
+    radial-gradient(900px circle at 50% 110%, rgba(110,231,183,0.08), transparent 50%);
+}
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size:36px 36px;
+  -webkit-mask-image:radial-gradient(ellipse 90% 60% at 50% 20%, black 30%, transparent 75%);
+          mask-image:radial-gradient(ellipse 90% 60% at 50% 20%, black 30%, transparent 75%);
+}
+
+/* ===== LAYOUT ===== */
+.layout{display:flex;min-height:100vh;position:relative;z-index:1}
+
+/* ===== SIDEBAR ===== */
 .sidebar{
   width:var(--sidebar-width);
-  background:var(--bg-secondary);
+  background:var(--surface);
   border-right:1px solid var(--border);
-  display:flex;
-  flex-direction:column;
-  position:fixed;
-  left:0;
-  top:0;
-  bottom:0;
-  z-index:100;
+  display:flex;flex-direction:column;
+  position:fixed;left:0;top:0;bottom:0;z-index:100;
+  padding:18px 14px;
+  box-shadow:inset -1px 0 0 var(--border-soft),8px 0 32px -16px rgba(11,20,38,0.06);
   transition:transform 0.3s;
 }
-.main-content{
-  flex:1;
-  margin-left:var(--sidebar-width);
-  display:flex;
-  flex-direction:column;
-}
+.main-content{flex:1;margin-left:var(--sidebar-width);display:flex;flex-direction:column;min-width:0}
+
 .sidebar-logo{
-  padding:12px 16px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  display:flex;align-items:center;gap:11px;
+  padding:6px 8px 16px;margin-bottom:6px;
   position:relative;
+  text-decoration:none;color:inherit;
 }
 .sidebar-logo::after{
-  content:'';
-  position:absolute;
-  bottom:0;
-  left:25%;
-  width:50%;
-  height:1px;
-  background:var(--border);
+  content:'';position:absolute;left:8px;right:8px;bottom:0;height:1px;background:var(--border);
 }
-.logo-icon{
-  width:96px;
-  height:96px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-decoration:none;
-  color:inherit;
-  cursor:pointer;
+.brand-mark{
+  width:44px;height:44px;border-radius:12px;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255,255,255,0.35), transparent 50%),
+    linear-gradient(135deg,var(--accent),var(--accent-2));
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.3),0 6px 16px -4px var(--accent-glow);
+  position:relative;flex-shrink:0;overflow:hidden;
 }
-.logo-icon img{
-  width:100%;
-  height:100%;
-  object-fit:contain;
+.brand-mark::after{
+  content:'';position:absolute;inset:-2px;border-radius:14px;
+  background:linear-gradient(135deg,var(--accent),transparent 60%);
+  z-index:-1;filter:blur(8px);opacity:0.5;
 }
-.logo-text{
-  display:none;
-}
-.sidebar-nav{
-  flex:1;
-  padding:12px;
-  overflow-y:auto;
-  scrollbar-width:thin;
-  scrollbar-color:var(--border-light) transparent;
-}
-.nav-section{
+.brand-mark img{width:78%;height:78%;object-fit:contain}
+.brand-text{display:flex;flex-direction:column;line-height:1.12}
+.brand-name{font-size:15px;font-weight:700;color:var(--ink);letter-spacing:-0.01em}
+.brand-tag{font-size:9.5px;font-weight:700;color:var(--accent);letter-spacing:0.14em;text-transform:uppercase}
+
+.context-card{
+  display:flex;align-items:center;gap:11px;
+  padding:10px 12px;
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  border-radius:12px;
   margin-bottom:16px;
+  box-shadow:var(--sh-inset);
 }
+.context-icon{
+  width:32px;height:32px;border-radius:9px;
+  background:var(--accent-soft);color:var(--accent);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.context-icon svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
+.context-info{line-height:1.2;flex:1;min-width:0}
+.context-name{font-size:13px;font-weight:600;color:var(--ink)}
+.context-meta{font-size:9.5px;font-weight:700;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase}
+.status-dot{
+  width:8px;height:8px;border-radius:50%;background:var(--accent);
+  box-shadow:0 0 0 3px var(--accent-tint),0 0 12px var(--accent-glow);
+  animation:pulse 2.4s ease-in-out infinite;flex-shrink:0;
+}
+@keyframes pulse{
+  0%,100%{box-shadow:0 0 0 3px var(--accent-tint),0 0 12px var(--accent-glow);transform:scale(1)}
+  50%{box-shadow:0 0 0 6px transparent,0 0 18px var(--accent-glow);transform:scale(1.1)}
+}
+
+.sidebar-nav{flex:1;overflow-y:auto;padding-right:2px}
+.nav-section{margin-bottom:12px}
 .nav-section-title{
-  font-size:10px;
-  font-weight:700;
-  color:var(--text-muted);
-  text-transform:uppercase;
-  letter-spacing:0.12em;
-  padding:6px 10px 6px;
+  font-size:10px;font-weight:700;
+  color:var(--ink-4);
+  text-transform:uppercase;letter-spacing:0.16em;
+  padding:0 10px 8px;
 }
 .nav-item{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:7px 12px;
-  border-radius:var(--radius-sm);
-  color:var(--text-secondary);
-  cursor:pointer;
-  transition:all 0.2s;
-  margin-bottom:2px;
   position:relative;
-  font-size:13px;
-  font-weight:500;
+  display:flex;align-items:center;gap:10px;
+  padding:8px 10px;border-radius:10px;
+  color:var(--ink-2);cursor:pointer;
+  transition:background 0.15s,color 0.15s;
+  margin-bottom:1px;
+  font-size:13px;font-weight:500;
   text-decoration:none;
 }
-.nav-item svg{
-  width:16px;
-  height:16px;
-  stroke:currentColor;
-  stroke-width:2;
-  stroke-linecap:round;
-  stroke-linejoin:round;
-  fill:none;
-  flex-shrink:0;
-}
-.nav-item:hover{
-  background:rgba(16,185,129,0.08);
-  color:var(--text-primary);
-}
+.nav-item svg{width:16px;height:16px;stroke:currentColor;stroke-width:1.8;fill:none;flex-shrink:0;stroke-linecap:round;stroke-linejoin:round}
+.nav-item:hover{background:var(--bg);color:var(--ink)}
 .nav-item.active{
-  background:var(--accent-light);
+  background:linear-gradient(90deg,var(--accent-soft) 0%, transparent 100%);
   color:var(--accent);
   font-weight:600;
 }
 .nav-item.active::before{
-  content:'';
-  position:absolute;
-  left:0;
-  top:50%;
-  transform:translateY(-50%);
-  width:3px;
-  height:16px;
-  background:var(--accent);
+  content:'';position:absolute;left:-14px;top:50%;transform:translateY(-50%);
+  width:3px;height:18px;
+  background:linear-gradient(180deg,var(--accent),var(--accent-2));
   border-radius:0 4px 4px 0;
+  box-shadow:0 0 12px var(--accent-glow);
 }
+.nav-item span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nav-icon-img{width:16px;height:16px;object-fit:contain;flex-shrink:0;opacity:0.7}
 .nav-badge{
   margin-left:auto;
   padding:2px 8px;
-  background:var(--accent);
-  color:#fff;
-  border-radius:12px;
-  font-size:11px;
-  font-weight:700;
+  background:var(--accent);color:#fff;
+  border-radius:12px;font-size:10px;font-weight:700;
+  box-shadow:0 2px 6px rgba(16,185,129,0.4);
 }
 .nav-expand-icon{
-  margin-left:auto;
-  width:12px;
-  height:12px;
-  transition:transform 0.2s;
+  margin-left:auto;width:13px;height:13px;
+  transition:transform 0.2s;opacity:0.5;
 }
-.nav-item.expanded .nav-expand-icon{
-  transform:rotate(90deg);
-}
-.nav-submenu{
-  max-height:0;
-  overflow:hidden;
-  transition:max-height 0.3s ease;
-  padding-left:28px;
-}
-.nav-submenu.open{
-  max-height:500px;
-}
+.nav-item.expanded .nav-expand-icon{transform:rotate(90deg)}
+.nav-submenu{max-height:0;overflow:hidden;transition:max-height 0.3s ease;padding-left:18px}
+.nav-submenu.open{max-height:600px}
 .nav-submenu .nav-item{
-  font-size:12px;
-  padding:6px 10px;
+  font-size:12px;padding:7px 10px;
 }
+.nav-submenu .nav-submenu{padding-left:14px}
+
 .sidebar-user{
-  padding:10px 14px;
-  border-top:1px solid var(--border);
-  display:flex;
-  align-items:center;
-  gap:12px;
-  text-decoration:none;
-  color:inherit;
-  cursor:pointer;
-  transition:background 0.2s;
+  margin-top:auto;
+  display:flex;align-items:center;gap:10px;
+  padding:10px;border-radius:12px;
+  border:1px solid var(--border);
+  background:var(--surface-2);
+  text-decoration:none;color:inherit;
+  transition:border-color 0.15s,background 0.15s;
+  box-shadow:var(--sh-inset);
 }
-.sidebar-user:hover{background:var(--bg-tertiary)}
+.sidebar-user:hover{border-color:var(--accent);background:var(--bg)}
 .user-avatar{
-  width:28px;
-  height:28px;
-  border-radius:50%;
-  background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:700;
-  font-size:12px;
-  color:#fff;
+  width:34px;height:34px;border-radius:50%;
+  background:linear-gradient(135deg,#3B82F6,#6366F1);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:600;font-size:13px;color:#fff;flex-shrink:0;
+  box-shadow:0 4px 10px -2px rgba(99,102,241,0.4);
+}
+.user-info{flex:1;min-width:0;line-height:1.2}
+.user-name{font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-role{font-size:11px;color:var(--ink-3)}
+.user-menu{
+  cursor:pointer;padding:6px;border-radius:8px;
+  color:var(--ink-3);
+  transition:background 0.15s,color 0.15s;
   flex-shrink:0;
 }
-.user-info{
-  flex:1;
-  min-width:0;
-}
-.user-name{
-  font-size:12px;
-  font-weight:600;
-  color:var(--text-primary);
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-.user-role{
-  font-size:11px;
-  color:var(--text-muted);
-}
-.user-menu{
-  cursor:pointer;
-  padding:4px;
-  border-radius:6px;
-  transition:0.2s;
-}
-.user-menu:hover{
-  background:var(--bg-tertiary);
-}
-.user-menu svg{
-  width:18px;
-  height:18px;
-  stroke:var(--text-secondary);
-  fill:none;
-}
+.user-menu:hover{background:var(--accent-tint);color:var(--accent)}
+.user-menu svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;display:block}
+
+/* ===== TOPBAR ===== */
 .topbar{
-  background:var(--bg-secondary);
+  background:var(--surface-glass);
+  backdrop-filter:blur(14px) saturate(140%);
+  -webkit-backdrop-filter:blur(14px) saturate(140%);
   border-bottom:1px solid var(--border);
-  padding:16px 32px;
-  display:flex;
-  align-items:center;
-  gap:20px;
-  position:sticky;
-  top:0;
-  z-index:50;
-  backdrop-filter:blur(12px);
+  padding:14px 28px;
+  display:flex;align-items:center;gap:20px;
+  position:sticky;top:0;z-index:50;
 }
-.topbar-left{
-  display:flex;
-  align-items:center;
-  gap:16px;
+.topbar-info{flex:1;min-width:0}
+.topbar-eyebrow{
+  font-size:11px;font-weight:600;
+  color:var(--ink-3);letter-spacing:0.12em;text-transform:uppercase;
+  display:flex;align-items:center;gap:8px;
+  margin-bottom:2px;
 }
+.topbar-eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent-glow)}
 .page-title{
-  font-size:22px;
-  font-weight:700;
-  color:var(--text-primary);
+  font-size:22px;font-weight:700;color:var(--ink);
   letter-spacing:-0.02em;
 }
-.page-subtitle{
-  font-size:13px;
-  color:var(--text-muted);
-  margin-top:2px;
+.theme-toggle-btn{
+  width:42px;height:42px;border-radius:50%;
+  background:var(--surface);border:1px solid var(--border);
+  color:var(--ink-2);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;
+  transition:border-color 0.15s,color 0.15s,transform 0.15s;
 }
-.topbar-right{
-  margin-left:auto;
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-.topbar-btn{
-  padding:10px 16px;
-  border-radius:var(--radius-sm);
-  background:var(--bg-tertiary);
-  border:1px solid var(--border-light);
-  color:var(--text-secondary);
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  gap:8px;
-  font-size:13px;
-  font-weight:600;
-  transition:all 0.2s;
-  text-decoration:none;
-}
-.topbar-btn svg{
-  width:18px;
-  height:18px;
-  stroke:currentColor;
-  fill:none;
-}
-.topbar-btn:hover{
-  background:var(--bg-card);
-  color:var(--text-primary);
-  border-color:var(--accent);
-}
-.topbar-btn.primary{
-  background:linear-gradient(135deg,var(--accent),#059669);
-  border:none;
-  color:#fff;
-  box-shadow:0 4px 16px rgba(16,185,129,0.3);
-}
-.topbar-btn.primary:hover{
-  box-shadow:0 6px 24px rgba(16,185,129,0.4);
-  transform:translateY(-1px);
-}
-.content{
-  padding:32px;
-  flex:1;
-}
-.stats-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-  gap:20px;
-  margin-bottom:32px;
-}
-.stat-card{
-  background:var(--bg-secondary);
+.theme-toggle-btn:hover{border-color:var(--accent);color:var(--accent);transform:scale(1.05)}
+
+/* ===== CONTENT ===== */
+.content{padding:24px 28px 40px;display:flex;flex-direction:column;gap:20px}
+
+/* Greeting card */
+.greet{
+  position:relative;overflow:hidden;
+  background:var(--surface);
   border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:24px;
-  position:relative;
-  overflow:hidden;
-  transition:all 0.3s;
+  border-radius:var(--radius-xl);
+  padding:26px 28px;
+  display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center;
+  box-shadow:var(--sh-card),var(--sh-inset);
 }
-.stat-card::before{
-  content:'';
-  position:absolute;
-  top:0;
-  left:0;
-  right:0;
-  height:4px;
-  background:linear-gradient(90deg,var(--accent),#34D399);
+.greet::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(500px circle at 0% 0%, var(--accent-tint), transparent 50%),
+    radial-gradient(400px circle at 100% 100%, rgba(14,165,233,0.06), transparent 55%);
+}
+.greet::after{
+  content:'';position:absolute;inset:0;pointer-events:none;opacity:0.4;
+  background-image:
+    linear-gradient(var(--grid-strong) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-strong) 1px, transparent 1px);
+  background-size:24px 24px;
+  -webkit-mask-image:linear-gradient(135deg, black, transparent 60%);
+          mask-image:linear-gradient(135deg, black, transparent 60%);
+}
+.greet > *{position:relative;z-index:1}
+
+.live-tag{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:5px 11px 5px 9px;
+  background:var(--accent-soft);
+  border:1px solid rgba(16,185,129,0.25);
+  border-radius:999px;
+  font-size:11px;font-weight:600;color:var(--accent);
+  letter-spacing:0.06em;text-transform:uppercase;
+  margin-bottom:14px;
+}
+.greet-name{
+  font-size:30px;font-weight:700;color:var(--ink);
+  letter-spacing:-0.025em;line-height:1.05;margin-bottom:6px;
+}
+.greet-name span{
+  background:linear-gradient(135deg,var(--accent),var(--accent-3));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.greet-sub{font-size:13px;color:var(--ink-3)}
+.greet-quote{
+  display:flex;gap:14px;
+  background:var(--surface-2);
+  border:1px solid var(--border-soft);
+  border-radius:var(--radius);
+  padding:18px 20px;
+  position:relative;
+  box-shadow:var(--sh-inset);
+}
+.greet-quote-mark{color:var(--accent);opacity:0.55;flex-shrink:0}
+.greet-quote-mark svg{width:22px;height:22px;stroke:currentColor;fill:currentColor}
+.greet-quote-text{font-size:13px;color:var(--ink-2);line-height:1.55;font-style:italic}
+.greet-quote-author{font-size:12px;color:var(--ink-3);margin-top:6px;font-style:normal;font-weight:500}
+
+/* ===== STAT CARDS (USD, EUR) ===== */
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.stat-card{
+  position:relative;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:22px;
+  overflow:hidden;
+  box-shadow:var(--sh-card),var(--sh-inset);
+  transition:transform 0.2s,box-shadow 0.2s,border-color 0.2s;
 }
 .stat-card:hover{
-  border-color:var(--accent);
-  transform:translateY(-4px);
-  box-shadow:0 12px 32px rgba(16,185,129,0.2);
+  transform:translateY(-2px);
+  box-shadow:var(--sh-card-hover),var(--sh-inset);
+  border-color:rgba(16,185,129,0.25);
 }
-.stat-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  margin-bottom:16px;
+.stat-card::before{
+  content:'';position:absolute;top:0;left:18px;right:18px;height:2px;
+  background:linear-gradient(90deg,var(--accent),var(--accent-3),var(--accent-4));
+  border-radius:0 0 4px 4px;
+  box-shadow:0 0 16px var(--accent-glow);
 }
+.stat-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;gap:8px}
 .stat-icon{
-  width:48px;
-  height:48px;
-  border-radius:12px;
-  background:var(--accent-light);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-.stat-icon svg{
-  width:24px;
-  height:24px;
-  stroke:var(--accent);
-  stroke-width:2;
-  fill:none;
-}
-.stat-trend{
-  padding:4px 10px;
-  border-radius:20px;
-  background:rgba(16,185,129,0.15);
+  width:44px;height:44px;border-radius:12px;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(16,185,129,0.18), transparent 60%),
+    var(--accent-soft);
   color:var(--accent);
-  font-size:12px;
-  font-weight:700;
-  display:flex;
-  align-items:center;
-  gap:4px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:inset 0 0 0 1px rgba(16,185,129,0.15);
 }
-.stat-trend svg{
-  width:14px;
-  height:14px;
-  fill:none;
-  stroke:currentColor;
+.stat-icon svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2}
+.stat-trend{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:4px 10px;border-radius:999px;
+  font-size:11px;font-weight:700;
+  background:var(--accent-soft);color:var(--accent);
+  border:1px solid rgba(16,185,129,0.20);
 }
+.stat-trend.up{background:var(--accent-soft);color:var(--accent);border-color:rgba(16,185,129,0.25)}
+.stat-trend.down{background:rgba(239,68,68,0.10);color:var(--danger);border-color:rgba(239,68,68,0.25)}
 .stat-value{
-  font-size:32px;
-  font-weight:800;
-  color:var(--text-primary);
-  line-height:1;
-  margin-bottom:8px;
-  letter-spacing:-0.02em;
+  font-size:30px;font-weight:700;color:var(--ink);
+  letter-spacing:-0.025em;line-height:1.05;margin-bottom:4px;
+  font-variant-numeric:tabular-nums;
 }
-.stat-label{
-  font-size:13px;
-  color:var(--text-muted);
-  font-weight:500;
-}
+.stat-label{font-size:13px;color:var(--ink-2);font-weight:500}
+
+/* ===== CARD GENERIC ===== */
 .card{
-  background:var(--bg-secondary);
+  background:var(--surface);
   border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:24px;
-  margin-bottom:24px;
-  box-shadow:var(--shadow);
+  border-radius:var(--radius-xl);
+  box-shadow:var(--sh-card),var(--sh-inset);
+  overflow:hidden;
 }
 .card-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:20px;
-  padding-bottom:16px;
-  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 22px 14px;
 }
 .card-title{
-  font-size:18px;
-  font-weight:700;
-  color:var(--text-primary);
-  display:flex;
-  align-items:center;
-  gap:10px;
+  font-size:11px;font-weight:700;
+  color:var(--ink-3);text-transform:uppercase;letter-spacing:0.16em;
+  display:flex;align-items:center;gap:9px;
 }
-.card-title svg{
-  width:22px;
-  height:22px;
-  stroke:var(--accent);
-  fill:none;
-}
+.card-title svg{width:13px;height:13px;stroke:var(--accent);fill:none;stroke-width:2}
+
+/* Quick actions */
 .quick-actions{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
-  gap:16px;
-  margin-bottom:32px;
+  grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+  gap:12px;
+  padding:4px 22px 22px;
 }
 .quick-action{
-  background:var(--bg-tertiary);
-  border:1px solid var(--border);
+  position:relative;overflow:hidden;
+  background:var(--surface-2);
+  border:1px solid var(--border-soft);
   border-radius:var(--radius);
-  padding:20px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:12px;
-  cursor:pointer;
-  transition:all 0.2s;
-  text-align:center;
-  text-decoration:none;
-  color:inherit;
+  padding:16px;
+  display:flex;flex-direction:column;gap:10px;
+  cursor:pointer;text-decoration:none;color:inherit;
+  transition:border-color 0.18s,transform 0.18s,box-shadow 0.18s,background 0.18s;
+  box-shadow:var(--sh-inset);
 }
 .quick-action:hover{
-  background:var(--bg-card);
-  border-color:var(--accent);
+  border-color:rgba(16,185,129,0.30);
   transform:translateY(-2px);
-  box-shadow:0 8px 24px rgba(16,185,129,0.15);
+  box-shadow:0 12px 28px -8px rgba(16,185,129,0.22),var(--sh-inset);
+  background:var(--surface);
 }
 .quick-action-icon{
-  width:48px;
-  height:48px;
-  border-radius:12px;
-  background:var(--accent-light);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-.quick-action-icon svg{
-  width:24px;
-  height:24px;
-  stroke:var(--accent);
-  fill:none;
-}
-.quick-action-label{
-  font-size:13px;
-  font-weight:600;
-  color:var(--text-primary);
-}
-.table-container{
-  overflow-x:auto;
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  background:var(--bg-tertiary);
-}
-table{
-  width:100%;
-  border-collapse:collapse;
-  font-size:13px;
-}
-thead{
-  background:var(--bg-secondary);
-}
-th{
-  padding:14px 16px;
-  text-align:left;
-  font-weight:700;
+  width:38px;height:38px;border-radius:11px;
+  background:radial-gradient(circle at 30% 25%, rgba(16,185,129,0.18), transparent 60%),var(--accent-soft);
   color:var(--accent);
-  font-size:11px;
-  text-transform:uppercase;
-  letter-spacing:0.1em;
-  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:inset 0 0 0 1px rgba(16,185,129,0.12);
 }
-td{
-  padding:14px 16px;
-  color:var(--text-primary);
-  border-bottom:1px solid var(--border);
-}
-tr:last-child td{
-  border-bottom:none;
-}
-tr:hover td{
-  background:rgba(16,185,129,0.04);
-}
-.badge{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  padding:6px 12px;
-  border-radius:20px;
-  font-size:12px;
-  font-weight:700;
-  text-transform:uppercase;
-  letter-spacing:0.05em;
-}
-.badge-success{background:rgba(16,185,129,0.2);color:var(--accent)}
-.badge-warning{background:rgba(245,158,11,0.2);color:#FCD34D}
-.badge-danger{background:rgba(239,68,68,0.2);color:#FCA5A5}
-.badge-info{background:rgba(59,130,246,0.2);color:#93C5FD}
-.stat-trend.up{background:rgba(16,185,129,0.15);color:var(--accent)}
-.stat-trend.down{background:rgba(239,68,68,0.15);color:#FCA5A5}
-.nav-icon-img{width:16px;height:16px;
-  object-fit:contain;
-  flex-shrink:0;
-  filter:brightness(0) invert(1);
-}
-html[data-theme="light"] .nav-icon-img{filter:none}
+.quick-action-icon svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2}
+.quick-action-label{font-size:13.5px;font-weight:600;color:var(--ink);line-height:1.3}
+
+/* ===== AVISOS (kanban) ===== */
+#avisos-kanban{padding:0 22px 22px}
 .avisos-board{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
-  gap:16px;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:14px;
 }
 .aviso-board-card{
-  background:var(--bg-tertiary);
-  border:1px solid var(--border);
+  background:var(--surface-2);
+  border:1px solid var(--border-soft);
   border-radius:var(--radius);
   overflow:hidden;
-  display:flex;
-  flex-direction:column;
-  transition:all 0.2s;
+  display:flex;flex-direction:column;
+  cursor:pointer;
+  transition:border-color 0.15s,transform 0.15s,box-shadow 0.15s;
+  box-shadow:var(--sh-inset);
 }
-.aviso-board-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.aviso-board-card:hover{
+  border-color:var(--accent);
+  transform:translateY(-2px);
+  box-shadow:0 12px 28px -8px rgba(16,185,129,0.18),var(--sh-inset);
+}
 .aviso-board-img{
-  width:100%;
-  height:140px;
-  object-fit:cover;
-  background:var(--bg-secondary);
-  border-bottom:1px solid var(--border);
+  width:100%;height:130px;object-fit:cover;
+  background:var(--bg);
+  border-bottom:1px solid var(--border-soft);
 }
 .aviso-board-noimg{
-  width:100%;
-  height:140px;
-  background:linear-gradient(135deg,rgba(16,185,129,0.1),rgba(59,130,246,0.1));
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:40px;
-  border-bottom:1px solid var(--border);
+  width:100%;height:130px;
+  background:radial-gradient(circle at 50% 50%, var(--accent-tint), transparent 70%);
+  display:flex;align-items:center;justify-content:center;
+  font-size:38px;
+  border-bottom:1px solid var(--border-soft);
 }
 .aviso-board-body{padding:14px;flex:1;display:flex;flex-direction:column;gap:6px}
-.aviso-board-title{font-size:14px;font-weight:700;color:var(--text-primary)}
+.aviso-board-title{font-size:14px;font-weight:600;color:var(--ink);line-height:1.3}
 .aviso-board-msg{
-  font-size:12px;
-  color:var(--text-secondary);
-  line-height:1.5;
-  display:-webkit-box;
-  -webkit-line-clamp:4;
-  -webkit-box-orient:vertical;
-  overflow:hidden;
-  white-space:pre-wrap;
+  font-size:12px;color:var(--ink-2);line-height:1.5;
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;
+  overflow:hidden;white-space:pre-wrap;
 }
 .aviso-board-meta{
-  font-size:10px;
-  color:var(--text-muted);
-  text-transform:uppercase;
-  letter-spacing:0.05em;
-  padding-top:8px;
-  border-top:1px solid var(--border);
-  margin-top:auto;
+  font-size:10.5px;color:var(--ink-4);
+  padding-top:8px;margin-top:auto;
+  border-top:1px solid var(--border-soft);
+  display:flex;justify-content:space-between;gap:8px;
 }
+.open-hint{color:var(--accent);font-weight:600}
 .avisos-empty{
-  text-align:center;
-  padding:2.5rem;
-  color:var(--text-muted);
-  font-size:14px;
-  background:var(--bg-tertiary);
-  border-radius:var(--radius);
-  border:1px dashed var(--border-light);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:36px 20px;text-align:center;color:var(--ink-3);gap:8px;
+  font-size:13px;
 }
-.aviso-board-card{cursor:pointer}
-.aviso-board-card .open-hint{
-  font-size:10px;
-  color:var(--text-muted);
-  text-transform:uppercase;
-  letter-spacing:0.05em;
-  padding:3px 8px;
-  background:var(--bg-secondary);
-  border-radius:10px;
-  display:inline-block;
-}
-/* Modal de expandir aviso */
+.avisos-empty small{font-size:11.5px;color:var(--ink-4)}
+
+/* ===== Modal Aviso ===== */
 .modal-overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.75);
-  backdrop-filter:blur(8px);
-  z-index:300;
-  display:none;
-  align-items:center;
-  justify-content:center;
+  position:fixed;inset:0;
+  background:rgba(3,7,10,0.7);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  z-index:200;
+  display:none;align-items:center;justify-content:center;
   padding:20px;
 }
 .modal-overlay.open{display:flex}
 .modal-aviso{
-  background:var(--bg-secondary);
-  border:1px solid var(--border-light);
-  border-radius:16px;
-  width:100%;
-  max-width:640px;
-  max-height:90vh;
-  overflow-y:auto;
-  display:flex;
-  flex-direction:column;
-  box-shadow:0 24px 80px rgba(0,0,0,0.6);
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-xl);
+  width:100%;max-width:560px;max-height:90vh;
+  overflow:hidden;
+  box-shadow:0 32px 80px -16px rgba(0,0,0,0.5),0 0 0 1px rgba(16,185,129,0.15);
+  display:flex;flex-direction:column;
 }
-.modal-aviso-img{
-  width:100%;
-  max-height:360px;
-  object-fit:contain;
-  background:var(--bg-tertiary);
-  border-radius:16px 16px 0 0;
-}
-.modal-aviso-body{padding:24px;display:flex;flex-direction:column;gap:12px}
-.modal-aviso-title{font-size:22px;font-weight:700;color:var(--text-primary)}
-.modal-aviso-meta{font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em}
-.modal-aviso-msg{font-size:15px;color:var(--text-secondary);line-height:1.7;white-space:pre-wrap;word-break:break-word}
+.modal-aviso-img{width:100%;max-height:280px;object-fit:cover;border-bottom:1px solid var(--border)}
+.modal-aviso-body{padding:24px 26px 22px;display:flex;flex-direction:column;gap:14px;overflow-y:auto}
+.modal-aviso-title{font-size:20px;font-weight:700;color:var(--ink);letter-spacing:-0.01em}
+.modal-aviso-meta{font-size:12px;color:var(--ink-3);font-weight:500}
+.modal-aviso-msg{font-size:14px;color:var(--ink-2);line-height:1.6;white-space:pre-wrap}
 .modal-aviso-actions{
-  display:flex;
-  gap:10px;
-  justify-content:space-between;
-  align-items:center;
-  padding-top:16px;
-  border-top:1px solid var(--border);
-  margin-top:8px;
-  flex-wrap:wrap;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding-top:8px;border-top:1px solid var(--border);
 }
-.modal-close{
-  cursor:pointer;
-  background:var(--bg-tertiary);
-  border:1px solid var(--border-light);
-  color:var(--text-secondary);
-  padding:8px 16px;
-  border-radius:var(--radius-sm);
-  font-size:13px;
-  font-weight:600;
-  transition:0.2s;
-}
-.modal-close:hover{background:var(--bg-card);color:var(--text-primary)}
 .btn-download{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  padding:8px 14px;
-  border-radius:var(--radius-sm);
-  background:rgba(16,185,129,0.12);
-  border:1px solid rgba(16,185,129,0.4);
-  color:var(--accent);
-  font-size:13px;
-  font-weight:600;
-  text-decoration:none;
-  transition:all 0.2s;
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 14px;border-radius:var(--radius-sm);
+  background:var(--accent-soft);color:var(--accent);
+  font-size:12px;font-weight:600;text-decoration:none;
 }
-.btn-download:hover{
-  background:rgba(16,185,129,0.2);
-  transform:translateY(-1px);
+.btn-download:hover{background:rgba(16,185,129,0.16)}
+.modal-close{
+  padding:8px 16px;border-radius:var(--radius-sm);
+  background:var(--surface-2);border:1px solid var(--border-strong);
+  color:var(--ink-2);cursor:pointer;font-family:inherit;font-size:13px;font-weight:500;
+  transition:border-color 0.15s,color 0.15s;
 }
-@media(max-width:1024px){
-  .sidebar{
-    transform:translateX(-100%);
-  }
-  .sidebar.open{
-    transform:translateX(0);
-  }
-  .main-content{
-    margin-left:0;
-  }
-}
+.modal-close:hover{border-color:var(--accent);color:var(--accent)}
+
 @keyframes fadeIn{
-  from{opacity:0;transform:translateY(20px)}
+  from{opacity:0;transform:translateY(10px)}
   to{opacity:1;transform:translateY(0)}
 }
-.content > *{
-  animation:fadeIn 0.4s ease-out;
+.content > *{animation:fadeIn 0.4s ease-out}
+
+/* ===== Responsivo (mobile/tablet) ===== */
+@media (max-width:1100px){
+  .greet{grid-template-columns:1fr}
+}
+@media (max-width:780px){
+  .stat-grid{grid-template-columns:1fr}
+  .quick-actions{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:1024px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main-content{margin-left:0}
 }
 </style>
+
 <link rel="stylesheet" href="./responsive.css">
 </head>
 <body>
 
 <div class="layout">
   <aside class="sidebar">
-    <div class="sidebar-logo">
-      <a href="dashboard.html" class="logo-icon" title="Ir para o Início">
-        <img src="logo-rompex-white.png" alt="ROMPEX">
-      </a>
+
+    <a href="dashboard.html" class="sidebar-logo" title="Início">
+      <div class="brand-mark"><img src="logo-rompex-white.png" alt="ROMPEX"></div>
+      <div class="brand-text">
+        <div class="brand-name">ROMPEX</div>
+        <div class="brand-tag">Sistema Interno</div>
+      </div>
+    </a>
+
+    <div class="context-card">
+      <div class="context-icon">
+        <svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h.01M9 13h.01M9 17h.01M15 9h.01M15 13h.01M15 17h.01"/></svg>
+      </div>
+      <div class="context-info">
+        <div class="context-name">Rompex</div>
+        <div class="context-meta">Online</div>
+      </div>
+      <div class="status-dot" title="Sistema operacional"></div>
     </div>
 
     <nav class="sidebar-nav">
       <div class="nav-section">
         <div class="nav-section-title">Principal</div>
         <a href="dashboard.html" class="nav-item active">
-          <svg viewBox="0 0 24 24">
-            <rect x="3" y="3" width="7" height="9" rx="1"/>
-            <rect x="14" y="3" width="7" height="5" rx="1"/>
-            <rect x="14" y="12" width="7" height="9" rx="1"/>
-            <rect x="3" y="16" width="7" height="5" rx="1"/>
-          </svg>
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
           <span>Início</span>
         </a>
         <a href="modulos/avisos.html" class="nav-item">
-          <svg viewBox="0 0 24 24">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-          </svg>
+          <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
           <span>Avisos</span>
           <span class="nav-badge" id="avisos-badge" style="display:none">0</span>
         </a>
         <a href="modulos/documentos.html" class="nav-item">
-          <svg viewBox="0 0 24 24">
-            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
-            <polyline points="13 2 13 9 20 9"/>
-          </svg>
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
           <span>Documentos</span>
         </a>
         <a href="modulos/lancar-avisos.html" class="nav-item">
-          <svg viewBox="0 0 24 24">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-          </svg>
+          <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
           <span>Lançar Avisos</span>
         </a>
       </div>
@@ -764,98 +640,59 @@ html[data-theme="light"] .nav-icon-img{filter:none}
       <div class="nav-section">
         <div class="nav-section-title">Módulos</div>
         <div class="nav-item" onclick="toggleSubmenu('modulos',event)">
-          <img src="icone-modulos.png" alt="" class="nav-icon-img">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
           <span>Módulos</span>
-          <svg class="nav-expand-icon" viewBox="0 0 24 24">
-            <polyline points="9 18 15 12 9 6"/>
-          </svg>
+          <svg class="nav-expand-icon" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
         <div class="nav-submenu" id="submenu-modulos">
           <div class="nav-item" onclick="toggleSubmenu('compras',event)">
-            <svg viewBox="0 0 24 24">
-              <circle cx="9" cy="21" r="1"/>
-              <circle cx="20" cy="21" r="1"/>
-              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-            </svg>
+            <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
             <span>Compras</span>
-            <svg class="nav-expand-icon" viewBox="0 0 24 24">
-              <polyline points="9 18 15 12 9 6"/>
-            </svg>
+            <svg class="nav-expand-icon" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
           </div>
           <div class="nav-submenu" id="submenu-compras">
             <a href="modulos/compras.html" class="nav-item">
-              <svg viewBox="0 0 24 24">
-                <line x1="12" y1="5" x2="12" y2="19"/>
-                <line x1="5" y1="12" x2="19" y2="12"/>
-              </svg>
+              <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
               <span>Lançamento de Compras</span>
             </a>
           </div>
-          
+
           <div class="nav-item" onclick="toggleSubmenu('financeiro',event)">
-            <svg viewBox="0 0 24 24">
-              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-            </svg>
+            <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
             <span>Financeiro</span>
-            <svg class="nav-expand-icon" viewBox="0 0 24 24">
-              <polyline points="9 18 15 12 9 6"/>
-            </svg>
+            <svg class="nav-expand-icon" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
           </div>
           <div class="nav-submenu" id="submenu-financeiro">
             <a href="modulos/relacao-compras.html" class="nav-item">
-              <svg viewBox="0 0 24 24">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
-                <line x1="16" y1="13" x2="8" y2="13"/>
-                <line x1="16" y1="17" x2="8" y2="17"/>
-              </svg>
+              <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
               <span>Relação de Compras</span>
             </a>
             <a href="modulos/financeiro.html" class="nav-item">
-              <svg viewBox="0 0 24 24">
-                <line x1="12" y1="1" x2="12" y2="23"/>
-                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-              </svg>
+              <svg viewBox="0 0 24 24"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>
               <span>Dashboard</span>
             </a>
           </div>
-          
+
           <div class="nav-item" onclick="toggleSubmenu('fiscal',event)">
-            <svg viewBox="0 0 24 24">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-              <polyline points="14 2 14 8 20 8"/>
-              <polyline points="9 15 11 17 15 13"/>
-            </svg>
+            <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
             <span>Fiscal</span>
-            <svg class="nav-expand-icon" viewBox="0 0 24 24">
-              <polyline points="9 18 15 12 9 6"/>
-            </svg>
+            <svg class="nav-expand-icon" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
           </div>
           <div class="nav-submenu" id="submenu-fiscal">
             <a href="modulos/fiscal.html" class="nav-item">
-              <svg viewBox="0 0 24 24">
-                <line x1="12" y1="5" x2="12" y2="19"/>
-                <line x1="5" y1="12" x2="19" y2="12"/>
-              </svg>
+              <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
               <span>NFS-e</span>
             </a>
           </div>
 
           <div class="nav-item" onclick="toggleSubmenu('tecnicos',event)">
-            <svg viewBox="0 0 24 24">
-              <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
-            </svg>
+            <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
             <span>Técnicos</span>
-            <svg class="nav-expand-icon" viewBox="0 0 24 24">
-              <polyline points="9 18 15 12 9 6"/>
-            </svg>
+            <svg class="nav-expand-icon" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
           </div>
           <div class="nav-submenu" id="submenu-tecnicos">
             <a href="modulos/certificados.html" class="nav-item">
-              <svg viewBox="0 0 24 24">
-                <line x1="12" y1="5" x2="12" y2="19"/>
-                <line x1="5" y1="12" x2="19" y2="12"/>
-              </svg>
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
               <span>Certificados</span>
             </a>
           </div>
@@ -865,36 +702,21 @@ html[data-theme="light"] .nav-icon-img{filter:none}
       <div class="nav-section">
         <div class="nav-section-title">Sistema</div>
         <div class="nav-item" onclick="toggleSubmenu('configuracoes', event)">
-          <svg viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="3"/>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-          </svg>
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
           <span>Configurações</span>
-          <svg class="nav-expand-icon" viewBox="0 0 24 24">
-            <polyline points="9 18 15 12 9 6"/>
-          </svg>
+          <svg class="nav-expand-icon" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
         <div class="nav-submenu" id="submenu-configuracoes">
           <a href="modulos/meu-perfil.html" class="nav-item">
-            <svg viewBox="0 0 24 24">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-              <circle cx="12" cy="7" r="4"/>
-            </svg>
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/></svg>
             <span>Meu Perfil</span>
           </a>
           <a href="modulos/usuarios.html" class="nav-item">
-            <svg viewBox="0 0 24 24">
-              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-              <circle cx="8.5" cy="7" r="4"/>
-              <line x1="20" y1="8" x2="20" y2="14"/>
-              <line x1="23" y1="11" x2="17" y2="11"/>
-            </svg>
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             <span>Usuários</span>
           </a>
           <a href="modulos/atualizacoes.html" class="nav-item">
-            <svg viewBox="0 0 24 24">
-              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-            </svg>
+            <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
             <span>Atualizações</span>
           </a>
         </div>
@@ -908,39 +730,50 @@ html[data-theme="light"] .nav-icon-img{filter:none}
         <div class="user-role" id="user-role">Administrador</div>
       </div>
       <div class="user-menu" onclick="event.preventDefault(); event.stopPropagation(); fazerLogout()" title="Sair">
-        <svg viewBox="0 0 24 24">
-          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-          <polyline points="16 17 21 12 16 7"/>
-          <line x1="21" y1="12" x2="9" y2="12"/>
-        </svg>
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
       </div>
     </a>
   </aside>
 
   <div class="main-content">
     <header class="topbar">
-      <div class="topbar-left">
-        <div>
-          <div class="page-title">Dashboard</div>
-          <div class="page-subtitle">Bem-vindo ao sistema ROMPEX</div>
-        </div>
+      <div class="topbar-info">
+        <div class="topbar-eyebrow"><span class="dot"></span>Sistema operacional · <span id="topbar-date"></span></div>
+        <div class="page-title">Dashboard</div>
       </div>
+      <button class="theme-toggle-btn" onclick="toggleTheme()" id="themeBtn" title="Tema">☾</button>
     </header>
 
     <main class="content">
-      <div class="stats-grid">
+
+      <!-- Greeting + frase motivacional -->
+      <section class="greet">
+        <div>
+          <div class="live-tag">
+            <div class="status-dot"></div>
+            Painel da empresa
+          </div>
+          <div class="greet-name" id="greet-name">Bom dia, <span>Admin</span></div>
+          <div class="greet-sub" id="greet-sub">ROMPEX · Sistema Interno</div>
+        </div>
+        <div class="greet-quote">
+          <div class="greet-quote-mark">
+            <svg viewBox="0 0 24 24"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h2c0 4-3 5-3 5v3zm12 0c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h2c0 4-3 5-3 5v3z"/></svg>
+          </div>
+          <div id="motivacao-texto" style="flex:1">
+            <div class="greet-quote-text">Carregando...</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Cotações USD e EUR -->
+      <section class="stat-grid">
         <div class="stat-card">
           <div class="stat-header">
             <div class="stat-icon">
-              <svg viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="2" y1="12" x2="22" y2="12"/>
-                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-              </svg>
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
             </div>
-            <div class="stat-trend" id="usd-trend">
-              <span>--</span>
-            </div>
+            <div class="stat-trend" id="usd-trend"><span>--</span></div>
           </div>
           <div class="stat-value" id="usd-value">R$ --</div>
           <div class="stat-label">Dólar (USD/BRL)</div>
@@ -949,121 +782,79 @@ html[data-theme="light"] .nav-icon-img{filter:none}
         <div class="stat-card">
           <div class="stat-header">
             <div class="stat-icon">
-              <svg viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="10"/>
-                <path d="M15 8a4 4 0 1 0 0 8M7 10h6M7 14h6"/>
-              </svg>
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M15 8a4 4 0 1 0 0 8M7 10h6M7 14h6"/></svg>
             </div>
-            <div class="stat-trend" id="eur-trend">
-              <span>--</span>
-            </div>
+            <div class="stat-trend" id="eur-trend"><span>--</span></div>
           </div>
           <div class="stat-value" id="eur-value">R$ --</div>
           <div class="stat-label">Euro (EUR/BRL)</div>
         </div>
+      </section>
 
-        <div class="stat-card" id="motivacao-card">
-          <div class="stat-header">
-            <div class="stat-icon">
-              <svg viewBox="0 0 24 24">
-                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-              </svg>
-            </div>
-          </div>
-          <div class="stat-value" id="motivacao-texto" style="font-size:18px;line-height:1.4">Carregando...</div>
-          <div class="stat-label">Mensagem do dia</div>
-        </div>
-      </div>
-
-      <div class="card">
+      <!-- Ações Rápidas -->
+      <section class="card">
         <div class="card-header">
           <div class="card-title">
-            <svg viewBox="0 0 24 24">
-              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-            </svg>
+            <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
             Ações Rápidas
           </div>
         </div>
         <div class="quick-actions">
           <a href="modulos/compras.html" class="quick-action">
             <div class="quick-action-icon">
-              <svg viewBox="0 0 24 24">
-                <line x1="12" y1="5" x2="12" y2="19"/>
-                <line x1="5" y1="12" x2="19" y2="12"/>
-              </svg>
+              <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             </div>
             <div class="quick-action-label">Nova Compra</div>
           </a>
-
           <a href="modulos/relacao-compras.html" class="quick-action">
             <div class="quick-action-icon">
-              <svg viewBox="0 0 24 24">
-                <line x1="12" y1="20" x2="12" y2="10"/>
-                <line x1="18" y1="20" x2="18" y2="4"/>
-                <line x1="6" y1="20" x2="6" y2="16"/>
-              </svg>
+              <svg viewBox="0 0 24 24"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>
             </div>
             <div class="quick-action-label">Relatórios</div>
           </a>
-
           <a href="modulos/usuarios.html" class="quick-action">
             <div class="quick-action-icon">
-              <svg viewBox="0 0 24 24">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                <circle cx="9" cy="7" r="4"/>
-                <line x1="23" y1="11" x2="17" y2="11"/>
-              </svg>
+              <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
             </div>
             <div class="quick-action-label">Usuários</div>
           </a>
-
           <a href="modulos/documentos.html" class="quick-action">
             <div class="quick-action-icon">
-              <svg viewBox="0 0 24 24">
-                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
-              </svg>
+              <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
             </div>
             <div class="quick-action-label">Documentos</div>
           </a>
-
           <a href="modulos/financeiro.html" class="quick-action">
             <div class="quick-action-icon">
-              <svg viewBox="0 0 24 24">
-                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-              </svg>
+              <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
             </div>
             <div class="quick-action-label">Financeiro</div>
           </a>
-
-          <div class="quick-action">
+          <a href="modulos/lancar-avisos.html" class="quick-action">
             <div class="quick-action-icon">
-              <svg viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="10"/>
-                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-                <line x1="12" y1="17" x2="12.01" y2="17"/>
-              </svg>
+              <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
             </div>
-            <div class="quick-action-label">Suporte</div>
-          </div>
+            <div class="quick-action-label">Lançar Aviso</div>
+          </a>
         </div>
-      </div>
+      </section>
 
-      <div class="card">
+      <!-- Avisos -->
+      <section class="card">
         <div class="card-header">
           <div class="card-title">
-            <svg viewBox="0 0 24 24">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-            </svg>
+            <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
             Avisos
           </div>
         </div>
         <div id="avisos-kanban"></div>
-      </div>
+      </section>
+
     </main>
   </div>
 </div>
 
+<!-- Modal de aviso -->
 <div class="modal-overlay" id="modal-aviso-overlay" onclick="fecharModalAviso(event)">
   <div class="modal-aviso" id="modal-aviso-content">
     <img id="modal-aviso-img" class="modal-aviso-img" alt="" style="display:none">
@@ -1081,235 +872,233 @@ html[data-theme="light"] .nav-icon-img{filter:none}
 
 <script src="auth.js"></script>
 <script>
-// Versionamento para forçar atualização (anti-cache)
-const VERSAO_SISTEMA = '3.0.0';
-console.log('🚀 ROMPEX Intranet v' + VERSAO_SISTEMA);
+const VERSAO_SISTEMA='3.1.0';
+console.log('🚀 ROMPEX Intranet v'+VERSAO_SISTEMA);
 
-const sessao = verificarAutenticacao();
-if (sessao) {
-  document.getElementById('user-name').textContent = sessao.nome;
-  document.getElementById('user-role').textContent = sessao.perfil;
-  document.getElementById('user-avatar').textContent = sessao.nome.substring(0, 2).toUpperCase();
+const sessao=verificarAutenticacao();
+if(sessao){
+  document.getElementById('user-name').textContent=sessao.nome;
+  document.getElementById('user-role').textContent=sessao.perfil;
+  document.getElementById('user-avatar').textContent=sessao.nome.substring(0,2).toUpperCase();
+  document.getElementById('greet-name').innerHTML='Bom dia, <span>'+escapeHtml(sessao.nome)+'</span>';
 }
 iniciarMonitoramentoSessao();
 
-function toggleSubmenu(id, event) {
-  if (event) event.stopPropagation();
-  const submenu = document.getElementById('submenu-' + id);
-  const item = event ? event.currentTarget : document.querySelector('[onclick*="' + id + '"]');
-  if (submenu) {
-    const isOpen = submenu.classList.contains('open');
-    if (isOpen) {
-      submenu.classList.remove('open');
-      if (item) item.classList.remove('expanded');
-    } else {
-      submenu.classList.add('open');
-      if (item) item.classList.add('expanded');
-    }
+// Topbar date
+(function(){
+  const d=new Date();
+  const meses=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  const dias=['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
+  const txt=dias[d.getDay()]+', '+d.getDate()+' '+meses[d.getMonth()]+' '+d.getFullYear();
+  const el=document.getElementById('topbar-date');
+  if(el) el.textContent=txt;
+})();
+
+function toggleSubmenu(id,event){
+  if(event)event.stopPropagation();
+  const submenu=document.getElementById('submenu-'+id);
+  const item=event?event.currentTarget:document.querySelector('[onclick*="'+id+'"]');
+  if(submenu){
+    const isOpen=submenu.classList.contains('open');
+    if(isOpen){submenu.classList.remove('open');if(item)item.classList.remove('expanded');}
+    else{submenu.classList.add('open');if(item)item.classList.add('expanded');}
   }
 }
+
+function toggleTheme(){
+  const html=document.documentElement;
+  const cur=html.getAttribute('data-theme')||'light';
+  const next=cur==='light'?'dark':'light';
+  html.setAttribute('data-theme',next);
+  try{localStorage.setItem('theme',next);}catch(e){}
+  const btn=document.getElementById('themeBtn');
+  if(btn) btn.textContent=next==='light'?'☾':'☀';
+}
+(function(){
+  const t=document.documentElement.getAttribute('data-theme')||'light';
+  const btn=document.getElementById('themeBtn');
+  if(btn) btn.textContent=t==='light'?'☾':'☀';
+})();
 
 /* ============================================================================
    Mensagem motivacional do dia
-   - Frases de filósofos e pensadores com foco empresarial/liderança/disciplina.
-   - Selecionada pelo dia do ano para variar diariamente sem aleatoriedade.
    ============================================================================ */
-const MENSAGENS_MOTIVACAO = [
-  { frase: 'A qualidade não é um ato, é um hábito.', autor: 'Aristóteles' },
-  { frase: 'A melhor maneira de prever o futuro é criá-lo.', autor: 'Peter Drucker' },
-  { frase: 'Nenhum vento sopra a favor de quem não sabe para onde ir.', autor: 'Sêneca' },
-  { frase: 'A inovação distingue um líder de um seguidor.', autor: 'Steve Jobs' },
-  { frase: 'Quem move montanhas começa carregando pequenas pedras.', autor: 'Confúcio' },
-  { frase: 'O segredo do sucesso é a constância de propósito.', autor: 'Benjamin Disraeli' },
-  { frase: 'O que pode ser medido pode ser melhorado.', autor: 'Peter Drucker' },
-  { frase: 'Não é o mais forte que sobrevive, mas o que melhor se adapta às mudanças.', autor: 'Charles Darwin' },
-  { frase: 'Risco vem de não saber o que se está fazendo.', autor: 'Warren Buffett' },
-  { frase: 'Comece fazendo o necessário, depois o possível, e de repente estará fazendo o impossível.', autor: 'São Francisco de Assis' },
-  { frase: 'Estratégia sem tática é o caminho mais lento para a vitória; tática sem estratégia é o ruído antes da derrota.', autor: 'Sun Tzu' },
-  { frase: 'Não basta saber, é preciso também aplicar; não basta querer, é preciso também agir.', autor: 'Goethe' },
-  { frase: 'Disciplina é a ponte entre objetivos e conquistas.', autor: 'Jim Rohn' },
-  { frase: 'Aquilo que você é fala tão alto que não consigo ouvir o que você diz.', autor: 'Ralph Waldo Emerson' },
-  { frase: 'Não tenha medo de desistir do bom para perseguir o ótimo.', autor: 'John D. Rockefeller' },
-  { frase: 'Faça o melhor que puder, com o que tiver, onde estiver.', autor: 'Theodore Roosevelt' },
-  { frase: 'O preço do sucesso é a dedicação, o trabalho árduo e uma incessante busca pela excelência.', autor: 'Vince Lombardi' },
-  { frase: 'O sucesso geralmente vem para aqueles que estão muito ocupados para procurá-lo.', autor: 'Henry David Thoreau' },
-  { frase: 'Conhece-te a ti mesmo.', autor: 'Sócrates' },
-  { frase: 'Cuide dos seus minutos e as horas cuidarão de si próprias.', autor: 'Lord Chesterfield' },
-  { frase: 'Tudo o que somos é resultado do que pensamos.', autor: 'Buda' },
-  { frase: 'Aquele que vence sem obstáculos triunfa sem glória.', autor: 'Pierre Corneille' },
-  { frase: 'Se você não está disposto a arriscar o usual, terá que se contentar com o ordinário.', autor: 'Jim Rohn' },
-  { frase: 'A vida é 10% o que acontece com você e 90% como você reage a isso.', autor: 'Charles R. Swindoll' },
-  { frase: 'A melhor preparação para amanhã é fazer hoje o seu melhor.', autor: 'H. Jackson Brown Jr.' },
-  { frase: 'O sucesso é ir de fracasso em fracasso sem perder entusiasmo.', autor: 'Winston Churchill' },
-  { frase: 'A imaginação é mais importante que o conhecimento.', autor: 'Albert Einstein' },
-  { frase: 'A maior glória em viver não está em nunca cair, mas em levantar-se sempre que caímos.', autor: 'Nelson Mandela' },
-  { frase: 'Não receie a perfeição: você nunca a alcançará.', autor: 'Salvador Dalí' },
-  { frase: 'Sua qualidade de vida será determinada pela qualidade do seu compromisso com a excelência.', autor: 'Vince Lombardi' }
+const MENSAGENS_MOTIVACAO=[
+  {frase:'A qualidade não é um ato, é um hábito.',autor:'Aristóteles'},
+  {frase:'A melhor maneira de prever o futuro é criá-lo.',autor:'Peter Drucker'},
+  {frase:'Nenhum vento sopra a favor de quem não sabe para onde ir.',autor:'Sêneca'},
+  {frase:'A inovação distingue um líder de um seguidor.',autor:'Steve Jobs'},
+  {frase:'Quem move montanhas começa carregando pequenas pedras.',autor:'Confúcio'},
+  {frase:'O segredo do sucesso é a constância de propósito.',autor:'Benjamin Disraeli'},
+  {frase:'O que pode ser medido pode ser melhorado.',autor:'Peter Drucker'},
+  {frase:'Não é o mais forte que sobrevive, mas o que melhor se adapta às mudanças.',autor:'Charles Darwin'},
+  {frase:'Risco vem de não saber o que se está fazendo.',autor:'Warren Buffett'},
+  {frase:'Comece fazendo o necessário, depois o possível, e de repente estará fazendo o impossível.',autor:'São Francisco de Assis'},
+  {frase:'Estratégia sem tática é o caminho mais lento para a vitória; tática sem estratégia é o ruído antes da derrota.',autor:'Sun Tzu'},
+  {frase:'Não basta saber, é preciso também aplicar; não basta querer, é preciso também agir.',autor:'Goethe'},
+  {frase:'Disciplina é a ponte entre objetivos e conquistas.',autor:'Jim Rohn'},
+  {frase:'Aquilo que você é fala tão alto que não consigo ouvir o que você diz.',autor:'Ralph Waldo Emerson'},
+  {frase:'Não tenha medo de desistir do bom para perseguir o ótimo.',autor:'John D. Rockefeller'},
+  {frase:'Faça o melhor que puder, com o que tiver, onde estiver.',autor:'Theodore Roosevelt'},
+  {frase:'O preço do sucesso é a dedicação, o trabalho árduo e uma incessante busca pela excelência.',autor:'Vince Lombardi'},
+  {frase:'O sucesso geralmente vem para aqueles que estão muito ocupados para procurá-lo.',autor:'Henry David Thoreau'},
+  {frase:'Conhece-te a ti mesmo.',autor:'Sócrates'},
+  {frase:'Cuide dos seus minutos e as horas cuidarão de si próprias.',autor:'Lord Chesterfield'},
+  {frase:'Tudo o que somos é resultado do que pensamos.',autor:'Buda'},
+  {frase:'Aquele que vence sem obstáculos triunfa sem glória.',autor:'Pierre Corneille'},
+  {frase:'Se você não está disposto a arriscar o usual, terá que se contentar com o ordinário.',autor:'Jim Rohn'},
+  {frase:'A vida é 10% o que acontece com você e 90% como você reage a isso.',autor:'Charles R. Swindoll'},
+  {frase:'A melhor preparação para amanhã é fazer hoje o seu melhor.',autor:'H. Jackson Brown Jr.'},
+  {frase:'O sucesso é ir de fracasso em fracasso sem perder entusiasmo.',autor:'Winston Churchill'},
+  {frase:'A imaginação é mais importante que o conhecimento.',autor:'Albert Einstein'},
+  {frase:'A maior glória em viver não está em nunca cair, mas em levantar-se sempre que caímos.',autor:'Nelson Mandela'},
+  {frase:'Não receie a perfeição: você nunca a alcançará.',autor:'Salvador Dalí'},
+  {frase:'Sua qualidade de vida será determinada pela qualidade do seu compromisso com a excelência.',autor:'Vince Lombardi'}
 ];
 
-function carregarMotivacao() {
-  // Sorteia uma frase aleatória a cada carregamento (evita repetir a anterior)
-  const ultimoIdx = parseInt(sessionStorage.getItem('rompex_ultima_frase') || '-1', 10);
+function carregarMotivacao(){
+  const ultimoIdx=parseInt(sessionStorage.getItem('rompex_ultima_frase')||'-1',10);
   let idx;
-  do {
-    idx = Math.floor(Math.random() * MENSAGENS_MOTIVACAO.length);
-  } while (MENSAGENS_MOTIVACAO.length > 1 && idx === ultimoIdx);
-  sessionStorage.setItem('rompex_ultima_frase', String(idx));
-  const item = MENSAGENS_MOTIVACAO[idx];
-  document.getElementById('motivacao-texto').innerHTML =
-    '"' + item.frase + '"' +
-    '<div style="font-size:13px;color:var(--text-muted);font-weight:600;margin-top:8px;font-style:italic">— ' + item.autor + '</div>';
+  do{idx=Math.floor(Math.random()*MENSAGENS_MOTIVACAO.length);}
+  while(MENSAGENS_MOTIVACAO.length>1 && idx===ultimoIdx);
+  sessionStorage.setItem('rompex_ultima_frase',String(idx));
+  const item=MENSAGENS_MOTIVACAO[idx];
+  document.getElementById('motivacao-texto').innerHTML=
+    '<div class="greet-quote-text">"'+escapeHtml(item.frase)+'"</div>'+
+    '<div class="greet-quote-author">— '+escapeHtml(item.autor)+'</div>';
 }
 
 /* ============================================================================
-   Cotações USD/BRL e EUR/BRL via API pública do Banco Central (SGS).
-   - USD: série 1 (Dólar comercial - venda)
-   - EUR: série 21619 (Euro venda)
-   Pega os 2 últimos pontos para calcular variação. Cache de 30 min porque
-   o BCB atualiza apenas em dias úteis.
+   Cotações USD/BRL e EUR/BRL via BCB
    ============================================================================ */
-const BCB_URL = function(serie) {
-  return 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.' + serie + '/dados/ultimos/2?formato=json';
-};
-const COTACAO_CACHE_KEY = 'rompex_cotacoes_bcb_cache';
-const COTACAO_CACHE_MS = 30 * 60 * 1000;
+const BCB_URL=function(serie){return 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.'+serie+'/dados/ultimos/2?formato=json';};
+const COTACAO_CACHE_KEY='rompex_cotacoes_bcb_cache';
+const COTACAO_CACHE_MS=30*60*1000;
 
-function renderCotacao(prefix, pontos) {
-  // pontos: [{data:"dd/mm/yyyy", valor:"5.43"}, ...] em ordem cronológica
-  if (!Array.isArray(pontos) || !pontos.length) return;
-  const atual = pontos[pontos.length - 1];
-  const anterior = pontos.length > 1 ? pontos[pontos.length - 2] : null;
-  const bid = parseFloat(atual.valor);
-  const valEl = document.getElementById(prefix + '-value');
-  const trendEl = document.getElementById(prefix + '-trend');
-  const labelEl = document.querySelector('#' + prefix + '-value ~ .stat-label');
+function renderCotacao(prefix,pontos){
+  if(!Array.isArray(pontos)||!pontos.length)return;
+  const atual=pontos[pontos.length-1];
+  const anterior=pontos.length>1?pontos[pontos.length-2]:null;
+  const bid=parseFloat(atual.valor);
+  const valEl=document.getElementById(prefix+'-value');
+  const trendEl=document.getElementById(prefix+'-trend');
+  const labelEl=document.querySelector('#'+prefix+'-value ~ .stat-label');
 
-  if (!isNaN(bid)) {
-    valEl.textContent = 'R$ ' + bid.toFixed(4).replace('.', ',');
-  }
-  if (anterior) {
-    const ant = parseFloat(anterior.valor);
-    if (!isNaN(ant) && ant !== 0) {
-      const pct = ((bid - ant) / ant) * 100;
-      trendEl.classList.remove('up', 'down');
-      trendEl.classList.add(pct >= 0 ? 'up' : 'down');
-      trendEl.innerHTML = '<span>' + (pct >= 0 ? '▲ ' : '▼ ') + Math.abs(pct).toFixed(2).replace('.', ',') + '%</span>';
+  if(!isNaN(bid)) valEl.textContent='R$ '+bid.toFixed(4).replace('.',',');
+  if(anterior){
+    const ant=parseFloat(anterior.valor);
+    if(!isNaN(ant)&&ant!==0){
+      const pct=((bid-ant)/ant)*100;
+      trendEl.classList.remove('up','down');
+      trendEl.classList.add(pct>=0?'up':'down');
+      trendEl.innerHTML='<span>'+(pct>=0?'▲ ':'▼ ')+Math.abs(pct).toFixed(2).replace('.',',')+'%</span>';
     }
   }
-  if (labelEl && atual.data) {
-    const base = labelEl.dataset.base || labelEl.textContent;
-    labelEl.dataset.base = base;
-    labelEl.textContent = base + ' · ' + atual.data;
+  if(labelEl&&atual.data){
+    const base=labelEl.dataset.base||labelEl.textContent;
+    labelEl.dataset.base=base;
+    labelEl.textContent=base+' · '+atual.data;
   }
 }
 
-async function carregarCotacoes() {
-  // 1) Cache válido?
-  try {
-    const cache = JSON.parse(localStorage.getItem(COTACAO_CACHE_KEY) || 'null');
-    if (cache && (Date.now() - cache.ts) < COTACAO_CACHE_MS) {
-      renderCotacao('usd', cache.usd);
-      renderCotacao('eur', cache.eur);
+async function carregarCotacoes(){
+  try{
+    const cache=JSON.parse(localStorage.getItem(COTACAO_CACHE_KEY)||'null');
+    if(cache&&(Date.now()-cache.ts)<COTACAO_CACHE_MS){
+      renderCotacao('usd',cache.usd);
+      renderCotacao('eur',cache.eur);
       return;
     }
-  } catch(e) { /* ignora cache corrompido */ }
+  }catch(e){}
 
-  // 2) Buscar dois fetches em paralelo (BCB é separado por série).
-  try {
-    const [respUsd, respEur] = await Promise.all([
-      fetch(BCB_URL(1)),
-      fetch(BCB_URL(21619))
-    ]);
-    if (!respUsd.ok || !respEur.ok) throw new Error('HTTP ' + respUsd.status + '/' + respEur.status);
-    const usd = await respUsd.json();
-    const eur = await respEur.json();
-    renderCotacao('usd', usd);
-    renderCotacao('eur', eur);
-    localStorage.setItem(COTACAO_CACHE_KEY, JSON.stringify({ ts: Date.now(), usd: usd, eur: eur }));
-  } catch(err) {
-    console.warn('[Cotacoes BCB] Falha ao buscar:', err);
-    document.getElementById('usd-value').textContent = 'indisponível';
-    document.getElementById('eur-value').textContent = 'indisponível';
+  try{
+    const [respUsd,respEur]=await Promise.all([fetch(BCB_URL(1)),fetch(BCB_URL(21619))]);
+    if(!respUsd.ok||!respEur.ok)throw new Error('HTTP '+respUsd.status+'/'+respEur.status);
+    const usd=await respUsd.json();
+    const eur=await respEur.json();
+    renderCotacao('usd',usd);
+    renderCotacao('eur',eur);
+    localStorage.setItem(COTACAO_CACHE_KEY,JSON.stringify({ts:Date.now(),usd:usd,eur:eur}));
+  }catch(err){
+    console.warn('[Cotacoes BCB] Falha:',err);
+    document.getElementById('usd-value').textContent='indisponível';
+    document.getElementById('eur-value').textContent='indisponível';
   }
 }
 
 /* ============================================================================
-   Avisos publicados — vêm de localStorage 'rompex_avisos' (alimentado pelo
-   módulo modulos/avisos.html).
+   Avisos (localStorage)
    ============================================================================ */
-function escapeHtml(s) {
-  return String(s == null ? '' : s)
+function escapeHtml(s){
+  return String(s==null?'':s)
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
     .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
-
-function fmtDataAviso(iso) {
-  if (!iso) return '';
-  const d = new Date(iso);
-  return isNaN(d) ? '' : d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+function fmtDataAviso(iso){
+  if(!iso)return '';
+  const d=new Date(iso);
+  return isNaN(d)?'':d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
 }
 
-// Lista cacheada para o modal acessar pelo índice.
-let _avisosCache = [];
+let _avisosCache=[];
 
-function carregarAvisos() {
-  try { _avisosCache = JSON.parse(localStorage.getItem('rompex_avisos') || '[]'); }
-  catch(e) { _avisosCache = []; }
+function carregarAvisos(){
+  try{_avisosCache=JSON.parse(localStorage.getItem('rompex_avisos')||'[]');}
+  catch(e){_avisosCache=[];}
 
-  const wrap = document.getElementById('avisos-kanban');
-  if (!_avisosCache.length) {
-    wrap.innerHTML = '<div class="avisos-empty">📭 Nenhum aviso publicado.<br><small>Publique avisos em Configurações → Lançar Avisos.</small></div>';
+  const wrap=document.getElementById('avisos-kanban');
+  if(!_avisosCache.length){
+    wrap.innerHTML='<div class="avisos-empty">📭 Nenhum aviso publicado.<br><small>Publique avisos em Configurações → Lançar Avisos.</small></div>';
     return;
   }
 
-  let html = '<div class="avisos-board">';
-  _avisosCache.forEach(function(a, i) {
-    const img = a.imagemUrl || a.imagemDataUrl;
-    html += '<div class="aviso-board-card" onclick="abrirModalAviso(' + i + ')">' +
+  let html='<div class="avisos-board">';
+  _avisosCache.forEach(function(a,i){
+    const img=a.imagemUrl||a.imagemDataUrl;
+    html+='<div class="aviso-board-card" onclick="abrirModalAviso('+i+')">'+
       (img
-        ? '<img class="aviso-board-img" src="' + escapeHtml(img) + '" alt="">'
-        : '<div class="aviso-board-noimg">📢</div>') +
-      '<div class="aviso-board-body">' +
-        '<div class="aviso-board-title">' + escapeHtml(a.titulo) + '</div>' +
-        '<div class="aviso-board-msg">' + escapeHtml(a.mensagem) + '</div>' +
-        '<div class="aviso-board-meta">' +
-          '<span>' + escapeHtml(fmtDataAviso(a.dataPublicacao)) + ' · ' + escapeHtml(a.autor || '') + '</span>' +
-          '<span class="open-hint" style="float:right">clique para abrir</span>' +
-        '</div>' +
-      '</div>' +
+        ?'<img class="aviso-board-img" src="'+escapeHtml(img)+'" alt="">'
+        :'<div class="aviso-board-noimg">📢</div>')+
+      '<div class="aviso-board-body">'+
+        '<div class="aviso-board-title">'+escapeHtml(a.titulo)+'</div>'+
+        '<div class="aviso-board-msg">'+escapeHtml(a.mensagem)+'</div>'+
+        '<div class="aviso-board-meta">'+
+          '<span>'+escapeHtml(fmtDataAviso(a.dataPublicacao))+' · '+escapeHtml(a.autor||'')+'</span>'+
+          '<span class="open-hint">abrir →</span>'+
+        '</div>'+
+      '</div>'+
     '</div>';
   });
-  wrap.innerHTML = html + '</div>';
+  wrap.innerHTML=html+'</div>';
 }
 
-/* ---------- Modal de expandir aviso ---------- */
-function abrirModalAviso(idx) {
-  const a = _avisosCache[idx];
-  if (!a) return;
-  const img = a.imagemUrl || a.imagemDataUrl;
-  const imgEl = document.getElementById('modal-aviso-img');
-  if (img) { imgEl.src = img; imgEl.style.display = 'block'; }
-  else { imgEl.removeAttribute('src'); imgEl.style.display = 'none'; }
-  document.getElementById('modal-aviso-titulo').textContent = a.titulo;
-  document.getElementById('modal-aviso-meta').textContent = fmtDataAviso(a.dataPublicacao) + ' · ' + (a.autor || '');
-  document.getElementById('modal-aviso-msg').textContent = a.mensagem;
-  const downloadEl = document.getElementById('modal-aviso-download');
-  if (a.permitirDownload && a.documentoId) {
-    downloadEl.innerHTML = '<a class="btn-download" href="modulos/documentos.html?pasta=Avisos">' +
-      '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
-        '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>' +
-        '<polyline points="7 10 12 15 17 10"/>' +
-        '<line x1="12" y1="15" x2="12" y2="3"/>' +
-      '</svg>' +
+function abrirModalAviso(idx){
+  const a=_avisosCache[idx];
+  if(!a)return;
+  const img=a.imagemUrl||a.imagemDataUrl;
+  const imgEl=document.getElementById('modal-aviso-img');
+  if(img){imgEl.src=img;imgEl.style.display='block';}
+  else{imgEl.removeAttribute('src');imgEl.style.display='none';}
+  document.getElementById('modal-aviso-titulo').textContent=a.titulo;
+  document.getElementById('modal-aviso-meta').textContent=fmtDataAviso(a.dataPublicacao)+' · '+(a.autor||'');
+  document.getElementById('modal-aviso-msg').textContent=a.mensagem;
+  const downloadEl=document.getElementById('modal-aviso-download');
+  if(a.permitirDownload&&a.documentoId){
+    downloadEl.innerHTML='<a class="btn-download" href="modulos/documentos.html?pasta=Avisos">'+
+      '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+
+        '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>'+
+        '<polyline points="7 10 12 15 17 10"/>'+
+        '<line x1="12" y1="15" x2="12" y2="3"/>'+
+      '</svg>'+
       'Baixar em Documentos</a>';
-  } else {
-    downloadEl.innerHTML = '';
+  }else{
+    downloadEl.innerHTML='';
   }
   document.getElementById('modal-aviso-overlay').classList.add('open');
 }
 
-function fecharModalAviso(ev) {
-  if (ev && ev.target.id !== 'modal-aviso-overlay' && ev.target.tagName !== 'BUTTON') return;
+function fecharModalAviso(ev){
+  if(ev&&ev.target.id!=='modal-aviso-overlay'&&ev.target.tagName!=='BUTTON')return;
   document.getElementById('modal-aviso-overlay').classList.remove('open');
 }
 
@@ -1317,20 +1106,17 @@ carregarMotivacao();
 carregarCotacoes();
 carregarAvisos();
 
-// 🔥 PROTEÇÃO ANTI-CACHE: Adiciona timestamp em todos os links
-document.addEventListener('DOMContentLoaded', function() {
-  const links = document.querySelectorAll('a[href$=".html"]');
-  const timestamp = new Date().getTime();
-  links.forEach(link => {
-    const href = link.getAttribute('href');
-    if (href && !href.includes('?')) {
-      link.setAttribute('href', href + '?v=' + timestamp);
-    }
+// Anti-cache nos links
+document.addEventListener('DOMContentLoaded',function(){
+  const links=document.querySelectorAll('a[href$=".html"]');
+  const timestamp=new Date().getTime();
+  links.forEach(link=>{
+    const href=link.getAttribute('href');
+    if(href&&!href.includes('?')) link.setAttribute('href',href+'?v='+timestamp);
   });
 });
 </script>
 <script src="theme.js"></script>
-
 <script src="./responsive.js"></script>
 </body>
 </html>
