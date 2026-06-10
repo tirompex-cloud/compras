@@ -28,5 +28,5 @@ window.ROMPEX_COMPRAS_CONFIG = {
 
   /* Chave da API da Anthropic (Claude) para leitura de comprovantes via OCR.
      Comeca com "sk-ant-api03-..." — pegue em https://console.anthropic.com */
-  ANTHROPIC_API_KEY: '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',
+  ANTHROPIC_API_KEY: '',
 };
