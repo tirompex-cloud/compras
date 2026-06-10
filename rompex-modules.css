@@ -839,3 +839,279 @@ hr{
   .topbar{padding:12px 16px!important}
   .page-title{font-size:18px!important}
 }
+
+/* =============================================================================
+   COMPRAS module — overrides especificos do modulo de lancamento de compras
+   (upload zone, tabs como pills, banners, modal, form fields)
+   ============================================================================= */
+
+/* Tabs (nav-tab) viram pills com gradient verde quando active */
+.nav-tabs{
+  display:flex!important;flex-wrap:wrap;gap:8px!important;
+  padding:10px!important;
+  background:var(--surface)!important;
+  border:1px solid var(--border)!important;
+  border-radius:var(--radius-lg)!important;
+  box-shadow:var(--shadow-inset),var(--shadow-xs);
+  margin-bottom:18px;
+}
+.nav-tab{
+  padding:8px 16px!important;
+  border-radius:999px!important;
+  background:var(--surface-2)!important;
+  border:1px solid var(--border)!important;
+  color:var(--text-secondary)!important;
+  font-size:13px!important;font-weight:600!important;
+  cursor:pointer;
+  transition:all var(--t-base) var(--easing)!important;
+  display:inline-flex;align-items:center;gap:6px;
+  box-shadow:var(--shadow-inset);
+}
+.nav-tab:hover{
+  border-color:var(--accent)!important;
+  color:var(--accent)!important;
+  background:var(--accent-tint)!important;
+  transform:translateY(-1px);
+}
+.nav-tab.active{
+  background:linear-gradient(135deg,var(--accent),var(--accent-2))!important;
+  color:#fff!important;
+  border-color:transparent!important;
+  box-shadow:0 4px 14px -2px var(--accent-glow),inset 0 1px 0 rgba(255,255,255,0.25)!important;
+  transform:translateY(-1px);
+}
+
+/* Banner de configuracao (warn) - mais polido */
+.banner{
+  background:var(--surface)!important;
+  border:1px solid var(--border)!important;
+  border-radius:var(--radius)!important;
+  padding:14px 16px!important;
+  font-size:13px!important;font-weight:500!important;
+  box-shadow:var(--shadow-inset),var(--shadow-xs);
+  display:flex!important;align-items:center;gap:12px;
+  margin-bottom:14px;
+}
+.banner.warn{
+  background:var(--warning-soft)!important;
+  border-color:rgba(245,158,11,0.30)!important;
+  color:var(--text-primary)!important;
+}
+.banner.warn::before{
+  content:'!';
+  display:inline-flex;align-items:center;justify-content:center;
+  width:24px;height:24px;border-radius:7px;
+  background:var(--warning);color:#fff;
+  font-size:14px;font-weight:800;flex-shrink:0;
+  box-shadow:0 4px 10px -2px rgba(245,158,11,0.4);
+}
+.banner a{
+  color:var(--accent)!important;
+  font-weight:700;text-decoration:none!important;
+}
+.banner a:hover{text-decoration:underline!important}
+
+/* Sheets connection bar (sticky) */
+.sheets-bar{
+  background:var(--surface)!important;
+  border:1px solid var(--accent-border)!important;
+  border-radius:var(--radius)!important;
+  padding:10px 14px!important;
+  font-size:12px!important;
+  color:var(--text-primary)!important;
+  box-shadow:var(--shadow-inset),var(--shadow-xs);
+  margin-bottom:14px;
+}
+.sheets-dot{
+  background:var(--accent)!important;
+  box-shadow:0 0 0 3px var(--accent-tint),0 0 12px var(--accent-glow)!important;
+}
+.sheets-bar a{color:var(--accent)!important;font-weight:700;text-decoration:none!important}
+.sheets-bar a:hover{text-decoration:underline!important}
+
+/* Icon button (topbar de configuracao) */
+.icon-btn{
+  background:var(--surface)!important;
+  border:1px solid var(--border)!important;
+  color:var(--text-secondary)!important;
+  border-radius:var(--radius-sm)!important;
+  padding:8px 14px!important;
+  font-size:12.5px!important;font-weight:600!important;
+  transition:all var(--t-base) var(--easing)!important;
+  box-shadow:var(--shadow-inset),var(--shadow-xs);
+  display:inline-flex;align-items:center;gap:6px;
+}
+.icon-btn:hover{
+  border-color:var(--accent)!important;
+  color:var(--accent)!important;
+  background:var(--accent-tint)!important;
+  transform:translateY(-1px);
+}
+.icon-btn.connected{
+  background:var(--accent-soft)!important;
+  border-color:var(--accent-border)!important;
+  color:var(--accent)!important;
+}
+
+/* Upload zone - SIGNATURE element (receipt OCR) */
+.upload-zone{
+  background:var(--surface)!important;
+  border:2px dashed var(--accent-border)!important;
+  border-radius:var(--radius-lg)!important;
+  padding:48px 24px!important;
+  position:relative;overflow:hidden;
+  transition:all var(--t-base) var(--easing)!important;
+  box-shadow:var(--shadow-inset);
+}
+.upload-zone::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(circle at 50% 30%, var(--accent-tint), transparent 65%),
+    radial-gradient(circle at 80% 80%, rgba(110,231,183,0.06), transparent 60%);
+  z-index:0;
+}
+.upload-zone > *{position:relative;z-index:1}
+.upload-zone:hover{
+  border-color:var(--accent)!important;
+  background:var(--surface)!important;
+  transform:translateY(-2px)!important;
+  box-shadow:0 24px 56px -16px var(--accent-glow),var(--shadow-inset)!important;
+}
+.upload-icon{
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255,255,255,0.35), transparent 50%),
+    linear-gradient(135deg,var(--accent),var(--accent-2))!important;
+  width:72px!important;height:72px!important;
+  border-radius:50%!important;
+  box-shadow:0 12px 32px -8px var(--accent-glow),inset 0 1px 0 rgba(255,255,255,0.3)!important;
+  display:flex;align-items:center;justify-content:center;
+  font-size:30px!important;
+  color:#fff;
+}
+.upload-zone h3{
+  color:var(--text-primary)!important;
+  font-size:17px!important;font-weight:700!important;
+  letter-spacing:-0.01em;
+  margin-bottom:4px!important;
+}
+.upload-zone p{
+  color:var(--text-secondary)!important;
+  font-size:13px!important;line-height:1.5!important;
+}
+
+/* Card titles em compras */
+.card-title{
+  color:var(--text-primary)!important;
+  font-size:13px!important;font-weight:700!important;
+  text-transform:uppercase;letter-spacing:0.12em!important;
+  margin-bottom:16px!important;
+  padding-bottom:14px;
+  border-bottom:1px solid var(--border-soft)!important;
+  display:flex!important;align-items:center;gap:10px;
+}
+
+/* Form fields no compras */
+.field{margin-bottom:14px}
+.field label,form label{
+  display:block!important;margin-bottom:6px!important;
+  font-size:10.5px!important;font-weight:700!important;
+  color:var(--text-secondary)!important;
+  text-transform:uppercase;letter-spacing:0.14em!important;
+}
+
+/* Modal de configuracoes */
+.overlay{
+  background:rgba(3,7,10,0.7)!important;
+  backdrop-filter:blur(12px)!important;-webkit-backdrop-filter:blur(12px)!important;
+}
+.overlay.open,.overlay.show{display:flex!important}
+.modal{
+  background:var(--surface)!important;
+  border:1px solid var(--border)!important;
+  border-radius:var(--radius-xl)!important;
+  padding:28px!important;
+  box-shadow:var(--shadow-xl)!important;
+  color:var(--text-primary)!important;
+  animation:rxModalIn 0.25s var(--easing);
+}
+.modal h2{
+  color:var(--text-primary)!important;
+  font-size:19px!important;font-weight:700!important;
+  margin-bottom:18px;letter-spacing:-0.01em;
+}
+.modal-section{
+  background:var(--surface-2)!important;
+  border:1px solid var(--border-soft)!important;
+  border-radius:var(--radius)!important;
+  padding:16px!important;
+  margin-bottom:14px;
+}
+.modal-section h3{
+  font-size:13px!important;font-weight:700!important;
+  color:var(--text-primary)!important;
+  display:flex;align-items:center;gap:8px;
+  margin-bottom:6px!important;
+  letter-spacing:-0.01em;
+}
+.modal-section .desc{
+  font-size:12px!important;color:var(--text-muted)!important;
+  margin-bottom:12px!important;
+  line-height:1.5;
+}
+.modal-actions{
+  display:flex;justify-content:flex-end;gap:10px;
+  margin-top:18px!important;padding-top:18px;
+  border-top:1px solid var(--border)!important;
+}
+
+/* Grids do compras (g2/g3/g4) */
+.g2,.g3,.g4{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+
+/* Metricas */
+.metrics{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:14px;
+  margin-bottom:18px;
+}
+
+/* Panel show/hide */
+.panel{display:none}
+.panel.active{display:flex}
+
+/* Main do compras */
+main{padding:24px 28px 40px!important}
+@media (max-width:768px){
+  .g2,.g3,.g4{grid-template-columns:1fr!important}
+  .metrics{grid-template-columns:1fr!important}
+  main{padding:18px 16px 32px!important}
+}
+
+/* Comprovante status (apos upload) */
+#comprovante-status{
+  font-size:13px;font-weight:500;
+  padding:10px 14px;border-radius:var(--radius-sm);
+  background:var(--surface-2);
+  border:1px solid var(--border-soft);
+  margin-top:8px;
+  display:inline-block;min-width:280px;
+}
+
+/* Botoes do compras */
+form button[type="submit"],.btn-save,.salvar-btn{
+  background:linear-gradient(135deg,var(--accent),var(--accent-2))!important;
+  color:#fff!important;border:none!important;
+  padding:12px 24px!important;border-radius:var(--radius)!important;
+  font-size:14px!important;font-weight:700!important;
+  cursor:pointer;
+  box-shadow:var(--shadow-accent-btn)!important;
+  transition:transform var(--t-base) var(--easing)!important;
+  display:inline-flex;align-items:center;gap:8px;
+}
+form button[type="submit"]:hover,.btn-save:hover,.salvar-btn:hover{
+  transform:translateY(-1px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.25),0 12px 28px -6px var(--accent-glow),0 24px 56px -16px rgba(16,185,129,0.40)!important;
+}

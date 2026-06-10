@@ -16,6 +16,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 <script src="../rompex-drive-api.js"></script>
+<script src="../compras-config.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -1195,9 +1196,20 @@ function g(id) { return (document.getElementById(id) || {}).value || ''; }
 function fmtVal(n) { return 'R$ ' + parseFloat(n || 0).toFixed(2).replace('.', ','); }
 function ecoColor(e) { return parseFloat(e || 0) > 0 ? '#10B981' : '#6B7280'; }
 function makeDL(url) { return url ? '<a href="' + url + '" target="_blank" style="color:#10B981">🔗</a>' : ''; }
-function getSheetsURL() { return localStorage.getItem('sheets_url') || ''; }
-function getSheetsFileURL() { return localStorage.getItem('sheets_file_url') || ''; }
-function getKey() { return localStorage.getItem('anthropic_key') || ''; }
+/* Getters: leem PRIMEIRO de compras-config.js (fixo), depois localStorage (modal),
+   senao vazio. Isso permite fixar no codigo sem precisar reconfigurar a cada login. */
+function getSheetsURL() {
+  return (window.ROMPEX_COMPRAS_CONFIG && window.ROMPEX_COMPRAS_CONFIG.SHEETS_APPS_SCRIPT_URL)
+      || localStorage.getItem('sheets_url') || '';
+}
+function getSheetsFileURL() {
+  return (window.ROMPEX_COMPRAS_CONFIG && window.ROMPEX_COMPRAS_CONFIG.SHEETS_VIEW_URL)
+      || localStorage.getItem('sheets_file_url') || '';
+}
+function getKey() {
+  return (window.ROMPEX_COMPRAS_CONFIG && window.ROMPEX_COMPRAS_CONFIG.ANTHROPIC_API_KEY)
+      || localStorage.getItem('anthropic_key') || '';
+}
 
 function loadDB() { 
   try { db = JSON.parse(localStorage.getItem('compras_v4') || '[]'); } 
