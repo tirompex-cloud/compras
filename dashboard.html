@@ -133,51 +133,23 @@ body::after{
 .main-content{flex:1;margin-left:var(--sidebar-width);display:flex;flex-direction:column;min-width:0}
 
 .sidebar-logo{
-  display:flex;align-items:center;gap:11px;
-  padding:6px 8px 16px;margin-bottom:6px;
+  padding:14px 16px 14px;
+  display:flex;align-items:center;justify-content:center;
   position:relative;
+  margin-bottom:6px;
   text-decoration:none;color:inherit;
 }
 .sidebar-logo::after{
-  content:'';position:absolute;left:8px;right:8px;bottom:0;height:1px;background:var(--border);
+  content:'';position:absolute;left:25%;right:25%;bottom:0;height:1px;background:var(--border);
 }
-.brand-mark{
-  width:44px;height:44px;border-radius:12px;
-  background:
-    radial-gradient(circle at 30% 25%, rgba(255,255,255,0.35), transparent 50%),
-    linear-gradient(135deg,var(--accent),var(--accent-2));
+.logo-icon{
+  width:96px;height:96px;
   display:flex;align-items:center;justify-content:center;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,0.3),0 6px 16px -4px var(--accent-glow);
-  position:relative;flex-shrink:0;overflow:hidden;
+  text-decoration:none;
 }
-.brand-mark::after{
-  content:'';position:absolute;inset:-2px;border-radius:14px;
-  background:linear-gradient(135deg,var(--accent),transparent 60%);
-  z-index:-1;filter:blur(8px);opacity:0.5;
-}
-.brand-mark img{width:78%;height:78%;object-fit:contain}
-.brand-text{display:flex;flex-direction:column;line-height:1.12}
-.brand-name{font-size:15px;font-weight:700;color:var(--ink);letter-spacing:-0.01em}
-.brand-tag{font-size:9.5px;font-weight:700;color:var(--accent);letter-spacing:0.14em;text-transform:uppercase}
+.logo-icon img{width:100%;height:100%;object-fit:contain;transition:filter 0.2s}
+html[data-theme="light"] .logo-icon img{filter:brightness(0)}
 
-.context-card{
-  display:flex;align-items:center;gap:11px;
-  padding:10px 12px;
-  background:var(--surface-2);
-  border:1px solid var(--border);
-  border-radius:12px;
-  margin-bottom:16px;
-  box-shadow:var(--sh-inset);
-}
-.context-icon{
-  width:32px;height:32px;border-radius:9px;
-  background:var(--accent-soft);color:var(--accent);
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;
-}
-.context-icon svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
-.context-info{line-height:1.2;flex:1;min-width:0}
-.context-name{font-size:13px;font-weight:600;color:var(--ink)}
-.context-meta{font-size:9.5px;font-weight:700;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase}
 .status-dot{
   width:8px;height:8px;border-radius:50%;background:var(--accent);
   box-shadow:0 0 0 3px var(--accent-tint),0 0 12px var(--accent-glow);
@@ -596,23 +568,10 @@ body::after{
 <div class="layout">
   <aside class="sidebar">
 
-    <a href="dashboard.html" class="sidebar-logo" title="Início">
-      <div class="brand-mark"><img src="logo-rompex-white.png" alt="ROMPEX"></div>
-      <div class="brand-text">
-        <div class="brand-name">ROMPEX</div>
-        <div class="brand-tag">Sistema Interno</div>
-      </div>
-    </a>
-
-    <div class="context-card">
-      <div class="context-icon">
-        <svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h.01M9 13h.01M9 17h.01M15 9h.01M15 13h.01M15 17h.01"/></svg>
-      </div>
-      <div class="context-info">
-        <div class="context-name">Rompex</div>
-        <div class="context-meta">Online</div>
-      </div>
-      <div class="status-dot" title="Sistema operacional"></div>
+    <div class="sidebar-logo">
+      <a href="dashboard.html" class="logo-icon" title="Início">
+        <img src="logo-rompex-white.png" alt="ROMPEX">
+      </a>
     </div>
 
     <nav class="sidebar-nav">

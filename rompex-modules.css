@@ -105,30 +105,32 @@ body::before{
   padding:18px 14px;
 }
 
-/* Logo container - compactar */
+/* Logo container - mantem grande e centralizada (igual era antes) */
 .sidebar-logo{
-  padding:6px 8px 16px!important;
+  padding:14px 16px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
   margin-bottom:6px;
   position:relative;
 }
 .sidebar-logo::after{
+  left:25%!important;right:25%!important;
   background:var(--border)!important;
 }
 .logo-icon{
-  width:44px!important;height:44px!important;
-  border-radius:12px;
-  background:
-    radial-gradient(circle at 30% 25%, rgba(255,255,255,0.35), transparent 50%),
-    linear-gradient(135deg,var(--accent),var(--accent-2));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,0.3),0 6px 16px -4px var(--accent-glow);
-  position:relative;overflow:hidden;
+  width:96px!important;height:96px!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  border-radius:0!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  overflow:visible!important;
 }
-.logo-icon::after{
-  content:'';position:absolute;inset:-2px;border-radius:14px;
-  background:linear-gradient(135deg,var(--accent),transparent 60%);
-  z-index:-1;filter:blur(8px);opacity:0.5;
-}
-.logo-icon img{width:78%!important;height:78%!important;object-fit:contain}
+.logo-icon::after{display:none!important}
+.logo-icon img{width:100%!important;height:100%!important;object-fit:contain;transition:filter 0.2s}
+html[data-theme="light"] .logo-icon img{filter:brightness(0)}
 
 /* Nav */
 .sidebar-nav{padding:0!important}
