@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ROMPEX · Preview Tech</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Surface */
+  --bg:#EEF2F8;
+  --bg-deep:#E4EAF4;
+  --surface:#FFFFFF;
+  --surface-2:#F8FAFD;
+  --surface-glass:rgba(255,255,255,0.72);
+  --border:#E2E8F0;
+  --border-strong:#CBD5E1;
+  --border-soft:#EFF2F8;
+
+  /* Ink */
+  --ink:#0B1426;
+  --ink-2:#3B4A63;
+  --ink-3:#6B7A93;
+  --ink-4:#9AA6BC;
+
+  /* Brand */
+  --accent:#10B981;
+  --accent-2:#059669;
+  --accent-3:#34D399;
+  --accent-4:#6EE7B7;
+  --accent-glow:rgba(16,185,129,0.35);
+  --accent-soft:rgba(16,185,129,0.10);
+  --accent-tint:rgba(16,185,129,0.06);
+
+  /* Status */
+  --danger:#EF4444;
+  --warning:#F59E0B;
+  --info:#0EA5E9;
+  --info-soft:rgba(14,165,233,0.10);
+
+  /* Shape */
+  --radius-xl:22px;
+  --radius-lg:18px;
+  --radius:14px;
+  --radius-sm:10px;
+
+  /* Layered shadows (light) */
+  --sh-card:
+    0 1px 1px rgba(11,20,38,0.04),
+    0 4px 14px -4px rgba(11,20,38,0.08),
+    0 24px 48px -24px rgba(11,20,38,0.10);
+  --sh-card-hover:
+    0 1px 1px rgba(11,20,38,0.04),
+    0 8px 24px -6px rgba(11,20,38,0.12),
+    0 32px 64px -16px rgba(16,185,129,0.18);
+  --sh-inset:inset 0 1px 0 rgba(255,255,255,0.6);
+
+  /* Grid pattern color */
+  --grid:rgba(16,185,129,0.05);
+  --grid-strong:rgba(16,185,129,0.08);
+
+  --sidebar-w:248px;
+  --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+}
+
+html[data-theme="dark"]{
+  --bg:#070C19;
+  --bg-deep:#040812;
+  --surface:#0F172A;
+  --surface-2:#131C2F;
+  --surface-glass:rgba(15,23,42,0.65);
+  --border:#1F2A40;
+  --border-strong:#2A3650;
+  --border-soft:#172033;
+  --ink:#F1F5F9;
+  --ink-2:#CBD5E1;
+  --ink-3:#94A3B8;
+  --ink-4:#64748B;
+  --accent-soft:rgba(16,185,129,0.16);
+  --accent-tint:rgba(16,185,129,0.10);
+  --grid:rgba(16,185,129,0.06);
+  --grid-strong:rgba(16,185,129,0.10);
+  --sh-card:
+    0 1px 1px rgba(0,0,0,0.4),
+    0 8px 24px -6px rgba(0,0,0,0.5),
+    0 32px 64px -24px rgba(16,185,129,0.20);
+  --sh-card-hover:
+    0 1px 1px rgba(0,0,0,0.4),
+    0 12px 32px -8px rgba(0,0,0,0.6),
+    0 32px 80px -16px rgba(16,185,129,0.30);
+  --sh-inset:inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:8px}
+::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+
+html,body{background:var(--bg);min-height:100vh}
+body{
+  font-family:var(--font);
+  color:var(--ink);
+  font-size:14px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  position:relative;
+  overflow-x:hidden;
+}
+
+/* ===== Background: mesh-gradient + grid pattern (TECH) ===== */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(900px circle at 10% 0%, rgba(16,185,129,0.10), transparent 55%),
+    radial-gradient(700px circle at 100% 30%, rgba(14,165,233,0.06), transparent 55%),
+    radial-gradient(900px circle at 50% 110%, rgba(110,231,183,0.08), transparent 50%);
+}
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size:36px 36px;
+  background-position:-1px -1px;
+  -webkit-mask-image:radial-gradient(ellipse 90% 60% at 50% 20%, black 30%, transparent 75%);
+          mask-image:radial-gradient(ellipse 90% 60% at 50% 20%, black 30%, transparent 75%);
+}
+
+/* ===== LAYOUT ===== */
+.layout{display:flex;min-height:100vh;position:relative;z-index:1}
+.sidebar{
+  width:var(--sidebar-w);
+  background:var(--surface);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  position:fixed;left:0;top:0;bottom:0;z-index:100;
+  padding:18px 14px;
+  box-shadow:
+    inset -1px 0 0 var(--border-soft),
+    8px 0 32px -16px rgba(11,20,38,0.06);
+}
+.main{flex:1;margin-left:var(--sidebar-w);display:flex;flex-direction:column;min-width:0}
+
+/* ===== SIDEBAR ===== */
+.brand{
+  display:flex;align-items:center;gap:11px;
+  padding:6px 8px 18px;margin-bottom:6px;
+}
+.brand-mark{
+  width:46px;height:46px;
+  border-radius:13px;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255,255,255,0.35), transparent 50%),
+    linear-gradient(135deg,var(--accent),var(--accent-2));
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:800;font-size:22px;letter-spacing:-0.05em;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.3),
+    0 6px 16px -4px var(--accent-glow);
+  position:relative;
+}
+.brand-mark::after{
+  content:'';position:absolute;inset:-2px;border-radius:15px;
+  background:linear-gradient(135deg,var(--accent),transparent 60%);
+  z-index:-1;filter:blur(8px);opacity:0.5;
+}
+.brand-text{display:flex;flex-direction:column;line-height:1.12}
+.brand-name{font-size:15px;font-weight:700;color:var(--ink);letter-spacing:-0.01em}
+.brand-tag{font-size:9.5px;font-weight:700;color:var(--accent);letter-spacing:0.14em;text-transform:uppercase}
+
+.context-card{
+  display:flex;align-items:center;gap:11px;
+  padding:10px 12px;
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  border-radius:12px;
+  margin-bottom:18px;
+  box-shadow:var(--sh-inset);
+}
+.context-icon{
+  width:32px;height:32px;border-radius:9px;
+  background:var(--accent-soft);color:var(--accent);
+  display:flex;align-items:center;justify-content:center;
+}
+.context-icon svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
+.context-info{line-height:1.2;flex:1}
+.context-name{font-size:13px;font-weight:600;color:var(--ink)}
+.context-meta{font-size:9.5px;font-weight:700;color:var(--accent);letter-spacing:0.12em;text-transform:uppercase}
+.status-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--accent);
+  box-shadow:0 0 0 3px var(--accent-tint), 0 0 12px var(--accent-glow);
+  animation:pulse 2.4s ease-in-out infinite;
+}
+@keyframes pulse{
+  0%,100%{box-shadow:0 0 0 3px var(--accent-tint), 0 0 12px var(--accent-glow);transform:scale(1)}
+  50%{box-shadow:0 0 0 6px transparent, 0 0 18px var(--accent-glow);transform:scale(1.1)}
+}
+
+.nav-section{margin-bottom:12px}
+.nav-section-title{
+  font-size:10px;font-weight:700;
+  color:var(--ink-4);
+  text-transform:uppercase;letter-spacing:0.16em;
+  padding:0 10px 8px;
+}
+.nav-item{
+  position:relative;
+  display:flex;align-items:center;gap:11px;
+  padding:9px 11px;border-radius:10px;
+  color:var(--ink-2);cursor:pointer;
+  transition:background 0.15s,color 0.15s;
+  margin-bottom:1px;
+  font-size:13px;font-weight:500;
+  text-decoration:none;
+}
+.nav-item svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.8;fill:none;flex-shrink:0}
+.nav-item:hover{background:var(--bg);color:var(--ink)}
+.nav-item.active{
+  background:linear-gradient(90deg,var(--accent-soft) 0%, transparent 100%);
+  color:var(--accent);
+  font-weight:600;
+}
+.nav-item.active::before{
+  content:'';position:absolute;left:-14px;top:50%;transform:translateY(-50%);
+  width:3px;height:18px;
+  background:linear-gradient(180deg,var(--accent),var(--accent-2));
+  border-radius:0 4px 4px 0;
+  box-shadow:0 0 12px var(--accent-glow);
+}
+.nav-chev{margin-left:auto;width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;opacity:0.5}
+
+.sidebar-user{
+  margin-top:auto;display:flex;flex-direction:column;gap:8px;
+  padding-top:12px;border-top:1px solid var(--border);
+}
+.user-row{display:flex;align-items:center;gap:10px;padding:6px 8px}
+.user-avatar{
+  width:34px;height:34px;border-radius:50%;
+  background:linear-gradient(135deg,#3B82F6,#6366F1);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:600;font-size:13px;color:#fff;flex-shrink:0;
+  box-shadow:0 4px 10px -2px rgba(99,102,241,0.4);
+}
+.user-info{flex:1;min-width:0;line-height:1.2}
+.user-name{font-size:13px;font-weight:600;color:var(--ink)}
+.user-role{font-size:11px;color:var(--ink-3)}
+.logout{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:9px;border-radius:10px;
+  border:1px solid var(--border);
+  background:var(--surface-2);color:var(--ink-2);
+  cursor:pointer;font-size:13px;font-weight:500;
+  text-decoration:none;
+  transition:border-color 0.15s,color 0.15s,background 0.15s;
+}
+.logout:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-tint)}
+.logout svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2}
+
+/* ===== CONTENT ===== */
+.content{padding:24px 28px 40px;display:flex;flex-direction:column;gap:20px}
+
+/* Greeting (glass + mesh + grid pattern inside) */
+.greet{
+  position:relative;overflow:hidden;
+  background:var(--surface-glass);
+  backdrop-filter:blur(16px) saturate(140%);
+  -webkit-backdrop-filter:blur(16px) saturate(140%);
+  border:1px solid var(--border);
+  border-radius:var(--radius-xl);
+  padding:26px 28px;
+  display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center;
+  box-shadow:var(--sh-card),var(--sh-inset);
+}
+.greet::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(500px circle at 0% 0%, var(--accent-tint), transparent 50%),
+    radial-gradient(400px circle at 100% 100%, rgba(14,165,233,0.06), transparent 55%);
+}
+.greet::after{
+  content:'';position:absolute;inset:0;pointer-events:none;opacity:0.4;
+  background-image:
+    linear-gradient(var(--grid-strong) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-strong) 1px, transparent 1px);
+  background-size:24px 24px;
+  -webkit-mask-image:linear-gradient(135deg, black, transparent 60%);
+          mask-image:linear-gradient(135deg, black, transparent 60%);
+}
+.greet > *{position:relative;z-index:1}
+
+.live-tag{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:5px 11px 5px 9px;
+  background:var(--accent-soft);
+  border:1px solid rgba(16,185,129,0.25);
+  border-radius:999px;
+  font-size:11px;font-weight:600;color:var(--accent);
+  letter-spacing:0.06em;text-transform:uppercase;
+  margin-bottom:14px;
+}
+.greet-name{
+  font-size:34px;font-weight:700;color:var(--ink);
+  letter-spacing:-0.025em;line-height:1.05;margin-bottom:6px;
+}
+.greet-name span{
+  background:linear-gradient(135deg,var(--accent),var(--accent-3));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.greet-sub{font-size:13px;color:var(--ink-3)}
+.greet-quote{
+  display:flex;gap:14px;
+  background:var(--surface);
+  border:1px solid var(--border-soft);
+  border-radius:var(--radius);
+  padding:18px 20px;
+  position:relative;
+  box-shadow:var(--sh-inset);
+}
+.greet-quote-mark{color:var(--accent);opacity:0.5;flex-shrink:0}
+.greet-quote-mark svg{width:22px;height:22px;stroke:currentColor;fill:currentColor}
+.greet-quote-text{font-size:13px;color:var(--ink-2);line-height:1.55;font-style:italic}
+.greet-quote-author{font-size:12px;color:var(--ink-3);margin-top:6px;font-style:normal;font-weight:500}
+
+/* ===== STAT CARDS with SPARKLINE ===== */
+.stat-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+}
+.stat{
+  position:relative;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:20px;
+  overflow:hidden;
+  box-shadow:var(--sh-card),var(--sh-inset);
+  transition:transform 0.2s,box-shadow 0.2s,border-color 0.2s;
+}
+.stat:hover{
+  transform:translateY(-2px);
+  box-shadow:var(--sh-card-hover),var(--sh-inset);
+  border-color:rgba(16,185,129,0.25);
+}
+.stat::before{
+  content:'';position:absolute;top:0;left:18px;right:18px;height:2px;
+  background:linear-gradient(90deg,var(--accent),var(--accent-3),var(--accent-4));
+  border-radius:0 0 4px 4px;
+  box-shadow:0 0 16px var(--accent-glow);
+}
+.stat-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;gap:8px}
+.stat-icon{
+  width:44px;height:44px;border-radius:12px;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(16,185,129,0.18), transparent 60%),
+    var(--accent-soft);
+  color:var(--accent);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:inset 0 0 0 1px rgba(16,185,129,0.15);
+}
+.stat-icon svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2}
+.stat-delta{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:4px 10px;border-radius:999px;
+  font-size:11px;font-weight:700;
+  background:var(--accent-soft);color:var(--accent);
+  border:1px solid rgba(16,185,129,0.20);
+}
+.stat-delta.down{background:rgba(239,68,68,0.10);color:var(--danger);border-color:rgba(239,68,68,0.20)}
+.stat-delta svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.5}
+.stat-value{
+  font-size:32px;font-weight:700;color:var(--ink);
+  letter-spacing:-0.025em;line-height:1.05;
+  margin-bottom:4px;
+  font-variant-numeric:tabular-nums;
+}
+.stat-label{font-size:13px;color:var(--ink-2);font-weight:500}
+.stat-sub{font-size:11px;color:var(--ink-4);margin-top:2px}
+.stat-spark{
+  margin-top:14px;width:100%;height:32px;
+}
+.stat-spark .line{fill:none;stroke:var(--accent);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.stat-spark .area{fill:url(#sparkGrad)}
+.stat-spark.down .line{stroke:var(--danger)}
+.stat-spark.down .area{fill:url(#sparkGradDown)}
+
+/* ===== TWO-COLUMN ROW ===== */
+.row{display:grid;grid-template-columns:1.6fr 1fr;gap:20px}
+
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-xl);
+  box-shadow:var(--sh-card),var(--sh-inset);
+}
+.card-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 22px 14px;
+}
+.card-head h3{
+  font-size:11px;font-weight:700;
+  color:var(--ink-3);text-transform:uppercase;letter-spacing:0.16em;
+  display:flex;align-items:center;gap:9px;
+}
+.card-head h3 svg{width:13px;height:13px;stroke:var(--accent);fill:none;stroke-width:2}
+.card-link{
+  font-size:12px;font-weight:600;color:var(--accent);
+  text-decoration:none;
+  display:inline-flex;align-items:center;gap:4px;
+  padding:5px 10px;border-radius:8px;
+  transition:background 0.15s;
+}
+.card-link:hover{background:var(--accent-tint)}
+.card-link svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5}
+
+/* Quick actions (with hover glow) */
+.quick-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  padding:4px 22px 22px;
+}
+.quick{
+  position:relative;overflow:hidden;
+  background:var(--surface-2);
+  border:1px solid var(--border-soft);
+  border-radius:var(--radius);
+  padding:16px 16px 16px 16px;
+  display:flex;flex-direction:column;gap:10px;
+  cursor:pointer;text-decoration:none;color:inherit;
+  transition:border-color 0.18s,transform 0.18s,box-shadow 0.18s,background 0.18s;
+  box-shadow:var(--sh-inset);
+}
+.quick::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(280px circle at var(--mx,50%) var(--my,0%), var(--accent-tint), transparent 60%);
+  opacity:0;transition:opacity 0.25s;
+}
+.quick:hover{
+  border-color:rgba(16,185,129,0.30);
+  transform:translateY(-2px);
+  box-shadow:0 12px 28px -8px rgba(16,185,129,0.22),var(--sh-inset);
+  background:var(--surface);
+}
+.quick:hover::before{opacity:1}
+.quick > *{position:relative;z-index:1}
+.quick-arrow{
+  position:absolute;top:14px;right:14px;
+  color:var(--ink-4);
+  transition:color 0.15s,transform 0.15s;
+}
+.quick:hover .quick-arrow{color:var(--accent);transform:translate(2px,-2px)}
+.quick-arrow svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.2}
+.quick-icon{
+  width:40px;height:40px;border-radius:11px;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(16,185,129,0.18), transparent 60%),
+    var(--accent-soft);
+  color:var(--accent);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:inset 0 0 0 1px rgba(16,185,129,0.12);
+}
+.quick-icon svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2}
+.quick-label{font-size:13.5px;font-weight:600;color:var(--ink);line-height:1.3}
+
+/* Avisos empty state */
+.empty{
+  padding:8px 22px 28px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:240px;text-align:center;gap:14px;
+}
+.empty-icon{
+  position:relative;
+  width:64px;height:64px;border-radius:18px;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(16,185,129,0.20), transparent 60%),
+    var(--accent-tint);
+  color:var(--accent);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:
+    inset 0 0 0 1px rgba(16,185,129,0.15),
+    0 8px 24px -8px var(--accent-glow);
+}
+.empty-icon::after{
+  content:'';position:absolute;inset:-6px;border-radius:24px;
+  border:1px solid rgba(16,185,129,0.15);
+  animation:ripple 3s ease-out infinite;
+}
+@keyframes ripple{
+  0%{transform:scale(0.9);opacity:0.8}
+  100%{transform:scale(1.4);opacity:0}
+}
+.empty-icon svg{width:28px;height:28px;stroke:currentColor;fill:none;stroke-width:1.8;position:relative}
+.empty-text{font-size:13px;color:var(--ink-3);max-width:200px}
+.empty-cta{
+  margin-top:4px;
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:12px;font-weight:600;color:var(--accent);
+  text-decoration:none;
+  padding:7px 14px;border-radius:8px;
+  background:var(--accent-tint);
+  transition:background 0.15s;
+}
+.empty-cta:hover{background:var(--accent-soft)}
+.empty-cta svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5}
+
+/* Theme toggle */
+.theme-toggle{
+  position:fixed;bottom:20px;right:20px;
+  width:48px;height:48px;border-radius:50%;
+  background:var(--surface);border:1px solid var(--border);
+  color:var(--ink-2);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;z-index:9999;
+  box-shadow:var(--sh-card);
+  transition:border-color 0.15s,color 0.15s,transform 0.15s;
+}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent);transform:scale(1.05)}
+
+/* Responsivo */
+@media (max-width:1180px){
+  .stat-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:960px){
+  .greet{grid-template-columns:1fr}
+  .row{grid-template-columns:1fr}
+}
+@media (max-width:720px){
+  .stat-grid{grid-template-columns:1fr}
+  .quick-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:1024px){
+  .sidebar{transform:translateX(-100%);transition:transform 0.3s}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+}
+</style>
+</head>
+<body>
+
+<!-- SVG defs (sparkline gradients) -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#10B981" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#10B981" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="sparkGradDown" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#EF4444" stop-opacity="0.30"/>
+      <stop offset="100%" stop-color="#EF4444" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<div class="layout">
+
+  <!-- ========= SIDEBAR ========= -->
+  <aside class="sidebar">
+
+    <div class="brand">
+      <div class="brand-mark">R</div>
+      <div class="brand-text">
+        <div class="brand-name">ROMPEX</div>
+        <div class="brand-tag">Sistema Interno</div>
+      </div>
+    </div>
+
+    <div class="context-card">
+      <div class="context-icon">
+        <svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h.01M9 13h.01M9 17h.01M15 9h.01M15 13h.01M15 17h.01"/></svg>
+      </div>
+      <div class="context-info">
+        <div class="context-name">Rompex</div>
+        <div class="context-meta">Pro · Multi-tenant</div>
+      </div>
+      <div class="status-dot" title="Online"></div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Principal</div>
+      <a href="#" class="nav-item active">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Início
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        Avisos
+        <svg class="nav-chev" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Documentos
+      </a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Módulos</div>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+        Compras
+        <svg class="nav-chev" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        Fiscal · NFS-e
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Financeiro
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+        Certificados
+      </a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Sistema</div>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/></svg>
+        Meu Perfil
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Usuários
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        Atualizações
+      </a>
+    </div>
+
+    <div class="sidebar-user">
+      <div class="user-row">
+        <div class="user-avatar">T</div>
+        <div class="user-info">
+          <div class="user-name">Thiago</div>
+          <div class="user-role">Administrador</div>
+        </div>
+      </div>
+      <a href="#" class="logout">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sair
+      </a>
+    </div>
+  </aside>
+
+  <!-- ========= MAIN ========= -->
+  <div class="main">
+    <div class="content">
+
+      <!-- GREETING -->
+      <section class="greet">
+        <div>
+          <div class="live-tag">
+            <div class="status-dot"></div>
+            Sistema operacional
+          </div>
+          <div class="greet-name">Bom dia, <span>Thiago</span></div>
+          <div class="greet-sub">Painel da empresa · Quarta, 10 jun 2026</div>
+        </div>
+        <div class="greet-quote">
+          <div class="greet-quote-mark">
+            <svg viewBox="0 0 24 24"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h2c0 4-3 5-3 5v3zm12 0c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h2c0 4-3 5-3 5v3z"/></svg>
+          </div>
+          <div>
+            <div class="greet-quote-text">"Qualidade nunca é por acaso; é sempre o resultado de esforço inteligente."</div>
+            <div class="greet-quote-author">— John Ruskin</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STATS -->
+      <section class="stat-grid">
+        <div class="stat">
+          <div class="stat-head">
+            <div class="stat-icon">
+              <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+            </div>
+            <div class="stat-delta">
+              <svg viewBox="0 0 24 24"><polyline points="17 11 12 6 7 11"/><polyline points="17 18 12 13 7 18"/></svg>
+              +8.3%
+            </div>
+          </div>
+          <div class="stat-value">1.247</div>
+          <div class="stat-label">Pedidos em aberto</div>
+          <div class="stat-sub">últimos 7 dias</div>
+          <svg class="stat-spark" viewBox="0 0 100 32" preserveAspectRatio="none">
+            <path class="area" d="M0,24 L14,20 L28,22 L42,15 L56,18 L70,10 L84,12 L100,5 L100,32 L0,32 Z"/>
+            <path class="line" d="M0,24 L14,20 L28,22 L42,15 L56,18 L70,10 L84,12 L100,5"/>
+          </svg>
+        </div>
+
+        <div class="stat">
+          <div class="stat-head">
+            <div class="stat-icon">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div class="stat-delta down">
+              <svg viewBox="0 0 24 24"><polyline points="7 13 12 18 17 13"/><polyline points="7 6 12 11 17 6"/></svg>
+              −12
+            </div>
+          </div>
+          <div class="stat-value">38</div>
+          <div class="stat-label">Aguardando aprovação</div>
+          <div class="stat-sub">desde ontem</div>
+          <svg class="stat-spark down" viewBox="0 0 100 32" preserveAspectRatio="none">
+            <path class="area" d="M0,8 L14,12 L28,10 L42,16 L56,14 L70,20 L84,22 L100,25 L100,32 L0,32 Z"/>
+            <path class="line" d="M0,8 L14,12 L28,10 L42,16 L56,14 L70,20 L84,22 L100,25"/>
+          </svg>
+        </div>
+
+        <div class="stat">
+          <div class="stat-head">
+            <div class="stat-icon">
+              <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+            <div class="stat-delta">
+              <svg viewBox="0 0 24 24"><polyline points="17 11 12 6 7 11"/><polyline points="17 18 12 13 7 18"/></svg>
+              +14.2%
+            </div>
+          </div>
+          <div class="stat-value">R$ 482k</div>
+          <div class="stat-label">Volume mensal</div>
+          <div class="stat-sub">vs mês anterior</div>
+          <svg class="stat-spark" viewBox="0 0 100 32" preserveAspectRatio="none">
+            <path class="area" d="M0,28 L14,24 L28,26 L42,18 L56,14 L70,12 L84,8 L100,4 L100,32 L0,32 Z"/>
+            <path class="line" d="M0,28 L14,24 L28,26 L42,18 L56,14 L70,12 L84,8 L100,4"/>
+          </svg>
+        </div>
+
+        <div class="stat">
+          <div class="stat-head">
+            <div class="stat-icon">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+            </div>
+            <div class="stat-delta">
+              <svg viewBox="0 0 24 24"><polyline points="17 11 12 6 7 11"/><polyline points="17 18 12 13 7 18"/></svg>
+              +3
+            </div>
+          </div>
+          <div class="stat-value">126</div>
+          <div class="stat-label">Certificados ativos</div>
+          <div class="stat-sub">esta semana</div>
+          <svg class="stat-spark" viewBox="0 0 100 32" preserveAspectRatio="none">
+            <path class="area" d="M0,20 L14,18 L28,15 L42,17 L56,12 L70,14 L84,9 L100,8 L100,32 L0,32 Z"/>
+            <path class="line" d="M0,20 L14,18 L28,15 L42,17 L56,12 L70,14 L84,9 L100,8"/>
+          </svg>
+        </div>
+      </section>
+
+      <!-- QUICK + AVISOS -->
+      <section class="row">
+
+        <div class="card">
+          <div class="card-head">
+            <h3>
+              <svg viewBox="0 0 24 24"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              Ações rápidas
+            </h3>
+            <a href="#" class="card-link">
+              configurar
+              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+          <div class="quick-grid" id="quickGrid">
+            <a href="#" class="quick">
+              <div class="quick-arrow"><svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></div>
+              <div class="quick-icon"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+              <div class="quick-label">Mural de Avisos</div>
+            </a>
+            <a href="#" class="quick">
+              <div class="quick-arrow"><svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></div>
+              <div class="quick-icon"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+              <div class="quick-label">Lançar Aviso</div>
+            </a>
+            <a href="#" class="quick">
+              <div class="quick-arrow"><svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></div>
+              <div class="quick-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+              <div class="quick-label">Documentos</div>
+            </a>
+            <a href="#" class="quick">
+              <div class="quick-arrow"><svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></div>
+              <div class="quick-icon"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg></div>
+              <div class="quick-label">Relação de Compras</div>
+            </a>
+            <a href="#" class="quick">
+              <div class="quick-arrow"><svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></div>
+              <div class="quick-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+              <div class="quick-label">Financeiro</div>
+            </a>
+            <a href="#" class="quick">
+              <div class="quick-arrow"><svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></div>
+              <div class="quick-icon"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div>
+              <div class="quick-label">Fiscal · NFS-e</div>
+            </a>
+            <a href="#" class="quick">
+              <div class="quick-arrow"><svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></div>
+              <div class="quick-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg></div>
+              <div class="quick-label">Emitir Certificado</div>
+            </a>
+            <a href="#" class="quick">
+              <div class="quick-arrow"><svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></div>
+              <div class="quick-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/></svg></div>
+              <div class="quick-label">Meu Perfil</div>
+            </a>
+            <a href="#" class="quick">
+              <div class="quick-arrow"><svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></div>
+              <div class="quick-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+              <div class="quick-label">Usuários</div>
+            </a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h3>
+              <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              Avisos
+            </h3>
+            <a href="#" class="card-link">
+              ver todos
+              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+          <div class="empty">
+            <div class="empty-icon">
+              <svg viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            </div>
+            <div class="empty-text">Nenhum aviso ainda — tudo tranquilo por aqui.</div>
+            <a href="#" class="empty-cta">
+              Lançar aviso
+              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<button class="theme-toggle" onclick="toggleTheme()" title="Tema" id="themeBtn">☾</button>
+
+<script>
+function toggleTheme(){
+  const html=document.documentElement;
+  const cur=html.getAttribute('data-theme')||'light';
+  const next=cur==='light'?'dark':'light';
+  html.setAttribute('data-theme',next);
+  document.getElementById('themeBtn').textContent=next==='light'?'☾':'☀';
+}
+
+// Spotlight hover effect on quick actions (radial gradient follows cursor)
+document.getElementById('quickGrid').addEventListener('mousemove', (e) => {
+  const target = e.target.closest('.quick');
+  if (!target) return;
+  const r = target.getBoundingClientRect();
+  target.style.setProperty('--mx', `${e.clientX - r.left}px`);
+  target.style.setProperty('--my', `${e.clientY - r.top}px`);
+});
+</script>
+
+</body>
+</html>
