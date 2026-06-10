@@ -1419,9 +1419,6 @@ input.auto,input[readonly]{
             <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
             Ver relação
           </button>
-          <button class="page-action" onclick="openSettings()" title="Configurações" aria-label="Configurações">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-          </button>
         </div>
       </div>
 
@@ -1448,11 +1445,6 @@ input.auto,input[readonly]{
 
     <main>
       <div id="panel-online" class="panel active">
-
-        <!-- Banner se Sheets nao configurado -->
-        <div id="banner-online" class="banner warn">
-          <span>Configure o <a onclick="openSettings()">Google Sheets</a> para backup automático das suas compras.</span>
-        </div>
 
         <!-- TWO-COLUMN: formulario (esquerda) + acoes (direita) -->
         <div class="compras-grid">
@@ -1646,38 +1638,8 @@ input.auto,input[readonly]{
   </div>
 </div>
 
-<div class="overlay" id="settings-overlay" onclick="maybeClose(event)">
-  <div class="modal">
-    <h2>⚙️ Configurações do Sistema</h2>
-    
-    <div class="modal-section">
-      <h3>Google Sheets</h3>
-      <p class="desc">URL do Apps Script para sincronização automática</p>
-      <div class="field">
-        <label>URL do Apps Script</label>
-        <input type="text" id="settings-sheets" placeholder="https://script.google.com/macros/s/.../exec">
-      </div>
-      <div class="field">
-        <label>URL da Planilha (visualização)</label>
-        <input type="text" id="settings-sheets-file" placeholder="https://docs.google.com/spreadsheets/d/...">
-      </div>
-    </div>
-    
-    <div class="modal-section">
-      <h3>Anthropic API</h3>
-      <p class="desc">Chave de API para leitura de comprovantes com IA</p>
-      <div class="field">
-        <label>API Key</label>
-        <input type="password" id="settings-apikey" placeholder="sk-ant-...">
-      </div>
-    </div>
-    
-    <div class="modal-actions">
-      <button class="btn" onclick="closeSettings()">Cancelar</button>
-      <button class="btn primary" onclick="saveSettings()">💾 Salvar</button>
-    </div>
-  </div>
-</div>
+<!-- Configurações de API (Sheets, Anthropic) sao definidas no backend
+     via compras-config.js. Modal removido — somente backend. -->
 
 <script src="../auth.js"></script>
 <script>

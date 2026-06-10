@@ -841,6 +841,167 @@ hr{
 }
 
 /* =============================================================================
+   v4 SHARED DESIGN SYSTEM (page-head + form-card + btn-save + dark theme)
+   Usado pelos modulos que ja foram refatorados (compras, lancar-avisos)
+   e pelos que serao (financeiro, documentos, usuarios, etc).
+   ============================================================================= */
+:root{
+  --bg-clean:#F1F4FA;
+  --tab-active-bg:#0F172A;
+  --tab-active-fg:#FFFFFF;
+  --banner-warn-text:#92400E;
+}
+html[data-theme="dark"]{
+  --bg-clean:#070C18;
+  --tab-active-bg:#F1F5F9;
+  --tab-active-fg:#0F172A;
+  --banner-warn-text:#FCD34D;
+}
+
+/* ===== PAGE HEAD (icon + title + sub + action) ===== */
+.page-head{
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:18px 28px 16px;
+  display:flex;align-items:center;gap:18px;
+  position:sticky;top:0;z-index:50;
+}
+.page-head-left{display:flex;align-items:center;gap:14px;min-width:0;flex:1}
+.page-icon{
+  width:44px;height:44px;border-radius:12px;
+  background:linear-gradient(135deg,var(--accent),var(--accent-hover));
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;flex-shrink:0;
+  box-shadow:0 6px 16px -4px var(--accent-glow),inset 0 1px 0 rgba(255,255,255,0.25);
+}
+.page-icon svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.page-head-text{display:flex;flex-direction:column;line-height:1.2;min-width:0}
+.page-h1{font-size:22px;font-weight:700;letter-spacing:-0.02em;color:var(--text-primary)!important;margin:0}
+.page-sub{font-size:13px;color:var(--text-muted)!important;margin:0;font-weight:500}
+.page-head-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.page-action{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:9px 16px;border-radius:10px;
+  background:var(--surface);border:1px solid var(--border);
+  color:var(--text-secondary)!important;font-size:13px;font-weight:600;
+  cursor:pointer;text-decoration:none;font-family:inherit;
+  transition:all var(--t-base) var(--easing);
+  box-shadow:var(--shadow-inset),var(--shadow-xs);
+}
+.page-action:hover{
+  border-color:var(--accent);
+  color:var(--accent)!important;
+  transform:translateY(-1px);
+}
+.page-action svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2}
+.page-action.primary{
+  background:linear-gradient(135deg,var(--accent),var(--accent-hover));
+  color:#fff!important;border-color:transparent;
+  box-shadow:var(--shadow-accent-btn);
+}
+.page-action.primary:hover{color:#fff!important;transform:translateY(-1px)}
+
+/* Quando page-head esta no topbar de um modulo (ja existente), tira o padding antigo */
+.topbar:has(.page-head){
+  background:transparent!important;
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+  border-bottom:none!important;
+  padding:0!important;
+  display:block!important;
+  position:relative!important;
+}
+.topbar:has(.page-head) + .content,
+.topbar:has(.page-head) ~ main{padding-top:18px}
+
+/* ===== FORM CARD (esquerda em layout two-column) ===== */
+.form-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:24px;
+  box-shadow:var(--shadow),var(--shadow-inset);
+}
+.form-row{display:grid;gap:14px;margin-bottom:14px}
+.form-row-2{grid-template-columns:1fr 1fr}
+.form-row-3{grid-template-columns:1fr 1fr 1fr}
+.form-divider{height:1px;background:var(--border-soft);margin:6px 0 16px}
+
+/* ===== ACTION PANEL (direita) ===== */
+.action-panel{display:flex;flex-direction:column;gap:14px;align-self:start;position:sticky;top:96px}
+
+/* ===== SAVE / CLEAR / CTA buttons ===== */
+.btn-save{
+  width:100%;padding:13px 18px;
+  background:linear-gradient(135deg,var(--accent),var(--accent-hover))!important;
+  color:#fff!important;border:none!important;
+  border-radius:12px!important;
+  font-size:14px!important;font-weight:700!important;
+  cursor:pointer;font-family:inherit;
+  box-shadow:var(--shadow-accent-btn);
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  transition:transform var(--t-base) var(--easing)!important;
+}
+.btn-save:hover{
+  transform:translateY(-1px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.25),0 6px 16px -2px var(--accent-glow),0 22px 40px -10px rgba(16,185,129,0.50)!important;
+}
+.btn-save:active{transform:translateY(0)}
+.btn-save svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.5}
+.btn-clear{
+  width:100%;padding:10px 14px;
+  background:transparent;border:none;
+  font-size:12.5px;color:var(--text-muted)!important;
+  cursor:pointer;font-family:inherit;font-weight:500;
+  border-radius:8px;
+  transition:background var(--t-base),color var(--t-base);
+}
+.btn-clear:hover{background:var(--surface-2);color:var(--text-primary)!important}
+
+/* ===== Compras grid layout ===== */
+.compras-grid{display:grid;grid-template-columns:1fr 340px;gap:18px;margin-bottom:24px}
+@media (max-width:1080px){
+  .compras-grid{grid-template-columns:1fr;gap:14px}
+  .action-panel{position:static}
+}
+
+/* ===== RECENT section (lista abaixo do grid) ===== */
+.recent-section{margin-top:8px}
+.recent-head{
+  display:flex;align-items:baseline;justify-content:space-between;
+  margin-bottom:14px;padding:0 4px;
+}
+.recent-title{font-size:14px;font-weight:600;color:var(--text-primary)!important;letter-spacing:-0.01em;margin:0}
+
+/* ===== Field labels com optional/required inline ===== */
+.field label .required,form label .required{color:var(--accent)!important;margin-left:2px;text-transform:none;font-weight:700}
+.field label .optional,form label .optional{
+  color:var(--text-muted)!important;font-weight:500;
+  text-transform:none!important;letter-spacing:0!important;
+  margin-left:auto;font-size:11px;
+}
+
+/* ===== Stats grid (dashboards) ===== */
+.stat-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:18px}
+.stat-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:18px}
+@media (max-width:1100px){
+  .stat-grid-3{grid-template-columns:repeat(2,1fr)}
+  .stat-grid-4{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:680px){
+  .stat-grid-3,.stat-grid-4{grid-template-columns:1fr}
+}
+
+/* Responsive mobile */
+@media (max-width:768px){
+  .page-head{padding:14px 16px 12px}
+  .page-h1{font-size:18px}
+  .page-sub{font-size:12px}
+  .page-action{padding:7px 12px;font-size:12px}
+  .form-card{padding:18px 16px 20px}
+  .form-row-2,.form-row-3{grid-template-columns:1fr}
+}
+
+/* =============================================================================
    COMPRAS module — overrides especificos do modulo de lancamento de compras
    (upload zone, tabs como pills, banners, modal, form fields)
    ============================================================================= */
