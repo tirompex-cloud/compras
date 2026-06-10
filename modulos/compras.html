@@ -705,6 +705,472 @@ tr:hover td{
 </style>
 <link rel="stylesheet" href="../responsive.css">
 <link rel="stylesheet" href="../rompex-modules.css">
+
+<!-- ===== COMPRAS v4 — Two-column layout (form esquerda + action panel direita) ===== -->
+<style>
+:root{
+  --bg:#F1F4FA;
+  --bg-deep:#E5EAF4;
+  --surface:#FFFFFF;
+  --surface-2:#F8FAFD;
+  --surface-3:#F1F5F9;
+  --border:#E5E9F2;
+  --border-2:#EEF1F7;
+  --ink:#0F172A;
+  --ink-2:#475569;
+  --ink-3:#7B879C;
+  --ink-4:#A8B2C5;
+  --accent:#10B981;
+  --accent-2:#059669;
+  --accent-3:#34D399;
+  --accent-soft:rgba(16,185,129,0.10);
+  --accent-tint:rgba(16,185,129,0.06);
+  --accent-glow:rgba(16,185,129,0.32);
+  --shadow-soft:0 1px 2px rgba(15,23,42,0.04),0 8px 24px -8px rgba(15,23,42,0.08);
+  --shadow-card:0 1px 2px rgba(15,23,42,0.05),0 12px 36px -12px rgba(15,23,42,0.10);
+  --shadow-cta:inset 0 1px 0 rgba(255,255,255,0.25),0 4px 12px -2px rgba(16,185,129,0.35),0 16px 32px -8px rgba(16,185,129,0.40);
+  --radius:12px;
+  --radius-lg:16px;
+  --radius-xl:20px;
+  --easing:cubic-bezier(.2,.8,.2,1);
+  --t-base:0.18s;
+}
+
+html,body{background:var(--bg)!important}
+body{color:var(--ink)!important}
+body::before{display:none!important}
+body::after{display:none!important}
+
+/* Layout/main */
+.main-content{min-width:0}
+main{
+  padding:0!important;background:transparent!important;
+}
+.panel{display:none;padding:0 28px 40px}
+.panel.active{display:block}
+
+/* ===== TOPBAR redesenhada ===== */
+.topbar{
+  background:transparent!important;
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+  border-bottom:none!important;
+  padding:0!important;
+  display:block!important;
+  position:relative!important;
+  z-index:5;
+}
+
+/* ===== PAGE HEADER (icon + title + sub + action) ===== */
+.page-head{
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:18px 28px 16px;
+  display:flex;align-items:center;gap:18px;
+  position:sticky;top:0;z-index:50;
+}
+.page-head-left{display:flex;align-items:center;gap:14px;min-width:0;flex:1}
+.page-icon{
+  width:44px;height:44px;border-radius:12px;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;flex-shrink:0;
+  box-shadow:0 6px 16px -4px var(--accent-glow),inset 0 1px 0 rgba(255,255,255,0.25);
+}
+.page-icon svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.page-head-text{display:flex;flex-direction:column;line-height:1.2;min-width:0}
+.page-h1{font-size:22px;font-weight:700;letter-spacing:-0.02em;color:var(--ink);margin:0}
+.page-sub{font-size:13px;color:var(--ink-3);margin:0;font-weight:500}
+.page-head-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.page-action{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:9px 16px;border-radius:10px;
+  background:var(--surface);border:1px solid var(--border);
+  color:var(--ink-2);font-size:13px;font-weight:600;
+  cursor:pointer;text-decoration:none;
+  font-family:inherit;
+  transition:all var(--t-base) var(--easing);
+  box-shadow:var(--shadow-soft);
+}
+.page-action:hover{
+  border-color:var(--accent);color:var(--accent);
+  transform:translateY(-1px);
+}
+.page-action svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2}
+
+/* ===== TAB PILLS (debaixo do header) ===== */
+.tab-pills-wrap{
+  background:var(--bg);
+  padding:14px 28px 0;
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+}
+.nav-tabs{
+  display:flex!important;flex-wrap:wrap;gap:8px!important;
+  background:transparent!important;border:none!important;
+  padding:0!important;margin:0!important;
+  box-shadow:none!important;
+}
+.nav-tab{
+  padding:8px 16px!important;border-radius:999px!important;
+  background:transparent!important;
+  border:1px solid var(--border)!important;
+  color:var(--ink-2)!important;
+  font-size:13px!important;font-weight:600!important;
+  cursor:pointer;
+  transition:all var(--t-base) var(--easing)!important;
+  display:inline-flex!important;align-items:center;gap:6px;
+  box-shadow:none!important;
+}
+.nav-tab:hover{
+  border-color:var(--ink-3)!important;
+  color:var(--ink)!important;
+  background:var(--surface)!important;
+  transform:none!important;
+}
+.nav-tab.active{
+  background:var(--ink)!important;
+  color:#fff!important;
+  border-color:var(--ink)!important;
+  box-shadow:0 6px 18px -4px rgba(15,23,42,0.25)!important;
+  transform:none!important;
+}
+.topbar-actions{display:none!important}
+
+/* Sheets connection bar — pequeno, embaixo dos tabs */
+.sheets-bar{
+  display:none;
+  margin:14px 28px 0!important;
+  padding:8px 12px!important;
+  background:var(--accent-soft)!important;
+  border:1px solid rgba(16,185,129,0.20)!important;
+  border-radius:10px!important;
+  font-size:12px!important;color:var(--accent-2)!important;
+  font-weight:600;align-items:center;gap:8px;
+}
+.sheets-bar.show{display:flex!important}
+.sheets-dot{
+  width:7px;height:7px;border-radius:50%;background:var(--accent)!important;
+  box-shadow:0 0 0 3px rgba(16,185,129,0.15),0 0 10px var(--accent-glow)!important;
+}
+.sheets-bar a{color:var(--accent-2)!important;text-decoration:none;margin-left:auto;font-weight:700}
+.sheets-bar a:hover{text-decoration:underline}
+
+/* Banner (mostrado quando Sheets não configurado) */
+.banner{
+  display:none;
+  margin:14px 28px 0!important;
+  padding:11px 14px!important;
+  background:rgba(245,158,11,0.10)!important;
+  border:1px solid rgba(245,158,11,0.25)!important;
+  border-radius:10px!important;
+  color:#92400E!important;font-size:13px!important;
+  align-items:center;gap:10px;
+}
+.banner.show,#banner-online.warn:not([style*="display:none"]){display:flex!important}
+.banner.warn::before{
+  content:'!';
+  display:inline-flex;align-items:center;justify-content:center;
+  width:20px;height:20px;border-radius:6px;
+  background:#F59E0B;color:#fff;font-size:12px;font-weight:800;flex-shrink:0;
+}
+.banner a{color:#F59E0B!important;font-weight:700;cursor:pointer}
+
+/* ===== COMPRAS GRID (two-column principal) ===== */
+.compras-grid{
+  display:grid;
+  grid-template-columns:1fr 320px;
+  gap:18px;
+  margin:18px 0 24px;
+}
+
+/* ===== FORM CARD (esquerda) ===== */
+.form-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:24px 24px 26px;
+  box-shadow:var(--shadow-card);
+}
+.form-card .card{
+  background:transparent!important;
+  border:none!important;
+  padding:0!important;
+  box-shadow:none!important;
+  margin:0 0 14px 0!important;
+}
+.form-card .card-title{
+  display:none!important;
+}
+.form-card .actions{display:none!important}
+
+.form-row{display:grid;gap:14px;margin-bottom:14px}
+.form-row-2{grid-template-columns:1fr 1fr}
+.form-row-3{grid-template-columns:1fr 1fr 1fr}
+
+.field{margin-bottom:0!important}
+.field label,form label{
+  display:block!important;margin-bottom:7px!important;
+  font-size:10.5px!important;font-weight:700!important;
+  color:var(--ink-3)!important;
+  text-transform:uppercase;letter-spacing:0.14em!important;
+}
+.field label .required{color:var(--accent)!important;margin-left:2px}
+.field label .optional{
+  color:var(--ink-4)!important;font-weight:500;
+  text-transform:none!important;letter-spacing:0!important;margin-left:6px;
+}
+
+/* Form inputs polished */
+input[type="text"],input[type="email"],input[type="password"],input[type="number"],input[type="date"],input[type="datetime-local"],input[type="month"],input[type="search"],input[type="tel"],input[type="url"],input[type="time"],select,textarea{
+  background:var(--surface)!important;
+  color:var(--ink)!important;
+  border:1px solid var(--border)!important;
+  border-radius:10px!important;
+  padding:10px 12px!important;
+  font-size:13.5px!important;
+  font-family:inherit;
+  box-shadow:none!important;
+  transition:border-color var(--t-base),box-shadow var(--t-base)!important;
+  width:100%;
+}
+input:hover,select:hover,textarea:hover{border-color:var(--ink-4)!important}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--accent)!important;
+  box-shadow:0 0 0 3px var(--accent-tint)!important;
+  outline:none!important;
+}
+input::placeholder{color:var(--ink-4)!important}
+input.auto,input[readonly]{
+  background:var(--surface-3)!important;color:var(--ink-3)!important;cursor:not-allowed;
+}
+/* Hidden inputs vtotal/economia (used by JS) */
+#online-vtotal,#online-economia{display:none}
+
+.form-divider{
+  height:1px;background:var(--border-2);
+  margin:6px 0 16px;
+}
+
+/* ===== ACTION PANEL (direita) ===== */
+.action-panel{display:flex;flex-direction:column;gap:14px;align-self:start;position:sticky;top:88px}
+
+/* Summary card (Valor total + Economia) */
+.summary-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:18px 20px;
+  box-shadow:var(--shadow-card);
+}
+.summary-row{
+  display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+  padding:6px 0;
+}
+.summary-label{font-size:13px;color:var(--ink-2);font-weight:500}
+.summary-value{
+  font-size:20px;font-weight:700;color:var(--ink);
+  letter-spacing:-0.01em;
+  font-variant-numeric:tabular-nums;
+}
+.summary-value.economy{color:var(--accent)!important;font-weight:700}
+.summary-divider{height:1px;background:var(--border-2);margin:4px 0}
+
+/* Upload card (comprovante) — compacta */
+.upload-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:18px 20px;
+  box-shadow:var(--shadow-card);
+}
+.upload-card-label{
+  font-size:10.5px;font-weight:700;
+  color:var(--ink-3);text-transform:uppercase;letter-spacing:0.14em;
+  margin-bottom:12px;
+}
+.upload-card-zone{
+  position:relative;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:22px 14px;
+  border:1.5px dashed var(--border);
+  border-radius:12px;
+  background:var(--surface-2);
+  cursor:pointer;text-align:center;
+  transition:all var(--t-base) var(--easing);
+}
+.upload-card-zone:hover{
+  border-color:var(--accent);
+  background:var(--accent-tint);
+}
+.upload-card-icon{
+  width:36px;height:36px;border-radius:10px;
+  background:rgba(16,185,129,0.10);
+  color:var(--accent);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:10px;
+}
+.upload-card-icon svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.upload-card-text{font-size:13px;font-weight:600;color:var(--ink)!important;margin:0 0 2px}
+.upload-card-hint{font-size:11.5px;color:var(--ink-3)!important;margin:0}
+.upload-card-input{position:absolute;opacity:0;width:0;height:0;pointer-events:none}
+.upload-card-status{
+  font-size:12px;color:var(--ink-3);margin-top:10px;text-align:center;
+  word-break:break-word;
+}
+.upload-card-status:empty{display:none}
+
+/* Hide the OLD upload-zone if still present elsewhere */
+#panel-online > .upload-zone,
+#panel-online > #status-online{display:none!important}
+
+/* Save button (CTA) */
+.btn-save{
+  width:100%;padding:13px 18px;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2))!important;
+  color:#fff!important;border:none!important;
+  border-radius:12px!important;
+  font-size:14px!important;font-weight:700!important;
+  cursor:pointer;
+  font-family:inherit;
+  box-shadow:var(--shadow-cta);
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  transition:transform var(--t-base) var(--easing)!important;
+}
+.btn-save:hover{
+  transform:translateY(-1px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.25),0 6px 16px -2px var(--accent-glow),0 22px 40px -10px rgba(16,185,129,0.50)!important;
+}
+.btn-save:active{transform:translateY(0)}
+.btn-save svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.5}
+
+.btn-clear{
+  width:100%;padding:10px 14px;
+  background:transparent;border:none;
+  font-size:12.5px;color:var(--ink-3);
+  cursor:pointer;font-family:inherit;font-weight:500;
+  border-radius:8px;
+  transition:background var(--t-base),color var(--t-base);
+}
+.btn-clear:hover{background:var(--surface-3);color:var(--ink)}
+
+/* ===== RECENT SECTION ===== */
+.recent-section{
+  background:transparent;
+  margin-top:8px;
+}
+.recent-head{
+  display:flex;align-items:baseline;justify-content:space-between;
+  margin-bottom:14px;padding:0 4px;
+}
+.recent-title{
+  font-size:14px;font-weight:600;color:var(--ink);
+  letter-spacing:-0.01em;margin:0;
+}
+.recent-empty{
+  padding:18px 22px;background:transparent;
+  font-size:13.5px;color:var(--ink-3);
+  border:1px dashed var(--border);border-radius:12px;
+  text-align:center;
+}
+#table-online,#table-online .tbl-wrap{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  overflow:hidden;
+  box-shadow:var(--shadow-soft);
+}
+#table-online table{margin:0;width:100%;border-collapse:collapse}
+#table-online thead{background:var(--surface-2)}
+#table-online th{
+  padding:10px 14px;text-align:left;
+  font-size:10px;font-weight:700;color:var(--ink-3);
+  text-transform:uppercase;letter-spacing:0.12em;
+  border-bottom:1px solid var(--border);
+  background:transparent!important;
+}
+#table-online td{
+  padding:12px 14px;font-size:13px;color:var(--ink);
+  border-bottom:1px solid var(--border-2);
+  background:transparent!important;
+  font-variant-numeric:tabular-nums;
+}
+#table-online tr:last-child td{border-bottom:none}
+#table-online tr:hover td{background:var(--accent-tint)!important}
+#table-online .empty{padding:18px;text-align:center;color:var(--ink-3);font-size:13px;background:transparent}
+
+/* Sync dot */
+.sync-dot{
+  display:inline-block;width:7px;height:7px;border-radius:50%;
+  background:var(--accent);box-shadow:0 0 0 2px rgba(16,185,129,0.18);
+}
+.sync-dot.pending{background:#F59E0B;box-shadow:0 0 0 2px rgba(245,158,11,0.18)}
+
+/* Modal (settings) */
+.overlay{
+  background:rgba(15,23,42,0.55)!important;
+  backdrop-filter:blur(8px)!important;-webkit-backdrop-filter:blur(8px)!important;
+  display:none;align-items:center;justify-content:center;
+  position:fixed;inset:0;z-index:200;padding:24px;
+}
+.overlay.open{display:flex!important}
+.modal{
+  background:var(--surface)!important;
+  border:1px solid var(--border)!important;
+  border-radius:var(--radius-xl)!important;
+  padding:28px!important;
+  width:100%;max-width:520px;
+  box-shadow:0 24px 56px -16px rgba(15,23,42,0.30)!important;
+  animation:cpModalIn 0.22s var(--easing);
+}
+@keyframes cpModalIn{
+  from{opacity:0;transform:translateY(14px) scale(0.98)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+.modal h2{color:var(--ink)!important;font-size:18px!important;font-weight:700;margin:0 0 18px;letter-spacing:-0.01em}
+.modal-section{
+  background:var(--surface-2)!important;
+  border:1px solid var(--border-2)!important;
+  border-radius:12px!important;
+  padding:14px 16px!important;margin-bottom:12px;
+}
+.modal-section h3{font-size:13px!important;font-weight:700;color:var(--ink)!important;margin:0 0 4px}
+.modal-section .desc{font-size:12px;color:var(--ink-3)!important;margin:0 0 10px;line-height:1.5}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+.modal .btn{
+  padding:9px 16px!important;border-radius:10px!important;
+  font-size:13px!important;font-weight:600!important;
+  border:1px solid var(--border)!important;
+  background:var(--surface)!important;color:var(--ink-2)!important;
+  cursor:pointer;font-family:inherit;
+  transition:all var(--t-base);
+  box-shadow:none!important;
+}
+.modal .btn:hover{border-color:var(--ink-4)!important;color:var(--ink)!important;transform:none!important}
+.modal .btn.primary{
+  background:linear-gradient(135deg,var(--accent),var(--accent-2))!important;
+  color:#fff!important;border:none!important;
+  box-shadow:0 4px 12px -2px var(--accent-glow)!important;
+}
+.modal .btn.primary:hover{transform:translateY(-1px);box-shadow:0 6px 18px -2px var(--accent-glow)!important}
+
+/* Hide stuff we don't need */
+.status-box{display:none!important}
+
+/* RESPONSIVE */
+@media (max-width:1080px){
+  .compras-grid{grid-template-columns:1fr;gap:14px}
+  .action-panel{position:static;flex-direction:column}
+}
+@media (max-width:768px){
+  .page-head{padding:14px 16px 12px}
+  .page-h1{font-size:18px}
+  .page-sub{font-size:12px}
+  .page-action{padding:7px 12px;font-size:12px}
+  .tab-pills-wrap{padding:12px 16px 0}
+  .panel{padding:0 16px 32px}
+  .form-card{padding:18px 16px 20px}
+  .form-row-2,.form-row-3{grid-template-columns:1fr}
+}
+</style>
 </head>
 <body>
 
@@ -909,22 +1375,43 @@ tr:hover td{
 
   <div class="main-content">
     <header class="topbar">
-      <nav class="nav-tabs">
-        <button class="nav-tab active" onclick="switchTab('online', this)">💰 Online</button>
-        <button class="nav-tab" onclick="switchTab('obras', this)">🏗️ Obras</button>
-        <button class="nav-tab" onclick="switchTab('geral', this)">📦 Geral</button>
-        <button class="nav-tab" onclick="switchTab('passagens', this)">✈️ Passagens</button>
-        <button class="nav-tab" onclick="switchTab('hospedagens', this)">🏨 Hospedagens</button>
-        <button class="nav-tab" onclick="switchTab('seguro', this)">🛡️ Seguros</button>
-        <button class="nav-tab" onclick="switchTab('relatorio', this)">📊 Relatórios</button>
-      </nav>
-      
-      <div class="topbar-actions">
-        <button class="icon-btn" id="sheets-btn" onclick="openSettings()">📄 Sheets</button>
-        <button class="icon-btn" onclick="openSettings()">⚙️</button>
+      <!-- Page header (icon + title + subtitle + Ver relação) -->
+      <div class="page-head">
+        <div class="page-head-left">
+          <div class="page-icon">
+            <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+          </div>
+          <div class="page-head-text">
+            <h1 class="page-h1">Compras</h1>
+            <p class="page-sub">Lançamento de compras e suprimentos</p>
+          </div>
+        </div>
+        <div class="page-head-right">
+          <button class="page-action" onclick="switchTab('relatorio', document.querySelector('.nav-tab[data-tab=relatorio]'))">
+            <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            Ver relação
+          </button>
+          <button class="page-action" onclick="openSettings()" title="Configurações" aria-label="Configurações">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Tabs (pills) -->
+      <div class="tab-pills-wrap">
+        <nav class="nav-tabs" role="tablist">
+          <button class="nav-tab active" data-tab="online" onclick="switchTab('online', this)">Online</button>
+          <button class="nav-tab" data-tab="obras" onclick="switchTab('obras', this)">Obras</button>
+          <button class="nav-tab" data-tab="geral" onclick="switchTab('geral', this)">Geral</button>
+          <button class="nav-tab" data-tab="passagens" onclick="switchTab('passagens', this)">Passagens</button>
+          <button class="nav-tab" data-tab="hospedagens" onclick="switchTab('hospedagens', this)">Hospedagens</button>
+          <button class="nav-tab" data-tab="seguro" onclick="switchTab('seguro', this)">Seguros</button>
+          <button class="nav-tab" data-tab="relatorio" onclick="switchTab('relatorio', this)">Relatórios</button>
+        </nav>
       </div>
     </header>
 
+    <!-- Status bar Google Sheets (escondido se conectado) -->
     <div class="sheets-bar" id="sheets-bar">
       <span class="sheets-dot"></span>
       <span>Conectado ao Google Sheets</span>
@@ -933,119 +1420,161 @@ tr:hover td{
 
     <main>
       <div id="panel-online" class="panel active">
+
+        <!-- Banner se Sheets nao configurado -->
         <div id="banner-online" class="banner warn">
-          ⚠️ <span>Configure o <a onclick="openSettings()">Google Sheets</a> para backup automático</span>
-        </div>
-        
-        <div class="upload-zone" onclick="document.getElementById('online-comprovante-input').click()">
-          <input type="file" id="online-comprovante-input" accept="image/*,application/pdf" style="display:none" onchange="anexarComprovante(this.files)">
-          <div class="upload-icon">📷</div>
-          <h3>Enviar Comprovante</h3>
-          <p>Clique para anexar • Suporta <strong>JPG, PNG, PDF</strong> • Máx. 50MB<br>
-          <span id="comprovante-status" style="color:var(--text-muted);font-size:12px"></span></p>
+          <span>Configure o <a onclick="openSettings()">Google Sheets</a> para backup automático das suas compras.</span>
         </div>
 
-        <div id="status-online" class="status-box"></div>
-        
-        <div class="card">
-          <div class="card-title">📝 Informações da Compra</div>
-          <div class="grid g3">
-            <div class="field">
-              <label>Mês</label>
-              <select id="online-mes">
-                <option>Janeiro</option><option>Fevereiro</option><option>Março</option>
-                <option>Abril</option><option selected>Maio</option><option>Junho</option>
-                <option>Julho</option><option>Agosto</option><option>Setembro</option>
-                <option>Outubro</option><option>Novembro</option><option>Dezembro</option>
-              </select>
+        <!-- TWO-COLUMN: formulario (esquerda) + acoes (direita) -->
+        <div class="compras-grid">
+
+          <!-- ============ ESQUERDA: FORM CARD ============ -->
+          <section class="form-card">
+
+            <!-- Seçao 1: Identificacao -->
+            <div class="form-row form-row-2">
+              <div class="field">
+                <label for="online-mes">Mês</label>
+                <select id="online-mes">
+                  <option>Janeiro</option><option>Fevereiro</option><option>Março</option>
+                  <option>Abril</option><option selected>Maio</option><option>Junho</option>
+                  <option>Julho</option><option>Agosto</option><option>Setembro</option>
+                  <option>Outubro</option><option>Novembro</option><option>Dezembro</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="online-data">Data da compra</label>
+                <input type="date" id="online-data">
+              </div>
             </div>
-            <div class="field">
-              <label>Item</label>
-              <input type="text" id="online-item" placeholder="Ex: Notebook Dell">
+
+            <div class="form-row">
+              <div class="field">
+                <label for="online-item">Item <span class="required">*</span></label>
+                <input type="text" id="online-item" placeholder="Ex: Notebook Dell">
+              </div>
             </div>
-            <div class="field">
-              <label>Solicitante</label>
-              <input type="text" id="online-solicitante" placeholder="Nome">
+
+            <div class="form-row form-row-2">
+              <div class="field">
+                <label for="online-solicitante">Solicitante</label>
+                <input type="text" id="online-solicitante" placeholder="Nome de quem solicitou">
+              </div>
+              <div class="field">
+                <label for="online-fornecedor">Fornecedor</label>
+                <input type="text" id="online-fornecedor" placeholder="Ex: Amazon, Mercado Livre…">
+              </div>
             </div>
-          </div>
-          <div class="grid g1">
-            <div class="field">
-              <label>Descrição</label>
-              <input type="text" id="online-descricao" placeholder="Detalhes adicionais (opcional)">
+
+            <div class="form-row">
+              <div class="field">
+                <label for="online-descricao">Descrição <span class="optional">(opcional)</span></label>
+                <input type="text" id="online-descricao" placeholder="Detalhes adicionais">
+              </div>
             </div>
-          </div>
-          <div class="grid g4">
-            <div class="field">
-              <label>Quantidade</label>
-              <input type="number" id="online-qtd" value="1" min="1" oninput="calcVtotal('online')">
+
+            <div class="form-divider"></div>
+
+            <!-- Seçao 2: Valores -->
+            <div class="form-row form-row-2">
+              <div class="field">
+                <label for="online-qtd">Quantidade</label>
+                <input type="number" id="online-qtd" value="1" min="1" oninput="calcVtotal('online')">
+              </div>
+              <div class="field">
+                <label for="online-vmedio">Valor médio (R$)</label>
+                <input type="number" id="online-vmedio" step="0.01" placeholder="0,00" oninput="calcVtotal('online')">
+              </div>
             </div>
-            <div class="field">
-              <label>Valor Médio R$</label>
-              <input type="number" id="online-vmedio" step="0.01" placeholder="0,00" oninput="calcVtotal('online')">
+
+            <div class="form-row form-row-2">
+              <div class="field">
+                <label for="online-vpago">Valor pago (R$)</label>
+                <input type="number" id="online-vpago" step="0.01" placeholder="0,00" oninput="calcVtotal('online')">
+              </div>
+              <div class="field">
+                <label for="online-formapgto">Forma de pagamento</label>
+                <select id="online-formapgto" onchange="toggleParcelas('online')">
+                  <option value="">Selecione…</option>
+                  <option value="cartao">Cartão corporativo</option>
+                  <option value="boleto">Boleto bancário</option>
+                </select>
+              </div>
             </div>
-            <div class="field">
-              <label>Valor Pago R$</label>
-              <input type="number" id="online-vpago" step="0.01" placeholder="0,00" oninput="calcVtotal('online')">
+
+            <div class="form-row form-row-2">
+              <div class="field" id="online-campo-digitos" style="display:none">
+                <label for="online-ultimos-digitos">4 últimos dígitos</label>
+                <input type="text" id="online-ultimos-digitos" placeholder="0000" maxlength="4">
+              </div>
+              <div class="field" id="online-campo-parcelas" style="display:none">
+                <label for="online-parcelas">Parcelas</label>
+                <select id="online-parcelas">
+                  <option>À vista</option>
+                  <option>2x sem juros</option>
+                  <option>3x sem juros</option>
+                  <option>4x sem juros</option>
+                  <option>6x sem juros</option>
+                  <option>12x sem juros</option>
+                </select>
+              </div>
             </div>
-            <div class="field">
-              <label>Valor Total (auto)</label>
-              <input type="number" class="auto" id="online-vtotal" value="0,00" readonly>
+
+            <!-- Inputs invisiveis que o JS le -->
+            <input type="number" id="online-vtotal" value="0" readonly tabindex="-1">
+            <input type="number" id="online-economia" value="0" readonly tabindex="-1">
+          </section>
+
+          <!-- ============ DIREITA: ACTION PANEL ============ -->
+          <aside class="action-panel">
+
+            <!-- Summary card -->
+            <div class="summary-card">
+              <div class="summary-row">
+                <span class="summary-label">Valor total</span>
+                <span class="summary-value" id="display-vtotal">R$ 0,00</span>
+              </div>
+              <div class="summary-divider"></div>
+              <div class="summary-row">
+                <span class="summary-label">Economia</span>
+                <span class="summary-value economy" id="display-economia">R$ 0,00</span>
+              </div>
             </div>
-          </div>
-          <div class="grid g3">
-            <div class="field">
-              <label>Economia R$ (auto)</label>
-              <input type="number" class="auto" id="online-economia" value="0,00" readonly>
+
+            <!-- Upload card (comprovante) -->
+            <div class="upload-card">
+              <div class="upload-card-label">Comprovante (opcional)</div>
+              <label class="upload-card-zone" for="online-comprovante-input">
+                <input class="upload-card-input" type="file" id="online-comprovante-input" accept="image/*,application/pdf" onchange="anexarComprovante(this.files)">
+                <div class="upload-card-icon">
+                  <svg viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                </div>
+                <p class="upload-card-text">Anexar nota / comprovante</p>
+                <p class="upload-card-hint">PDF ou imagem · até 50&nbsp;MB</p>
+              </label>
+              <div id="comprovante-status" class="upload-card-status"></div>
             </div>
-            <div class="field">
-              <label>Fornecedor</label>
-              <input type="text" id="online-fornecedor" placeholder="Ex: Amazon">
-            </div>
-            <div class="field">
-              <label>Data da Compra</label>
-              <input type="date" id="online-data">
-            </div>
-          </div>
+
+            <!-- Save button -->
+            <button class="btn-save" onclick="saveEntry('online')">
+              <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Salvar compra
+            </button>
+
+            <!-- Limpar (subtle) -->
+            <button class="btn-clear" onclick="clearForm('online')">Limpar formulário</button>
+          </aside>
+
         </div>
-        
-        <div class="card">
-          <div class="card-title">💳 Informações de Pagamento</div>
-          <div class="grid g2">
-            <div class="field">
-              <label>Forma de Pagamento</label>
-              <select id="online-formapgto" onchange="toggleParcelas('online')">
-                <option value="">Selecione...</option>
-                <option value="cartao">💳 Cartão Corporativo</option>
-                <option value="boleto">📄 Boleto Bancário</option>
-              </select>
-            </div>
-            <div class="field" id="online-campo-digitos" style="display:none">
-              <label>4 Últimos Dígitos</label>
-              <input type="text" id="online-ultimos-digitos" placeholder="6411" maxlength="4">
-            </div>
-            <div class="field" id="online-campo-parcelas" style="display:none">
-              <label>Parcelas</label>
-              <select id="online-parcelas">
-                <option>À vista</option>
-                <option>2x sem juros</option>
-                <option>3x sem juros</option>
-                <option>4x sem juros</option>
-                <option>6x sem juros</option>
-                <option>12x sem juros</option>
-              </select>
-            </div>
+
+        <!-- Recent entries (largura toda) -->
+        <section class="recent-section">
+          <div class="recent-head">
+            <h2 class="recent-title">Lançamentos recentes</h2>
           </div>
-          
-          <div class="actions">
-            <button class="btn" onclick="clearForm('online')">Limpar</button>
-            <button class="btn primary" onclick="saveEntry('online')">💾 Salvar Compra</button>
-          </div>
-        </div>
-        
-        <div class="card">
-          <div class="card-title">📋 Lançamentos Recentes</div>
           <div id="table-online"></div>
-        </div>
+        </section>
       </div>
 
       <div id="panel-relatorio" class="panel">
@@ -1244,11 +1773,20 @@ function calcVtotal(cat) {
   var vpago = parseFloat(g(cat + '-vpago') || 0);
   var vtotal = qtd * vpago;
   var economia = qtd * (vmedio - vpago);
-  
+
   var elT = document.getElementById(cat + '-vtotal');
   var elE = document.getElementById(cat + '-economia');
   if (elT) elT.value = vtotal.toFixed(2);
   if (elE) elE.value = economia.toFixed(2);
+
+  // Atualiza display do action-panel (Summary card)
+  var dispT = document.getElementById('display-vtotal');
+  var dispE = document.getElementById('display-economia');
+  if (dispT) dispT.textContent = 'R$ ' + vtotal.toFixed(2).replace('.', ',');
+  if (dispE) {
+    dispE.textContent = 'R$ ' + economia.toFixed(2).replace('.', ',');
+    dispE.classList.toggle('economy', economia > 0);
+  }
 }
 
 function updateBanners() {
