@@ -734,6 +734,32 @@ tr:hover td{
   --radius-xl:20px;
   --easing:cubic-bezier(.2,.8,.2,1);
   --t-base:0.18s;
+  --tab-active-bg:#0F172A;
+  --tab-active-fg:#FFFFFF;
+  --banner-warn-text:#92400E;
+}
+
+/* ===== DARK THEME tokens (corrige fundo branco no tema dark) ===== */
+html[data-theme="dark"]{
+  --bg:#070C18;
+  --bg-deep:#04070F;
+  --surface:#0F1726;
+  --surface-2:#141E33;
+  --surface-3:#1A2540;
+  --border:#22304C;
+  --border-2:#1A2540;
+  --ink:#F1F5F9;
+  --ink-2:#CBD5E1;
+  --ink-3:#94A3B8;
+  --ink-4:#64748B;
+  --accent-soft:rgba(16,185,129,0.18);
+  --accent-tint:rgba(16,185,129,0.10);
+  --shadow-soft:0 1px 2px rgba(0,0,0,0.4),0 8px 24px -8px rgba(0,0,0,0.5);
+  --shadow-card:0 1px 2px rgba(0,0,0,0.4),0 12px 36px -12px rgba(0,0,0,0.6);
+  --shadow-cta:inset 0 1px 0 rgba(255,255,255,0.08),0 4px 12px -2px rgba(16,185,129,0.45),0 16px 32px -8px rgba(16,185,129,0.55);
+  --tab-active-bg:#F1F5F9;
+  --tab-active-fg:#0F172A;
+  --banner-warn-text:#FCD34D;
 }
 
 html,body{background:var(--bg)!important}
@@ -827,9 +853,9 @@ main{
   transform:none!important;
 }
 .nav-tab.active{
-  background:var(--ink)!important;
-  color:#fff!important;
-  border-color:var(--ink)!important;
+  background:var(--tab-active-bg)!important;
+  color:var(--tab-active-fg)!important;
+  border-color:var(--tab-active-bg)!important;
   box-shadow:0 6px 18px -4px rgba(15,23,42,0.25)!important;
   transform:none!important;
 }
@@ -862,9 +888,11 @@ main{
   background:rgba(245,158,11,0.10)!important;
   border:1px solid rgba(245,158,11,0.25)!important;
   border-radius:10px!important;
-  color:#92400E!important;font-size:13px!important;
+  color:var(--banner-warn-text)!important;font-size:13px!important;
   align-items:center;gap:10px;
 }
+.banner a{color:var(--banner-warn-text)!important;font-weight:700;cursor:pointer;text-decoration:underline}
+html[data-theme="dark"] .sheets-bar,html[data-theme="dark"] .sheets-bar a{color:var(--accent-3)!important}
 .banner.show,#banner-online.warn:not([style*="display:none"]){display:flex!important}
 .banner.warn::before{
   content:'!';

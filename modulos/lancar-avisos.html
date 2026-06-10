@@ -481,6 +481,175 @@ html[data-theme="light"] .nav-icon-img{filter:none}
 </style>
 <link rel="stylesheet" href="../responsive.css">
 <link rel="stylesheet" href="../rompex-modules.css">
+
+<!-- ===== LANCAR-AVISOS v2 — page-head + two-column form/preview + dark theme ===== -->
+<style>
+:root{
+  --bg:#F1F4FA;
+  --surface:#FFFFFF;
+  --surface-2:#F8FAFD;
+  --surface-3:#F1F5F9;
+  --border:#E5E9F2;
+  --border-2:#EEF1F7;
+  --ink:#0F172A;
+  --ink-2:#475569;
+  --ink-3:#7B879C;
+  --ink-4:#A8B2C5;
+  --accent:#10B981;
+  --accent-2:#059669;
+  --accent-3:#34D399;
+  --accent-soft:rgba(16,185,129,0.10);
+  --accent-tint:rgba(16,185,129,0.06);
+  --accent-glow:rgba(16,185,129,0.32);
+  --shadow-soft:0 1px 2px rgba(15,23,42,0.04),0 8px 24px -8px rgba(15,23,42,0.08);
+  --shadow-card:0 1px 2px rgba(15,23,42,0.05),0 12px 36px -12px rgba(15,23,42,0.10);
+  --shadow-cta:inset 0 1px 0 rgba(255,255,255,0.25),0 4px 12px -2px rgba(16,185,129,0.35),0 16px 32px -8px rgba(16,185,129,0.40);
+  --radius:12px;--radius-lg:16px;--radius-xl:20px;
+  --easing:cubic-bezier(.2,.8,.2,1);--t-base:0.18s;
+  --tab-active-bg:#0F172A;--tab-active-fg:#FFFFFF;
+}
+html[data-theme="dark"]{
+  --bg:#070C18;--surface:#0F1726;--surface-2:#141E33;--surface-3:#1A2540;
+  --border:#22304C;--border-2:#1A2540;
+  --ink:#F1F5F9;--ink-2:#CBD5E1;--ink-3:#94A3B8;--ink-4:#64748B;
+  --accent-soft:rgba(16,185,129,0.18);--accent-tint:rgba(16,185,129,0.10);
+  --shadow-soft:0 1px 2px rgba(0,0,0,0.4),0 8px 24px -8px rgba(0,0,0,0.5);
+  --shadow-card:0 1px 2px rgba(0,0,0,0.4),0 12px 36px -12px rgba(0,0,0,0.6);
+  --shadow-cta:inset 0 1px 0 rgba(255,255,255,0.08),0 4px 12px -2px rgba(16,185,129,0.45),0 16px 32px -8px rgba(16,185,129,0.55);
+  --tab-active-bg:#F1F5F9;--tab-active-fg:#0F172A;
+}
+
+html,body{background:var(--bg)!important}
+body{color:var(--ink)!important}
+body::before{display:none!important}
+body::after{display:none!important}
+
+.main-content{min-width:0}
+.content{padding:0 28px 40px!important}
+.topbar{background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border-bottom:none!important;padding:0!important;display:block!important;position:relative!important;z-index:5}
+
+/* Page head (shared pattern) */
+.page-head{background:var(--surface);border-bottom:1px solid var(--border);padding:18px 28px 16px;display:flex;align-items:center;gap:18px;position:sticky;top:0;z-index:50;margin:0 -28px 18px}
+.page-head-left{display:flex;align-items:center;gap:14px;min-width:0;flex:1}
+.page-icon{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;box-shadow:0 6px 16px -4px var(--accent-glow),inset 0 1px 0 rgba(255,255,255,0.25)}
+.page-icon svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.page-head-text{display:flex;flex-direction:column;line-height:1.2;min-width:0}
+.page-h1{font-size:22px;font-weight:700;letter-spacing:-0.02em;color:var(--ink)!important;margin:0}
+.page-sub{font-size:13px;color:var(--ink-3)!important;margin:0;font-weight:500}
+.page-head-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.page-action{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:10px;background:var(--surface);border:1px solid var(--border);color:var(--ink-2)!important;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;font-family:inherit;transition:all var(--t-base) var(--easing);box-shadow:var(--shadow-soft)}
+.page-action:hover{border-color:var(--accent);color:var(--accent)!important;transform:translateY(-1px)}
+.page-action svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2}
+
+/* Drive status indicator (preserva o existente, repolido) */
+.drive-status{
+  display:inline-flex;align-items:center;gap:8px;
+  margin-bottom:18px;padding:7px 12px;border-radius:999px;
+  background:var(--surface);border:1px solid var(--border);
+  font-size:12px;color:var(--ink-2)!important;font-weight:500;
+  box-shadow:var(--shadow-soft);
+}
+.drive-status .dot{width:7px;height:7px;border-radius:50%;background:var(--ink-4);transition:background var(--t-base)}
+.drive-status.ok .dot{background:var(--accent);box-shadow:0 0 0 3px var(--accent-tint),0 0 8px var(--accent-glow)}
+.drive-status.err .dot{background:#EF4444;box-shadow:0 0 0 3px rgba(239,68,68,0.15)}
+
+/* Two-column grid */
+.compras-grid{display:grid;grid-template-columns:1fr 340px;gap:18px;margin-bottom:24px}
+
+/* Form card */
+.form-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;box-shadow:var(--shadow-card)}
+.form-row{display:grid;gap:14px;margin-bottom:14px}
+.form-row-2{grid-template-columns:1fr 1fr}
+.field{margin-bottom:0!important}
+.field label,form label{display:block!important;margin-bottom:7px!important;font-size:10.5px!important;font-weight:700!important;color:var(--ink-3)!important;text-transform:uppercase;letter-spacing:0.14em!important;display:flex;justify-content:space-between;align-items:baseline}
+.field label .required{color:var(--accent)!important;margin-left:2px;text-transform:none}
+.field label .optional{color:var(--ink-4)!important;font-weight:500;text-transform:none!important;letter-spacing:0!important;margin-left:auto;font-size:11px}
+.form-divider{height:1px;background:var(--border-2);margin:6px 0 16px}
+
+/* Inputs polished */
+input[type="text"],input[type="email"],input[type="password"],input[type="number"],input[type="date"],input[type="search"],input[type="tel"],input[type="url"],input[type="time"],select,textarea{
+  background:var(--surface)!important;color:var(--ink)!important;
+  border:1px solid var(--border)!important;border-radius:10px!important;
+  padding:10px 12px!important;font-size:13.5px!important;font-family:inherit;
+  box-shadow:none!important;width:100%;
+  transition:border-color var(--t-base),box-shadow var(--t-base)!important;
+}
+textarea{min-height:140px;resize:vertical;line-height:1.5}
+input:hover,select:hover,textarea:hover{border-color:var(--ink-4)!important}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)!important;box-shadow:0 0 0 3px var(--accent-tint)!important;outline:none!important}
+input::placeholder,textarea::placeholder{color:var(--ink-4)!important}
+
+/* Upload card zone (inline anexo) */
+.upload-card-zone{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px 14px;border:1.5px dashed var(--border);border-radius:12px;background:var(--surface-2);cursor:pointer;text-align:center;transition:all var(--t-base) var(--easing)}
+.upload-card-zone:hover{border-color:var(--accent);background:var(--accent-tint)}
+.upload-card-icon{width:36px;height:36px;border-radius:10px;background:rgba(16,185,129,0.10);color:var(--accent);display:flex;align-items:center;justify-content:center}
+.upload-card-icon svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.upload-card-text{font-size:13px;font-weight:600;color:var(--ink)!important;margin:0 0 2px}
+.upload-card-hint{font-size:11.5px;color:var(--ink-3)!important;margin:0}
+.upload-card-input{position:absolute;opacity:0;width:0;height:0;pointer-events:none}
+.preview-controls{font-size:11.5px;color:var(--ink-3)}
+
+/* ===== ACTION PANEL (direita) ===== */
+.action-panel{display:flex;flex-direction:column;gap:14px;align-self:start;position:sticky;top:100px}
+
+/* PREVIEW CARD (signature deste módulo: aviso aparece ao vivo) */
+.preview-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 18px 20px;box-shadow:var(--shadow-card)}
+.preview-card-label{font-size:10.5px;font-weight:700;color:var(--ink-3)!important;text-transform:uppercase;letter-spacing:0.14em;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.preview-card-label::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px var(--accent-tint),0 0 10px var(--accent-glow);animation:lvPulse 2.4s ease-in-out infinite}
+@keyframes lvPulse{0%,100%{transform:scale(1);box-shadow:0 0 0 3px var(--accent-tint),0 0 10px var(--accent-glow)}50%{transform:scale(1.2);box-shadow:0 0 0 5px transparent,0 0 14px var(--accent-glow)}}
+
+.preview-aviso{background:var(--surface-2);border:1px solid var(--border-2);border-radius:12px;overflow:hidden}
+.preview-img{width:100%;height:140px;object-fit:cover;background:var(--surface-3);display:block}
+.preview-noimg{width:100%;height:140px;background:linear-gradient(135deg,var(--accent-tint),rgba(110,231,183,0.10));display:flex;align-items:center;justify-content:center;font-size:42px;color:var(--accent)}
+.preview-body{padding:14px}
+.preview-title{font-size:15px;font-weight:700;color:var(--ink)!important;line-height:1.3;margin:0 0 6px;word-wrap:break-word}
+.preview-msg{font-size:13px;color:var(--ink-2)!important;line-height:1.5;white-space:pre-wrap;word-wrap:break-word;max-height:200px;overflow:hidden;margin:0}
+.preview-meta{margin-top:10px;padding-top:10px;border-top:1px solid var(--border-2);font-size:10.5px;color:var(--ink-3)!important;text-transform:uppercase;letter-spacing:0.05em}
+
+/* Save / clear buttons */
+.btn-save{width:100%;padding:13px 18px;background:linear-gradient(135deg,var(--accent),var(--accent-2))!important;color:#fff!important;border:none!important;border-radius:12px!important;font-size:14px!important;font-weight:700!important;cursor:pointer;font-family:inherit;box-shadow:var(--shadow-cta);display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:transform var(--t-base) var(--easing)!important}
+.btn-save:hover{transform:translateY(-1px);box-shadow:inset 0 1px 0 rgba(255,255,255,0.25),0 6px 16px -2px var(--accent-glow),0 22px 40px -10px rgba(16,185,129,0.50)!important}
+.btn-save:active{transform:translateY(0)}
+.btn-save svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.5}
+.btn-clear{width:100%;padding:10px 14px;background:transparent;border:none;font-size:12.5px;color:var(--ink-3)!important;cursor:pointer;font-family:inherit;font-weight:500;border-radius:8px;transition:background var(--t-base),color var(--t-base)}
+.btn-clear:hover{background:var(--surface-3);color:var(--ink)!important}
+
+/* Recent section */
+.recent-section{margin-top:8px}
+.recent-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px;padding:0 4px}
+.recent-title{font-size:14px;font-weight:600;color:var(--ink)!important;letter-spacing:-0.01em;margin:0}
+
+/* Lista de avisos polished */
+#lista-avisos{background:transparent}
+#lista-avisos > *,
+#lista-avisos .aviso-card,
+#lista-avisos .aviso-board-card{
+  background:var(--surface)!important;
+  border:1px solid var(--border)!important;
+  border-radius:var(--radius)!important;
+  box-shadow:var(--shadow-soft)!important;
+  color:var(--ink)!important;
+}
+
+/* Status box */
+.status-box{margin-top:10px;font-size:12.5px;color:var(--ink-3);min-height:18px}
+
+/* Hide old upload-zone if still present */
+#card-novo-aviso > div.upload-zone:not(.upload-card-zone){display:none!important}
+
+@media (max-width:1080px){
+  .compras-grid{grid-template-columns:1fr;gap:14px}
+  .action-panel{position:static}
+}
+@media (max-width:768px){
+  .page-head{padding:14px 16px 12px;margin:0 -16px 14px}
+  .page-h1{font-size:18px}
+  .page-sub{font-size:12px}
+  .content{padding:0 16px 32px!important}
+  .form-card{padding:18px 16px 20px}
+  .form-row-2{grid-template-columns:1fr}
+}
+</style>
 </head>
 <body>
 
@@ -683,72 +852,183 @@ html[data-theme="light"] .nav-icon-img{filter:none}
 
   <div class="main-content">
     <header class="topbar">
-      <div>
-        <div class="page-title">📢 Lançar Avisos</div>
-        <div class="page-subtitle">Publique comunicados visíveis no Início e em Avisos</div>
+      <!-- Page header (icon + title + subtitle + Drive status) -->
+      <div class="page-head">
+        <div class="page-head-left">
+          <div class="page-icon">
+            <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </div>
+          <div class="page-head-text">
+            <h1 class="page-h1">Lançar avisos</h1>
+            <p class="page-sub">Publique comunicados visíveis no Início e na página de Avisos</p>
+          </div>
+        </div>
+        <div class="page-head-right">
+          <a href="avisos.html" class="page-action" title="Ver mural">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            Ver mural
+          </a>
+        </div>
       </div>
     </header>
 
     <main class="content">
+
+      <!-- Drive status discreto -->
       <div class="drive-status" id="drive-status">
         <span class="dot"></span>
         <span id="drive-status-text">Verificando integração com o Drive...</span>
       </div>
 
-      <div class="card" id="card-novo-aviso">
-        <div class="card-title">📝 Novo Aviso</div>
+      <!-- TWO-COLUMN: form (esq) + preview ao vivo (dir) -->
+      <div class="compras-grid">
 
-        <div class="field">
-          <label>Título</label>
-          <input type="text" id="aviso-titulo" maxlength="80" placeholder="Ex: Reunião geral na sexta-feira">
-        </div>
+        <!-- ============ ESQUERDA: FORM ============ -->
+        <section class="form-card" id="card-novo-aviso">
 
-        <div class="field">
-          <label>Mensagem</label>
-          <textarea id="aviso-mensagem" maxlength="500" placeholder="Conteúdo completo do aviso (até 500 caracteres)"></textarea>
-        </div>
-
-        <div class="field">
-          <label>Anexo (opcional · .png, .jpg, .jpeg · máx. 5MB)</label>
-          <div class="upload-zone" id="upload-zone" onclick="document.getElementById('img-input').click()">
-            <input type="file" id="img-input" accept=".png,.jpg,.jpeg,image/png,image/jpeg" style="display:none" onchange="selecionarImagem(this.files)">
-            <div id="upload-empty">
-              <div class="upload-icon">🖼️</div>
-              <h3>Anexar imagem</h3>
-              <p>Clique para selecionar · apenas <strong>.png, .jpg, .jpeg</strong></p>
-            </div>
-            <div id="upload-preview" style="display:none">
-              <img id="preview-img" alt="Pré-visualização">
-              <div class="preview-controls">
-                <span id="preview-nome"></span>
-                <span class="remove" onclick="event.stopPropagation();removerImagem()">remover</span>
-              </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="aviso-titulo">Título <span class="required">*</span></label>
+              <input type="text" id="aviso-titulo" maxlength="80" placeholder="Ex: Reunião geral na sexta-feira">
             </div>
           </div>
-        </div>
 
-        <div class="field" id="campo-permitir-download" style="display:none">
-          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;text-transform:none;letter-spacing:0">
-            <input type="checkbox" id="aviso-permitir-download" style="width:18px;height:18px;cursor:pointer">
-            <span>Permitir que outros usuários baixem este anexo (cópia fica disponível em Documentos → Avisos)</span>
-          </label>
-        </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="aviso-mensagem">
+                Mensagem <span class="required">*</span>
+                <span class="optional"><span id="char-count">0</span> / 500</span>
+              </label>
+              <textarea id="aviso-mensagem" maxlength="500" placeholder="Conteúdo completo do aviso (até 500 caracteres)" rows="6"></textarea>
+            </div>
+          </div>
 
-        <div id="status-publicacao" class="status-box"></div>
+          <div class="form-divider"></div>
 
-        <div class="actions">
-          <button class="btn" onclick="limparFormulario()">Limpar</button>
-          <button class="btn primary" id="btn-publicar" onclick="publicarAviso()">📢 Publicar Aviso</button>
-        </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="img-input">Imagem <span class="optional">(opcional · PNG, JPG · até 5&nbsp;MB)</span></label>
+              <label class="upload-card-zone" for="img-input">
+                <input type="file" id="img-input" class="upload-card-input" accept=".png,.jpg,.jpeg,image/png,image/jpeg" onchange="selecionarImagem(this.files)">
+                <div id="upload-empty" style="display:flex;flex-direction:column;align-items:center;gap:8px">
+                  <div class="upload-card-icon">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                  </div>
+                  <p class="upload-card-text">Anexar imagem</p>
+                  <p class="upload-card-hint">PNG ou JPG · até 5&nbsp;MB</p>
+                </div>
+                <div id="upload-preview" style="display:none;flex-direction:column;align-items:center;gap:8px;width:100%">
+                  <img id="preview-img" alt="Pré-visualização" style="max-width:100%;max-height:120px;border-radius:8px">
+                  <div class="preview-controls">
+                    <span id="preview-nome"></span>
+                    <span class="remove" onclick="event.preventDefault();event.stopPropagation();removerImagem()" style="cursor:pointer;color:var(--accent);font-weight:700;margin-left:8px">remover</span>
+                  </div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-row" id="campo-permitir-download" style="display:none">
+            <div class="field">
+              <label style="display:flex;align-items:center;gap:10px;cursor:pointer;text-transform:none;letter-spacing:0;font-size:13px;color:var(--ink-2);font-weight:500">
+                <input type="checkbox" id="aviso-permitir-download" style="width:18px;height:18px;cursor:pointer;accent-color:var(--accent)">
+                <span>Permitir que outros usuários baixem este anexo (cópia fica em Documentos → Avisos)</span>
+              </label>
+            </div>
+          </div>
+
+          <div id="status-publicacao" class="status-box"></div>
+        </section>
+
+        <!-- ============ DIREITA: LIVE PREVIEW + ACTIONS ============ -->
+        <aside class="action-panel">
+
+          <!-- Live preview do aviso -->
+          <div class="preview-card">
+            <div class="preview-card-label">Pré-visualização ao vivo</div>
+            <article class="preview-aviso" id="preview-aviso">
+              <div class="preview-noimg" id="preview-noimg">📢</div>
+              <img class="preview-img" id="preview-img-live" alt="" style="display:none">
+              <div class="preview-body">
+                <h3 class="preview-title" id="preview-titulo">Sem título</h3>
+                <p class="preview-msg" id="preview-mensagem">Comece a escrever o conteúdo do aviso. Ele aparecerá aqui em tempo real.</p>
+                <div class="preview-meta" id="preview-meta">Você · agora</div>
+              </div>
+            </article>
+          </div>
+
+          <!-- Publicar -->
+          <button class="btn-save" id="btn-publicar" onclick="publicarAviso()">
+            <svg viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            Publicar aviso
+          </button>
+
+          <button class="btn-clear" onclick="limparFormulario()">Limpar formulário</button>
+        </aside>
+
       </div>
 
-      <div class="card">
-        <div class="card-title">📋 Avisos Publicados</div>
+      <!-- Avisos publicados (largura toda) -->
+      <section class="recent-section">
+        <div class="recent-head">
+          <h2 class="recent-title">Avisos publicados</h2>
+        </div>
         <div id="lista-avisos"></div>
-      </div>
+      </section>
     </main>
   </div>
 </div>
+
+<!-- Live preview wiring (escutar os campos e atualizar preview ao lado) -->
+<script>
+(function(){
+  function fmtMetaLive(){
+    var sessao = (window.verificarAutenticacao && verificarAutenticacao()) || null;
+    var nome = (sessao && sessao.nome) || 'Você';
+    return nome + ' · agora';
+  }
+  function updatePreview(){
+    var t = document.getElementById('aviso-titulo');
+    var m = document.getElementById('aviso-mensagem');
+    var pT = document.getElementById('preview-titulo');
+    var pM = document.getElementById('preview-mensagem');
+    var pMeta = document.getElementById('preview-meta');
+    var cc = document.getElementById('char-count');
+    if (pT) pT.textContent = (t && t.value.trim()) || 'Sem título';
+    if (pM) pM.textContent = (m && m.value.trim()) || 'Comece a escrever o conteúdo do aviso. Ele aparecerá aqui em tempo real.';
+    if (cc && m) cc.textContent = (m.value || '').length;
+    if (pMeta) pMeta.textContent = fmtMetaLive();
+  }
+  function syncImageToPreview(files){
+    var liveImg = document.getElementById('preview-img-live');
+    var noimg  = document.getElementById('preview-noimg');
+    if (!files || !files.length){
+      if (liveImg){liveImg.removeAttribute('src');liveImg.style.display='none';}
+      if (noimg) noimg.style.display='flex';
+      return;
+    }
+    var f = files[0];
+    var r = new FileReader();
+    r.onload = function(e){
+      if (liveImg){liveImg.src = e.target.result;liveImg.style.display='block';}
+      if (noimg) noimg.style.display='none';
+    };
+    r.readAsDataURL(f);
+  }
+  document.addEventListener('DOMContentLoaded', function(){
+    var t = document.getElementById('aviso-titulo');
+    var m = document.getElementById('aviso-mensagem');
+    var i = document.getElementById('img-input');
+    if (t) t.addEventListener('input', updatePreview);
+    if (m) m.addEventListener('input', updatePreview);
+    if (i) i.addEventListener('change', function(){ syncImageToPreview(this.files); });
+    updatePreview();
+  });
+  // Hook publico p/ outras funcoes do modulo (removerImagem etc) chamarem
+  window.atualizarPreviewAviso = updatePreview;
+  window.syncPreviewImagem = syncImageToPreview;
+})();
+</script>
 
 <script src="../auth.js"></script>
 <script>
@@ -844,19 +1124,23 @@ function selecionarImagem(files) {
 function removerImagem() {
   imagemSelecionada = null;
   document.getElementById('img-input').value = '';
-  document.getElementById('upload-empty').style.display = 'block';
-  document.getElementById('upload-preview').style.display = 'none';
-  document.getElementById('upload-zone').classList.remove('has-preview');
-  document.getElementById('campo-permitir-download').style.display = 'none';
-  document.getElementById('aviso-permitir-download').checked = false;
+  var ue = document.getElementById('upload-empty');     if (ue) ue.style.display = 'flex';
+  var up = document.getElementById('upload-preview');   if (up) up.style.display = 'none';
+  var uz = document.getElementById('upload-zone');      if (uz) uz.classList.remove('has-preview');
+  var cd = document.getElementById('campo-permitir-download'); if (cd) cd.style.display = 'none';
+  var pd = document.getElementById('aviso-permitir-download'); if (pd) pd.checked = false;
+  // Sincroniza live preview do action-panel
+  if (window.syncPreviewImagem) window.syncPreviewImagem(null);
 }
 
 function limparFormulario() {
   document.getElementById('aviso-titulo').value = '';
   document.getElementById('aviso-mensagem').value = '';
-  document.getElementById('aviso-permitir-download').checked = false;
+  var pd = document.getElementById('aviso-permitir-download'); if (pd) pd.checked = false;
   removerImagem();
   esconderStatus();
+  // Atualiza live preview (limpou tudo)
+  if (window.atualizarPreviewAviso) window.atualizarPreviewAviso();
 }
 
 /* Registra o anexo na lista de Documentos (subpasta 'Avisos') para que apareça
