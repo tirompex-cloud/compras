@@ -4,7 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <script>
-(function(){try{var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+(function(){try{
+  if(localStorage.getItem('rompex_v3')!=='1'){localStorage.setItem('theme','light');localStorage.setItem('rompex_v3','1');}
+  var t=localStorage.getItem('theme')||'light';
+  document.documentElement.setAttribute('data-theme',t);
+}catch(e){}})();
 </script>
 <title>ROMPEX • Técnicos · Certificados</title>
 <link rel="icon" type="image/png" href="../Rompex_Favicon_Transparente.png">
