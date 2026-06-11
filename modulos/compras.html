@@ -1258,6 +1258,93 @@ html[data-theme="dark"] .ocr-banner-text span{color:#38BDF8}
 }
 .ocr-banner.error .ocr-banner-text strong{color:#B91C1C}
 .ocr-banner.error .ocr-banner-text span{color:#EF4444}
+
+/* ===== Custom modals (substitui alert/confirm/prompt nativos) ===== */
+.rx-modal-overlay{
+  position:fixed;inset:0;
+  background:rgba(3,7,10,0.55);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  display:none;align-items:center;justify-content:center;
+  z-index:99999;padding:20px;
+  animation:rxOvIn 0.18s var(--easing);
+}
+.rx-modal-overlay.show{display:flex}
+@keyframes rxOvIn{from{opacity:0}to{opacity:1}}
+.rx-modal-box{
+  background:var(--surface,#fff);
+  border:1px solid var(--border,#E2E8F0);
+  border-radius:18px;padding:22px 24px 20px;
+  max-width:460px;width:100%;
+  box-shadow:0 24px 60px -16px rgba(15,23,42,0.30),0 1px 0 rgba(255,255,255,0.6) inset;
+  animation:rxBoxIn 0.22s var(--easing);
+}
+@keyframes rxBoxIn{from{opacity:0;transform:translateY(12px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.rx-modal-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:8px}
+.rx-modal-icon{
+  width:42px;height:42px;border-radius:12px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:20px;font-weight:800;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.25);
+}
+.rx-modal-icon.info    {background:linear-gradient(135deg,#0EA5E9,#0369A1);box-shadow:inset 0 1px 0 rgba(255,255,255,0.25),0 4px 12px -2px rgba(14,165,233,0.35)}
+.rx-modal-icon.success {background:linear-gradient(135deg,#10B981,#059669);box-shadow:inset 0 1px 0 rgba(255,255,255,0.25),0 4px 12px -2px rgba(16,185,129,0.40)}
+.rx-modal-icon.warning {background:linear-gradient(135deg,#F59E0B,#D97706);box-shadow:inset 0 1px 0 rgba(255,255,255,0.25),0 4px 12px -2px rgba(245,158,11,0.40)}
+.rx-modal-icon.error   {background:linear-gradient(135deg,#EF4444,#DC2626);box-shadow:inset 0 1px 0 rgba(255,255,255,0.25),0 4px 12px -2px rgba(239,68,68,0.40)}
+.rx-modal-icon.confirm {background:linear-gradient(135deg,#6366F1,#4F46E5);box-shadow:inset 0 1px 0 rgba(255,255,255,0.25),0 4px 12px -2px rgba(99,102,241,0.40)}
+.rx-modal-icon.prompt  {background:linear-gradient(135deg,#8B5CF6,#7C3AED);box-shadow:inset 0 1px 0 rgba(255,255,255,0.25),0 4px 12px -2px rgba(139,92,246,0.40)}
+.rx-modal-text{flex:1;min-width:0;padding-top:2px}
+.rx-modal-title{
+  font-size:16px;font-weight:700;
+  color:var(--ink,#0F172A);letter-spacing:-0.01em;
+  line-height:1.3;margin:0 0 6px;
+}
+.rx-modal-body{
+  font-size:13.5px;color:var(--ink-2,#475569);
+  line-height:1.55;white-space:pre-wrap;
+  word-wrap:break-word;
+}
+.rx-modal-input{
+  width:100%;margin-top:14px;
+  padding:11px 13px;
+  background:var(--surface-2,#F8FAFD);
+  border:1px solid var(--border,#E2E8F0);
+  border-radius:10px;
+  font-size:14px;font-family:inherit;
+  color:var(--ink,#0F172A);
+  transition:border-color 0.15s,box-shadow 0.15s;
+}
+.rx-modal-input:focus{
+  outline:none;
+  border-color:var(--accent,#10B981);
+  box-shadow:0 0 0 3px var(--accent-tint,rgba(16,185,129,0.10));
+}
+.rx-modal-actions{
+  display:flex;gap:10px;justify-content:flex-end;
+  margin-top:18px;padding-top:16px;
+  border-top:1px solid var(--border,#E2E8F0);
+}
+.rx-modal-btn{
+  padding:10px 18px;border-radius:10px;
+  font-size:13px;font-weight:600;
+  cursor:pointer;font-family:inherit;
+  border:1px solid var(--border,#E2E8F0);
+  background:var(--surface,#fff);
+  color:var(--ink-2,#475569);
+  transition:all 0.15s;
+}
+.rx-modal-btn:hover{border-color:var(--ink-4,#94A3B8);color:var(--ink,#0F172A);transform:translateY(-1px)}
+.rx-modal-btn.primary{
+  background:linear-gradient(135deg,var(--accent,#10B981),var(--accent-2,#059669));
+  color:#fff;border:none;
+  box-shadow:0 4px 12px -2px rgba(16,185,129,0.40);
+}
+.rx-modal-btn.primary:hover{transform:translateY(-1px);box-shadow:0 8px 22px -4px rgba(16,185,129,0.55);color:#fff}
+.rx-modal-btn.danger{
+  background:linear-gradient(135deg,#EF4444,#DC2626);
+  color:#fff;border:none;
+  box-shadow:0 4px 12px -2px rgba(239,68,68,0.40);
+}
+.rx-modal-btn.danger:hover{transform:translateY(-1px);box-shadow:0 8px 22px -4px rgba(239,68,68,0.55);color:#fff}
 </style>
 </head>
 <body>
@@ -1727,6 +1814,148 @@ var comprovanteAtual = null;
    o form. A chave Anthropic vive em Supabase Secrets (server-side); aqui so a
    URL publica e a anon key (ambas publicaveis, criadas pra isso).
    ============================================================================ */
+/* ============================================================================
+   Custom modals (substitui alert/confirm/prompt nativos do browser)
+   Uso:
+     await rxAlert('msg', 'success'|'info'|'warning'|'error');
+     var ok = await rxConfirm('msg', { dangerous: true, okText: 'Excluir' });
+     var txt = await rxPrompt('msg', 'valor inicial', { placeholder: '…' });
+   ============================================================================ */
+(function(){
+  var ICONS  = { info:'i', success:'✓', warning:'!', error:'⨯', confirm:'?', prompt:'✎' };
+  var TITLES = { info:'Aviso', success:'Sucesso', warning:'Atenção', error:'Erro', confirm:'Confirmação', prompt:'Entrada' };
+
+  function buildOverlay(html){
+    var ov = document.createElement('div');
+    ov.className = 'rx-modal-overlay show';
+    ov.innerHTML = html;
+    document.body.appendChild(ov);
+    return ov;
+  }
+
+  function closeOverlay(ov, onKey){
+    if (onKey) document.removeEventListener('keydown', onKey);
+    ov.style.animation = 'rxOvIn 0.15s reverse';
+    setTimeout(function(){ if (ov.parentNode) ov.remove(); }, 140);
+  }
+
+  window.rxAlert = function(msg, type){
+    return new Promise(function(resolve){
+      type = type || 'info';
+      var title = TITLES[type] || 'Aviso';
+      var ov = buildOverlay(
+        '<div class="rx-modal-box">' +
+          '<div class="rx-modal-header">' +
+            '<div class="rx-modal-icon ' + type + '">' + (ICONS[type] || 'i') + '</div>' +
+            '<div class="rx-modal-text">' +
+              '<div class="rx-modal-title"></div>' +
+              '<div class="rx-modal-body"></div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="rx-modal-actions">' +
+            '<button class="rx-modal-btn primary" data-act="ok">OK</button>' +
+          '</div>' +
+        '</div>'
+      );
+      ov.querySelector('.rx-modal-title').textContent = title;
+      ov.querySelector('.rx-modal-body').textContent = msg;
+      function close(){ closeOverlay(ov, onKey); resolve(); }
+      function onKey(e){ if (e.key === 'Escape' || e.key === 'Enter') close(); }
+      ov.querySelector('[data-act=ok]').addEventListener('click', close);
+      ov.addEventListener('click', function(e){ if (e.target === ov) close(); });
+      document.addEventListener('keydown', onKey);
+      setTimeout(function(){ ov.querySelector('[data-act=ok]').focus(); }, 50);
+    });
+  };
+
+  window.rxConfirm = function(msg, opts){
+    return new Promise(function(resolve){
+      opts = opts || {};
+      var title = opts.title || 'Confirmar';
+      var okText = opts.okText || 'Confirmar';
+      var cancelText = opts.cancelText || 'Cancelar';
+      var iconType = opts.dangerous ? 'warning' : 'confirm';
+      var btnClass = opts.dangerous ? 'danger' : 'primary';
+
+      var ov = buildOverlay(
+        '<div class="rx-modal-box">' +
+          '<div class="rx-modal-header">' +
+            '<div class="rx-modal-icon ' + iconType + '">' + ICONS[iconType] + '</div>' +
+            '<div class="rx-modal-text">' +
+              '<div class="rx-modal-title"></div>' +
+              '<div class="rx-modal-body"></div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="rx-modal-actions">' +
+            '<button class="rx-modal-btn" data-act="cancel"></button>' +
+            '<button class="rx-modal-btn ' + btnClass + '" data-act="ok"></button>' +
+          '</div>' +
+        '</div>'
+      );
+      ov.querySelector('.rx-modal-title').textContent = title;
+      ov.querySelector('.rx-modal-body').textContent = msg;
+      ov.querySelector('[data-act=cancel]').textContent = cancelText;
+      ov.querySelector('[data-act=ok]').textContent = okText;
+
+      function close(v){ closeOverlay(ov, onKey); resolve(v); }
+      function onKey(e){
+        if (e.key === 'Escape') close(false);
+        if (e.key === 'Enter')  close(true);
+      }
+      ov.querySelector('[data-act=cancel]').addEventListener('click', function(){ close(false); });
+      ov.querySelector('[data-act=ok]').addEventListener('click', function(){ close(true); });
+      ov.addEventListener('click', function(e){ if (e.target === ov) close(false); });
+      document.addEventListener('keydown', onKey);
+      setTimeout(function(){ ov.querySelector('[data-act=ok]').focus(); }, 50);
+    });
+  };
+
+  window.rxPrompt = function(msg, defaultValue, opts){
+    return new Promise(function(resolve){
+      opts = opts || {};
+      var title = opts.title || 'Entrada';
+      var okText = opts.okText || 'OK';
+      var cancelText = opts.cancelText || 'Cancelar';
+      var placeholder = opts.placeholder || '';
+
+      var ov = buildOverlay(
+        '<div class="rx-modal-box">' +
+          '<div class="rx-modal-header">' +
+            '<div class="rx-modal-icon prompt">' + ICONS.prompt + '</div>' +
+            '<div class="rx-modal-text">' +
+              '<div class="rx-modal-title"></div>' +
+              '<div class="rx-modal-body"></div>' +
+            '</div>' +
+          '</div>' +
+          '<input class="rx-modal-input" type="text" />' +
+          '<div class="rx-modal-actions">' +
+            '<button class="rx-modal-btn" data-act="cancel"></button>' +
+            '<button class="rx-modal-btn primary" data-act="ok"></button>' +
+          '</div>' +
+        '</div>'
+      );
+      ov.querySelector('.rx-modal-title').textContent = title;
+      ov.querySelector('.rx-modal-body').textContent = msg;
+      ov.querySelector('[data-act=cancel]').textContent = cancelText;
+      ov.querySelector('[data-act=ok]').textContent = okText;
+      var input = ov.querySelector('.rx-modal-input');
+      input.value = defaultValue || '';
+      input.placeholder = placeholder;
+
+      function close(v){ closeOverlay(ov, onKey); resolve(v); }
+      function onKey(e){
+        if (e.key === 'Escape') close(null);
+        if (e.key === 'Enter' && document.activeElement === input) close(input.value);
+      }
+      ov.querySelector('[data-act=cancel]').addEventListener('click', function(){ close(null); });
+      ov.querySelector('[data-act=ok]').addEventListener('click', function(){ close(input.value); });
+      ov.addEventListener('click', function(e){ if (e.target === ov) close(null); });
+      document.addEventListener('keydown', onKey);
+      setTimeout(function(){ input.focus(); input.select(); }, 60);
+    });
+  };
+})();
+
 function setOcrBanner(state, title, sub) {
   var el = document.getElementById('ocr-banner');
   if (!el) return;
@@ -1858,8 +2087,8 @@ async function anexarComprovante(files) {
   var file = files[0];
   var statusEl = document.getElementById('comprovante-status');
 
-  if (file.size > 50 * 1024 * 1024) {
-    alert('⚠️ Arquivo excede 50 MB.');
+  if (file.size > 25 * 1024 * 1024) {
+    rxAlert('Arquivo excede 25 MB. Comprima a imagem antes de anexar.', 'warning');
     document.getElementById('online-comprovante-input').value = '';
     return;
   }
@@ -1995,7 +2224,7 @@ function updateBanners() {
 }
 
 function buildEntry(cat) {
-  if (cat !== 'online') { alert('Apenas categoria Online implementada nesta versão'); return null; }
+  if (cat !== 'online') { rxAlert('Apenas categoria Online implementada nesta versão.', 'info'); return null; }
 
   var mes = g('online-mes');
   var item = g('online-item');
@@ -2011,7 +2240,7 @@ function buildEntry(cat) {
   if (!vpago || vpago<=0) faltam.push('Valor pago');
   if (!formaPgto)        faltam.push('Forma de pagamento');
   if (faltam.length) {
-    alert('⚠️ Preencha os campos obrigatórios:\n• ' + faltam.join('\n• '));
+    rxAlert('Preencha os campos obrigatórios:\n\n• ' + faltam.join('\n• '), 'warning');
     return null;
   }
 
@@ -2081,7 +2310,7 @@ async function _saveEntryImpl(cat, entry) {
   if (!cfg.SUPABASE_SAVE_URL || !cfg.SUPABASE_ANON_KEY) {
     // Sem Supabase configurado: salva so localmente (modo offline).
     db.push(entry); saveDB(); clearForm(cat); limparComprovante(); renderTable(cat);
-    alert('✅ Compra salva localmente (Supabase não configurado).');
+    rxAlert('Compra salva localmente (Supabase não configurado).', 'success');
     return;
   }
 
@@ -2135,7 +2364,7 @@ async function _saveEntryImpl(cat, entry) {
     var data = await resp.json();
     if (!resp.ok || !data.ok) {
       console.warn('[Compras] Supabase rejeitou:', data);
-      alert('⚠️ Erro ao salvar no Supabase\n\n' + (data.error || ('HTTP ' + resp.status)) + (data.detail ? '\n\nDetalhe: ' + data.detail : ''));
+      rxAlert('Erro ao salvar no Supabase\n\n' + (data.error || ('HTTP ' + resp.status)) + (data.detail ? '\n\nDetalhe: ' + data.detail : ''), 'error');
       return;
     }
 
@@ -2172,14 +2401,14 @@ async function _saveEntryImpl(cat, entry) {
     limparComprovante();
     renderTable(cat);
 
-    alert('✅ Compra salva no Supabase!\n\n' +
-          'Item: ' + (s.item || '') + '\n' +
-          'Valor Total: ' + fmtVal(s.valor_total) + '\n' +
-          (s.forma_pagamento === 'cartao' ? 'Cartão: ****' + s.ultimos_digitos : 'Boleto') +
-          (s.comprovante_url ? '\nComprovante: ' + s.comprovante_nome : ''));
+    rxAlert('Compra salva no Supabase!\n\n' +
+            'Item: ' + (s.item || '') + '\n' +
+            'Valor total: ' + fmtVal(s.valor_total) + '\n' +
+            (s.forma_pagamento === 'cartao' ? 'Cartão: ****' + s.ultimos_digitos : 'Boleto') +
+            (s.comprovante_url ? '\nComprovante: ' + s.comprovante_nome : ''), 'success');
   } catch (err) {
     console.warn('[Compras] Falha de rede:', err);
-    alert('⚠️ Falha de rede ao salvar no Supabase.\n\n' + (err.message || err) + '\n\nSeus dados ficaram no formulário — pode tentar de novo.');
+    rxAlert('Falha de rede ao salvar.\n\n' + (err.message || err) + '\n\nSeus dados ficaram no formulário — pode tentar de novo.', 'error');
   }
 }
 
@@ -2263,12 +2492,23 @@ async function cancelarCompra(supabaseId) {
   var sessao = (typeof verificarAutenticacao === 'function') ? verificarAutenticacao() : null;
   var quem = (sessao && sessao.nome) || 'Anonimo';
 
-  if (!confirm('Cancelar este lançamento?\n\nVai ficar registrado como cancelado por ' + quem + '.')) return;
-  var motivo = prompt('Motivo (opcional):', '') || '';
+  var ok = await rxConfirm(
+    'Esse lançamento e o comprovante anexado vão ser apagados. Vai ficar registrado como cancelado por ' + quem + '.',
+    { title: 'Cancelar lançamento?', okText: 'Sim, cancelar', cancelText: 'Voltar', dangerous: true }
+  );
+  if (!ok) return;
+
+  var motivo = await rxPrompt('Por que esse lançamento foi cancelado? (opcional)', '', {
+    title: 'Motivo do cancelamento',
+    placeholder: 'Ex: Lançamento duplicado, erro de valor, devolução…',
+    okText: 'Confirmar'
+  });
+  if (motivo === null) return; // usuário fechou o prompt
+  motivo = motivo || '';
 
   var cfg = window.ROMPEX_COMPRAS_CONFIG || {};
   if (!cfg.SUPABASE_CANCEL_URL || !cfg.SUPABASE_ANON_KEY) {
-    alert('⚠️ Cancelamento não configurado.\n\nEdite no Table Editor do Supabase manualmente:\nseta cancelado_em, cancelado_por, cancelado_motivo.');
+    rxAlert('Cancelamento não configurado.\n\nEdite no Table Editor do Supabase manualmente: cancelado_em, cancelado_por, cancelado_motivo.', 'warning');
     return;
   }
 
@@ -2299,10 +2539,10 @@ async function cancelarCompra(supabaseId) {
           saveDB();
           renderTable('online');
         }
-        alert('ℹ️ Esse lançamento já foi removido do banco.\n\nLimpei do cache local.');
+        rxAlert('Esse lançamento já foi removido do banco. Limpei do cache local.', 'info');
         return;
       }
-      alert('⚠️ Falha ao cancelar:\n' + (data.error || ('HTTP ' + resp.status)) + (data.detail ? '\n\n' + data.detail : ''));
+      rxAlert('Falha ao cancelar:\n\n' + (data.error || ('HTTP ' + resp.status)) + (data.detail ? '\n\n' + data.detail : ''), 'error');
       return;
     }
 
@@ -2316,24 +2556,23 @@ async function cancelarCompra(supabaseId) {
       renderTable('online');
     }
   } catch (err) {
-    alert('⚠️ Falha de rede ao cancelar.\n\n' + (err.message || err));
+    rxAlert('Falha de rede ao cancelar.\n\n' + (err.message || err), 'error');
   }
 }
 
 /* Botao manual: limpa do cache local os lancamentos com supabaseId que ja foram
    deletados direto no Table Editor. Mantém os pre-Supabase (sem supabaseId). */
-function limparOrfaosDoCache() {
-  if (!confirm('Limpar dos "Lançamentos recentes" os itens que voce deletou direto no Supabase?')) return;
+async function limparOrfaosDoCache() {
+  var ok = await rxConfirm(
+    'Vai remover todos os itens do cache local que vieram do Supabase. O que está no banco continua intacto — só some daqui dos Lançamentos recentes.',
+    { title: 'Limpar cache local?', okText: 'Limpar', cancelText: 'Voltar' }
+  );
+  if (!ok) return;
   var antes = db.length;
-  // Estrategia: mantem so quem nao tem supabaseId (pre-migracao) ou
-  // ja tinha sido cancelado pelo sistema. O resto que cair em 404 vai sair
-  // sozinho quando voce tentar cancelar. Pra forcar limpeza imediata, marca todos
-  // os com supabaseId como pendentes de checagem.
-  // Implementacao simples: pergunta confirmacao e remove qualquer entry com supabaseId.
   db = db.filter(function(e) { return !e.supabaseId; });
   saveDB();
   renderTable('online');
-  alert('🧹 Removidos ' + (antes - db.length) + ' lançamentos do cache local.\n\nOs lancamentos que ainda existem no Supabase voltam a aparecer aqui quando voce reabrir e criar novos. Para ver tudo o que existe no banco, va no Table Editor.');
+  rxAlert('Removidos ' + (antes - db.length) + ' lançamentos do cache local. Para ver tudo o que existe no banco, abra o Table Editor.', 'success');
 }
 
 function renderAllTables() { 
@@ -2393,7 +2632,7 @@ function saveSettings(){
   if(fu)localStorage.setItem('sheets_file_url',fu);
   closeSettings(); 
   updateBanners();
-  alert('✅ Configurações salvas com sucesso!');
+  rxAlert('Configurações salvas com sucesso!', 'success');
 }
 
 function toggleSubmenu(id, event) {
