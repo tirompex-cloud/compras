@@ -21,278 +21,348 @@
 <link rel="stylesheet" href="../responsive.css">
 <link rel="stylesheet" href="../rompex-modules.css">
 
-<!-- ===== STAKEHOLDERS — tokens + tabela + modal ===== -->
 <style>
-:root{
-  --bg:#F1F4FA;
-  --surface:#FFFFFF;
-  --surface-2:#F8FAFD;
-  --surface-3:#F1F5F9;
-  --border:#E5E9F2;
-  --border-2:#EEF1F7;
-  --ink:#0F172A;
-  --ink-2:#475569;
-  --ink-3:#7B879C;
-  --ink-4:#A8B2C5;
-  --accent:#10B981;
-  --accent-2:#059669;
-  --accent-3:#34D399;
-  --accent-soft:rgba(16,185,129,0.10);
-  --accent-tint:rgba(16,185,129,0.06);
-  --accent-glow:rgba(16,185,129,0.32);
-  --shadow-soft:0 1px 2px rgba(15,23,42,0.04),0 8px 24px -8px rgba(15,23,42,0.08);
-  --shadow-card:0 1px 2px rgba(15,23,42,0.05),0 12px 36px -12px rgba(15,23,42,0.10);
-  --easing:cubic-bezier(.2,.8,.2,1);
-  --t-base:0.18s;
-  --tab-active-bg:#0F172A;
-  --tab-active-fg:#FFFFFF;
-}
-html[data-theme="dark"]{
-  --bg:#070C18;--surface:#0F1726;--surface-2:#141E33;--surface-3:#1A2540;
-  --border:#22304C;--border-2:#1A2540;
-  --ink:#F1F5F9;--ink-2:#CBD5E1;--ink-3:#94A3B8;--ink-4:#64748B;
-  --accent-soft:rgba(16,185,129,0.18);--accent-tint:rgba(16,185,129,0.10);
-  --shadow-soft:0 1px 2px rgba(0,0,0,0.4),0 8px 24px -8px rgba(0,0,0,0.5);
-  --shadow-card:0 1px 2px rgba(0,0,0,0.4),0 12px 36px -12px rgba(0,0,0,0.6);
-  --tab-active-bg:#F1F5F9;--tab-active-fg:#0F172A;
-}
+/* ============================================================================
+   Stakeholders — só o necessário pra este módulo
+   Tokens base, sidebar, page-head, form-card, btn-save vem de rompex-modules.css
+   ============================================================================ */
 
-html,body{background:var(--bg)!important}
-body{color:var(--ink)!important}
-body::before{display:none!important}
-body::after{display:none!important}
-
-.main-content{min-width:0}
+main{padding:0!important;background:transparent!important}
+.panel{display:none;padding:0 28px 40px}
+.panel.active{display:block}
 .topbar{
   background:transparent!important;border-bottom:none!important;
   padding:0!important;display:block!important;position:relative!important;
 }
-main{padding:0!important;background:transparent!important}
-.panel{display:none;padding:0 28px 40px}
-.panel.active{display:block}
 
-/* PAGE HEAD */
-.page-head{
-  background:var(--surface);border-bottom:1px solid var(--border);
-  padding:18px 28px 16px;display:flex;align-items:center;gap:18px;
-  position:sticky;top:0;z-index:50;
+/* TAB PILLS — mesmo padrão do compras */
+.tab-pills-wrap{
+  background:var(--bg-primary);
+  padding:14px 28px 0;display:flex;gap:8px;
 }
-.page-head-left{display:flex;align-items:center;gap:14px;flex:1;min-width:0}
-.page-icon{
-  width:44px;height:44px;border-radius:12px;
-  background:linear-gradient(135deg,var(--accent),var(--accent-2));
-  display:flex;align-items:center;justify-content:center;
-  color:#fff;flex-shrink:0;
-  box-shadow:0 6px 16px -4px var(--accent-glow),inset 0 1px 0 rgba(255,255,255,0.25);
-}
-.page-icon svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.page-h1{font-size:22px;font-weight:700;letter-spacing:-0.02em;color:var(--ink);margin:0}
-.page-sub{font-size:13px;color:var(--ink-3);margin:0;font-weight:500}
-.page-head-right{display:flex;gap:10px;flex-shrink:0}
-.page-action{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:9px 16px;border-radius:10px;
-  background:var(--surface);border:1px solid var(--border);
-  color:var(--ink-2);font-size:13px;font-weight:600;
-  cursor:pointer;text-decoration:none;font-family:inherit;
-  transition:all var(--t-base) var(--easing);
-}
-.page-action:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
-.page-action.primary{
-  background:linear-gradient(135deg,var(--accent),var(--accent-2));
-  color:#fff;border:none;
-  box-shadow:0 4px 12px -2px var(--accent-glow);
-}
-.page-action.primary:hover{color:#fff;box-shadow:0 8px 22px -4px var(--accent-glow)}
-.page-action svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2}
-
-/* TABS */
-.tab-pills-wrap{background:var(--bg);padding:14px 28px 0;display:flex;gap:8px}
-.nav-tabs{display:flex;gap:8px;background:transparent;border:none;padding:0;margin:0}
+.nav-tabs{display:flex;gap:8px;background:transparent;border:none;padding:0;margin:0;box-shadow:none}
 .nav-tab{
   padding:8px 16px;border-radius:999px;
-  background:transparent;border:1px solid var(--border);color:var(--ink-2);
+  background:transparent;border:1px solid var(--border);color:var(--text-secondary);
   font-size:13px;font-weight:600;cursor:pointer;
-  transition:all var(--t-base) var(--easing);
+  transition:all 0.18s cubic-bezier(.2,.8,.2,1);
   font-family:inherit;
 }
-.nav-tab:hover{border-color:var(--ink-3);color:var(--ink);background:var(--surface)}
+.nav-tab:hover{border-color:var(--text-muted);color:var(--text-primary);background:var(--surface)}
 .nav-tab.active{
-  background:var(--tab-active-bg);color:var(--tab-active-fg);border-color:var(--tab-active-bg);
+  background:var(--text-primary);color:var(--bg-primary);border-color:var(--text-primary);
   box-shadow:0 6px 18px -4px rgba(15,23,42,0.25);
 }
 
-/* TOOLBAR */
-.toolbar{
+/* TOOLBAR LIMPA: search + chips */
+.stk-toolbar{
   display:flex;align-items:center;gap:10px;flex-wrap:wrap;
-  background:var(--surface);border:1px solid var(--border);border-radius:14px;
-  padding:12px 14px;margin:18px 0 16px;
-  box-shadow:var(--shadow-soft);
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:10px 14px;
+  margin:18px 0 14px;
+  box-shadow:var(--shadow-inset);
 }
-.toolbar input[type="text"],.toolbar select{
-  background:var(--surface);color:var(--ink);
-  border:1px solid var(--border);border-radius:10px;
-  padding:9px 12px;font-size:13.5px;font-family:inherit;
-  transition:border-color var(--t-base),box-shadow var(--t-base);
-}
-.toolbar input[type="text"]{flex:1;min-width:220px}
-.toolbar input:focus,.toolbar select:focus{
-  outline:none;border-color:var(--accent);
-  box-shadow:0 0 0 3px var(--accent-tint);
-}
-.toolbar label.checkbox-label{
+.stk-busca{
+  flex:1;min-width:240px;
   display:flex;align-items:center;gap:8px;
-  font-size:13px;color:var(--ink-2);cursor:pointer;
+  padding:6px 10px;
+  background:var(--surface-2);border:1px solid var(--border);
+  border-radius:10px;
+  transition:border-color .15s,box-shadow .15s;
 }
-.toolbar input[type="checkbox"]{width:16px;height:16px;accent-color:var(--accent);cursor:pointer}
+.stk-busca:focus-within{
+  border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-tint);
+}
+.stk-busca svg{
+  width:16px;height:16px;
+  stroke:var(--text-muted);fill:none;stroke-width:2;flex-shrink:0;
+}
+.stk-busca input{
+  flex:1;border:none!important;background:transparent!important;outline:none;
+  padding:6px 0!important;font-size:14px;color:var(--text-primary)!important;font-family:inherit;
+  min-width:0;box-shadow:none!important;
+}
+.stk-busca input::placeholder{color:var(--text-muted)}
+
+.stk-chips{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap}
+.stk-chip{
+  padding:7px 12px;border-radius:999px;
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  color:var(--text-secondary);
+  font-size:12px;font-weight:600;cursor:pointer;
+  transition:all 0.15s;
+  font-family:inherit;
+  white-space:nowrap;
+}
+.stk-chip:hover{border-color:var(--accent);color:var(--accent)}
+.stk-chip.active{
+  background:var(--accent-soft);border-color:var(--accent-border);color:var(--accent);
+  box-shadow:inset 0 0 0 1px var(--accent-border);
+}
 
 /* TABELA */
-.tabela-wrap{
-  background:var(--surface);border:1px solid var(--border);border-radius:14px;
-  overflow:hidden;box-shadow:var(--shadow-soft);
+.stk-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:var(--shadow);
 }
-table.stk-table{width:100%;border-collapse:collapse;font-size:13px}
+.stk-table{width:100%;border-collapse:collapse;font-size:13.5px}
 .stk-table thead{background:var(--surface-2)}
 .stk-table th{
-  padding:11px 14px;text-align:left;
-  font-size:10px;font-weight:700;color:var(--ink-3);
-  text-transform:uppercase;letter-spacing:0.12em;
+  padding:14px 16px;
+  font-size:10px;font-weight:700;
+  color:var(--text-muted)!important;
+  text-transform:uppercase;letter-spacing:0.14em;
+  text-align:left;
   border-bottom:1px solid var(--border);
 }
+.stk-table th.right{text-align:right}
 .stk-table td{
-  padding:13px 14px;color:var(--ink);
-  border-bottom:1px solid var(--border-2);
+  padding:13px 16px;
+  color:var(--text-primary)!important;
+  border-bottom:1px solid var(--border-soft);
   vertical-align:middle;
+  background:transparent!important;
 }
 .stk-table tr:last-child td{border-bottom:none}
-.stk-table tr:hover td{background:var(--accent-tint)}
-.stk-table tr.inativo td{opacity:0.55;background:rgba(148,163,184,0.06)}
+.stk-table tbody tr{transition:background 0.15s}
+.stk-table tbody tr:hover td{background:var(--accent-tint)!important}
+.stk-table tbody tr.inativo{opacity:0.6}
+.stk-table tbody tr.inativo td{background:rgba(148,163,184,0.04)!important}
 
-.badge-tipo{
-  display:inline-block;padding:2px 8px;border-radius:5px;
-  font-size:10px;font-weight:700;letter-spacing:0.04em;
+/* AVATAR + NOME (signature visual) */
+.stk-nome-cell{display:flex;align-items:center;gap:12px;min-width:0}
+.stk-avatar{
+  width:36px;height:36px;border-radius:10px;
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:12.5px;font-weight:700;color:#fff;
+  flex-shrink:0;
+  letter-spacing:0.02em;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.25),0 2px 6px -2px rgba(0,0,0,0.18);
 }
-.badge-tipo.PF{background:rgba(99,102,241,0.10);color:#6366F1;border:1px solid rgba(99,102,241,0.25)}
-.badge-tipo.PJ{background:rgba(245,158,11,0.10);color:#D97706;border:1px solid rgba(245,158,11,0.25)}
-.badge-inativo{
-  margin-left:6px;padding:2px 8px;border-radius:5px;
-  background:rgba(100,116,139,0.10);color:#64748B;
-  font-size:10px;font-weight:700;letter-spacing:0.04em;
+.stk-avatar.PF{background:linear-gradient(135deg,#6366F1,#4F46E5)}
+.stk-avatar.PJ{background:linear-gradient(135deg,#F59E0B,#D97706)}
+.stk-nome-info{display:flex;flex-direction:column;line-height:1.3;min-width:0}
+.stk-nome-info strong{
+  font-weight:600;color:var(--text-primary);font-size:14px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.stk-nome-info small{
+  font-size:11.5px;color:var(--text-muted);font-weight:500;margin-top:1px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  font-variant-numeric:tabular-nums;
 }
 
-.acoes{display:flex;gap:4px;justify-content:flex-end}
-.btn-acao{
-  padding:5px 10px;border-radius:6px;
-  background:transparent;border:1px solid var(--border);
-  font-size:11.5px;font-weight:600;color:var(--ink-2);
-  cursor:pointer;font-family:inherit;
-  transition:all var(--t-base);
+.stk-meta{font-size:12.5px;color:var(--text-secondary)}
+.stk-meta-empty{color:var(--text-muted);font-style:italic;font-size:12px}
+
+.stk-acoes{display:flex;justify-content:flex-end;gap:2px}
+.stk-acao-btn{
+  background:transparent;border:none;cursor:pointer;
+  padding:7px;border-radius:7px;
+  color:var(--text-muted);
+  transition:all 0.15s;
+  display:inline-flex;align-items:center;justify-content:center;
 }
-.btn-acao:hover{border-color:var(--ink-3);color:var(--ink)}
-.btn-acao.danger:hover{border-color:#EF4444;color:#EF4444;background:rgba(239,68,68,0.06)}
+.stk-acao-btn:hover{background:var(--surface-2);color:var(--text-primary)}
+.stk-acao-btn.danger:hover{background:rgba(239,68,68,0.08);color:#EF4444}
+.stk-acao-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
 /* EMPTY STATE */
-.empty-stk{
-  padding:50px 24px;text-align:center;color:var(--ink-3);
-  background:var(--surface);border:1px dashed var(--border);border-radius:14px;
+.stk-empty{
+  background:var(--surface);
+  border:1px dashed var(--border);
+  border-radius:14px;
+  padding:60px 24px;
+  text-align:center;
 }
-.empty-stk .ico{font-size:36px;margin-bottom:10px}
-.empty-stk p{margin:0 0 16px;font-size:14px}
-.empty-stk button{
-  padding:9px 16px;border-radius:10px;
-  background:linear-gradient(135deg,var(--accent),var(--accent-2));
-  color:#fff;border:none;font-weight:600;cursor:pointer;font-family:inherit;
+.stk-empty-icon{
+  width:64px;height:64px;border-radius:18px;
+  background:radial-gradient(circle at 30% 25%, rgba(16,185,129,0.18), transparent 60%),var(--accent-tint);
+  color:var(--accent);
+  display:inline-flex;align-items:center;justify-content:center;
+  margin-bottom:14px;
+  box-shadow:inset 0 0 0 1px rgba(16,185,129,0.15),0 8px 24px -8px var(--accent-glow);
+}
+.stk-empty-icon svg{width:30px;height:30px;stroke:currentColor;fill:none;stroke-width:1.8}
+.stk-empty h3{font-size:16px;font-weight:600;color:var(--text-primary);margin:0 0 6px}
+.stk-empty p{font-size:13.5px;color:var(--text-secondary);margin:0 0 18px auto;max-width:360px;margin-left:auto;margin-right:auto}
+.stk-empty button{
+  padding:10px 18px;border-radius:10px;
+  background:linear-gradient(135deg,var(--accent),var(--accent-hover));
+  color:#fff;border:none;font-weight:700;font-size:13px;
+  cursor:pointer;font-family:inherit;
   box-shadow:0 4px 12px -2px var(--accent-glow);
+  display:inline-flex;align-items:center;gap:8px;
+  transition:transform .15s,box-shadow .15s;
 }
+.stk-empty button:hover{transform:translateY(-1px);box-shadow:0 8px 22px -4px var(--accent-glow)}
+.stk-empty button svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.5}
+
+/* SKELETON */
+.stk-skel-row{
+  display:flex;align-items:center;gap:14px;padding:13px 16px;
+  border-bottom:1px solid var(--border-soft);
+}
+.stk-skel-row:last-child{border-bottom:none}
+.stk-skel-box{
+  background:linear-gradient(90deg,var(--surface-2),var(--surface-2) 30%,var(--bg-primary) 50%,var(--surface-2) 70%);
+  background-size:200% 100%;
+  animation:stkSkel 1.4s linear infinite;
+  border-radius:6px;height:14px;
+}
+.stk-skel-avt{width:36px;height:36px;border-radius:10px;flex-shrink:0}
+@keyframes stkSkel{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
 /* MODAL FORM */
-.modal-form{max-width:680px!important;max-height:90vh;display:flex;flex-direction:column}
-.modal-form-body{overflow-y:auto;padding:4px;margin:0 -4px}
+.stk-modal{
+  max-width:720px!important;
+  max-height:90vh;
+  display:flex;flex-direction:column;
+  padding:0!important;
+}
+.stk-modal-head{
+  padding:18px 22px 16px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:14px;
+  flex-shrink:0;
+}
+.stk-modal-head .ico{
+  width:42px;height:42px;border-radius:12px;
+  background:linear-gradient(135deg,var(--accent),var(--accent-hover));
+  color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 14px -4px var(--accent-glow),inset 0 1px 0 rgba(255,255,255,0.25);
+}
+.stk-modal-head .ico svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2}
+.stk-modal-head .txt{flex:1;line-height:1.3;min-width:0}
+.stk-modal-head h2{font-size:17px;font-weight:700;color:var(--text-primary);margin:0;letter-spacing:-0.01em}
+.stk-modal-head p{font-size:12.5px;color:var(--text-muted);margin:2px 0 0}
+.stk-modal-close{
+  width:32px;height:32px;border-radius:8px;
+  background:transparent;border:none;cursor:pointer;
+  color:var(--text-muted);
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.15s;
+}
+.stk-modal-close:hover{background:var(--surface-2);color:var(--text-primary)}
+.stk-modal-close svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.5}
 
-.tipo-toggle{display:flex;gap:8px;margin-top:4px}
-.tipo-btn{
-  flex:1;padding:11px 14px;border-radius:10px;
-  background:var(--surface-2);border:2px solid var(--border);
-  color:var(--ink-2);font-size:13.5px;font-weight:600;
-  cursor:pointer;font-family:inherit;
-  transition:all var(--t-base);
+.stk-modal-body{padding:18px 22px;overflow-y:auto;flex:1}
+
+.stk-tipo-tabs{
+  display:flex;gap:6px;
+  background:var(--surface-2);border-radius:11px;padding:4px;
+  margin-bottom:18px;
 }
-.tipo-btn:hover{border-color:var(--ink-4)}
-.tipo-btn.active{
-  background:var(--accent-soft);border-color:var(--accent);color:var(--accent-2);
-  box-shadow:0 4px 12px -4px var(--accent-glow);
+.stk-tipo-tab{
+  flex:1;padding:9px 14px;border-radius:8px;
+  background:transparent;border:none;color:var(--text-secondary);
+  font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;
+  transition:all 0.15s;
+  display:flex;align-items:center;justify-content:center;gap:7px;
 }
+.stk-tipo-tab:hover{color:var(--text-primary)}
+.stk-tipo-tab.active{
+  background:var(--surface);color:var(--text-primary);
+  box-shadow:0 1px 3px rgba(15,23,42,0.08);
+}
+
+.stk-section-label{
+  display:flex;align-items:center;gap:10px;
+  margin:24px 0 12px;
+  font-size:10px;font-weight:700;
+  color:var(--text-muted);
+  text-transform:uppercase;letter-spacing:0.18em;
+}
+.stk-section-label::after{
+  content:'';flex:1;height:1px;background:var(--border-soft);
+}
+.stk-section-label:first-child{margin-top:0}
+
+#pj-block{display:none}
+#pj-block.show{display:block}
+
+/* Form fields override */
+.stk-modal input[type="text"],
+.stk-modal input[type="email"],
+.stk-modal select{
+  background:var(--surface)!important;
+  color:var(--text-primary)!important;
+  border:1px solid var(--border)!important;
+  border-radius:10px!important;padding:10px 12px!important;
+  font-size:13.5px!important;font-family:inherit;width:100%;
+  transition:border-color .15s,box-shadow .15s!important;
+  box-shadow:none!important;
+}
+.stk-modal input:focus,.stk-modal select:focus{
+  outline:none;border-color:var(--accent)!important;
+  box-shadow:0 0 0 3px var(--accent-tint)!important;
+}
+.stk-modal .field{margin-bottom:0!important}
+.stk-modal .field label{
+  display:block;margin-bottom:6px;
+  font-size:10.5px;font-weight:700;
+  color:var(--text-muted)!important;
+  text-transform:uppercase;letter-spacing:0.14em;
+}
+.stk-modal .field label .req{color:var(--accent);margin-left:2px}
 
 .cep-wrap{display:flex;gap:6px}
 .cep-wrap input{flex:1}
 .cep-wrap button{
   padding:0 14px;border-radius:10px;
   background:var(--surface);border:1px solid var(--border);
-  color:var(--ink-2);cursor:pointer;font-size:13px;font-family:inherit;
-  transition:all var(--t-base);
+  color:var(--text-secondary);cursor:pointer;font-size:14px;font-family:inherit;
+  transition:all 0.15s;
+  display:inline-flex;align-items:center;
 }
 .cep-wrap button:hover{border-color:var(--accent);color:var(--accent)}
 
-.field-divider{
-  height:1px;background:var(--border-2);
-  margin:18px -4px 14px;padding:0;
-}
-.field-divider-label{
-  font-size:10.5px;font-weight:700;color:var(--ink-3);
-  text-transform:uppercase;letter-spacing:0.14em;
-  margin:18px 0 10px;padding-bottom:8px;
-  border-bottom:1px solid var(--border-2);
-}
+.stk-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.stk-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+.stk-grid-2-1{display:grid;grid-template-columns:1.6fr 0.6fr;gap:14px;margin-bottom:14px}
+.stk-grid-2-cep{display:grid;grid-template-columns:1fr 100px;gap:14px;margin-bottom:14px}
 
-input[type="text"],input[type="email"],select{
-  background:var(--surface)!important;
-  color:var(--ink)!important;
-  border:1px solid var(--border)!important;
-  border-radius:10px!important;padding:10px 12px!important;
-  font-size:13.5px!important;font-family:inherit;width:100%;
-  transition:border-color var(--t-base),box-shadow var(--t-base);
+.stk-modal-foot{
+  display:flex;justify-content:flex-end;gap:10px;align-items:center;
+  padding:14px 22px;
+  border-top:1px solid var(--border);
+  flex-shrink:0;
+  background:var(--surface);
 }
-input:focus,select:focus{
-  outline:none;border-color:var(--accent)!important;
-  box-shadow:0 0 0 3px var(--accent-tint)!important;
+.stk-foot-btn{
+  padding:10px 18px;border-radius:10px;
+  font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;
+  border:1px solid var(--border);
+  background:var(--surface);color:var(--text-secondary);
+  transition:all 0.15s;
 }
+.stk-foot-btn:hover{border-color:var(--text-muted);color:var(--text-primary)}
+.stk-foot-btn.primary{
+  background:linear-gradient(135deg,var(--accent),var(--accent-hover));
+  color:#fff;border:none;
+  box-shadow:0 4px 12px -2px var(--accent-glow);
+}
+.stk-foot-btn.primary:hover{transform:translateY(-1px);box-shadow:0 8px 22px -4px var(--accent-glow);color:#fff}
+.stk-foot-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none!important}
 
-.field label{
-  display:block;margin-bottom:6px;
-  font-size:10.5px;font-weight:700;
-  color:var(--ink-3);text-transform:uppercase;letter-spacing:0.14em;
-}
-.field label .required{color:var(--accent);margin-left:2px}
-.field{margin-bottom:0}
-.form-row{display:grid;gap:14px;margin-bottom:14px}
-.form-row-2{grid-template-columns:1fr 1fr}
-.form-row-3{grid-template-columns:1fr 1fr 1fr}
-.form-row-c{grid-template-columns:1.5fr 0.6fr}
-
-#pj-block{display:none}
-#pj-block.show{display:block}
-
-/* Loading skeleton */
-.skeleton-row{
-  display:flex;gap:14px;padding:14px;
-  border-bottom:1px solid var(--border-2);
-}
-.skeleton-box{
-  background:linear-gradient(90deg,var(--surface-2),var(--surface-3),var(--surface-2));
-  background-size:200% 100%;animation:skel 1.4s linear infinite;
-  border-radius:6px;height:16px;
-}
-@keyframes skel{0%{background-position:200% 0}100%{background-position:-200% 0}}
-
+/* Mobile */
 @media (max-width:768px){
   .panel{padding:0 16px 32px}
-  .page-head{padding:14px 16px 12px}
-  .page-h1{font-size:18px}
   .tab-pills-wrap{padding:12px 16px 0}
-  .toolbar{padding:10px 12px}
-  .toolbar input[type="text"]{min-width:150px}
-  .form-row-2,.form-row-3,.form-row-c{grid-template-columns:1fr}
-  .stk-table td,.stk-table th{padding:10px 8px;font-size:12px}
+  .stk-toolbar{padding:10px 12px}
+  .stk-busca{min-width:0}
+  .stk-table th.col-doc,.stk-table td.col-doc,
+  .stk-table th.col-meta,.stk-table td.col-meta{display:none}
+  .stk-table td,.stk-table th{padding:10px 12px}
+  .stk-modal{max-width:100%!important;max-height:100vh;border-radius:14px 14px 0 0!important}
+  .stk-grid-2,.stk-grid-3,.stk-grid-2-1,.stk-grid-2-cep{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -382,7 +452,7 @@ input:focus,select:focus{
           <div class="page-icon">
             <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           </div>
-          <div>
+          <div class="page-head-text">
             <h1 class="page-h1">Stakeholders</h1>
             <p class="page-sub">Clientes e fornecedores cadastrados</p>
           </div>
@@ -404,36 +474,40 @@ input:focus,select:focus{
     </header>
 
     <main>
-      <!-- PANEL: CLIENTES -->
+      <!-- ============== PANEL: CLIENTES ============== -->
       <div id="panel-clientes" class="panel active">
-        <div class="toolbar">
-          <input type="text" id="busca-clientes" placeholder="🔍 Buscar por nome, documento, razão social…" oninput="onBusca('clientes')">
-          <select id="filtro-tipo-clientes" onchange="filtrar('clientes')">
-            <option value="">Todos os tipos</option>
-            <option value="PF">Pessoa Física</option>
-            <option value="PJ">Pessoa Jurídica</option>
-          </select>
-          <label class="checkbox-label">
-            <input type="checkbox" id="filtro-inativos-clientes" onchange="filtrar('clientes')">
-            <span>Mostrar inativos</span>
-          </label>
+        <div class="stk-toolbar">
+          <div class="stk-busca">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="busca-clientes" placeholder="Buscar por nome, documento ou razão social…" oninput="onBusca('clientes')">
+          </div>
+          <div class="stk-chips" data-tab="clientes" data-group="tipo">
+            <button class="stk-chip active" data-tipo="" onclick="setChipTipo('clientes','')">Todos</button>
+            <button class="stk-chip" data-tipo="PF" onclick="setChipTipo('clientes','PF')">Pessoa Física</button>
+            <button class="stk-chip" data-tipo="PJ" onclick="setChipTipo('clientes','PJ')">Pessoa Jurídica</button>
+          </div>
+          <div class="stk-chips">
+            <button class="stk-chip" id="chip-inativos-clientes" onclick="toggleInativos('clientes')">Mostrar inativos</button>
+          </div>
         </div>
         <div id="lista-clientes"></div>
       </div>
 
-      <!-- PANEL: FORNECEDORES -->
+      <!-- ============== PANEL: FORNECEDORES ============== -->
       <div id="panel-fornecedores" class="panel">
-        <div class="toolbar">
-          <input type="text" id="busca-fornecedores" placeholder="🔍 Buscar por nome, documento, razão social…" oninput="onBusca('fornecedores')">
-          <select id="filtro-tipo-fornecedores" onchange="filtrar('fornecedores')">
-            <option value="">Todos os tipos</option>
-            <option value="PF">Pessoa Física</option>
-            <option value="PJ">Pessoa Jurídica</option>
-          </select>
-          <label class="checkbox-label">
-            <input type="checkbox" id="filtro-inativos-fornecedores" onchange="filtrar('fornecedores')">
-            <span>Mostrar inativos</span>
-          </label>
+        <div class="stk-toolbar">
+          <div class="stk-busca">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="busca-fornecedores" placeholder="Buscar por nome, documento ou razão social…" oninput="onBusca('fornecedores')">
+          </div>
+          <div class="stk-chips" data-tab="fornecedores" data-group="tipo">
+            <button class="stk-chip active" data-tipo="" onclick="setChipTipo('fornecedores','')">Todos</button>
+            <button class="stk-chip" data-tipo="PF" onclick="setChipTipo('fornecedores','PF')">Pessoa Física</button>
+            <button class="stk-chip" data-tipo="PJ" onclick="setChipTipo('fornecedores','PJ')">Pessoa Jurídica</button>
+          </div>
+          <div class="stk-chips">
+            <button class="stk-chip" id="chip-inativos-fornecedores" onclick="toggleInativos('fornecedores')">Mostrar inativos</button>
+          </div>
         </div>
         <div id="lista-fornecedores"></div>
       </div>
@@ -441,52 +515,55 @@ input:focus,select:focus{
   </div>
 </div>
 
-<!-- ========= MODAL DE CADASTRO ========= -->
+<!-- ========= MODAL CADASTRO ========= -->
 <div id="modal-stakeholder" class="rx-modal-overlay">
-  <div class="rx-modal-box modal-form">
-    <div class="rx-modal-header">
-      <div class="rx-modal-icon confirm" id="modal-icon">+</div>
-      <div class="rx-modal-text">
-        <div class="rx-modal-title" id="modal-title">Novo cliente</div>
-        <div class="rx-modal-body" id="modal-sub">Preencha os dados abaixo. Apenas Nome e CPF/CNPJ são obrigatórios.</div>
+  <div class="rx-modal-box stk-modal">
+    <div class="stk-modal-head">
+      <div class="ico">
+        <svg id="modal-icon-svg" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       </div>
+      <div class="txt">
+        <h2 id="modal-title">Novo cliente</h2>
+        <p id="modal-sub">Apenas nome e CPF/CNPJ são obrigatórios.</p>
+      </div>
+      <button class="stk-modal-close" onclick="fecharModal()" aria-label="Fechar">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
     </div>
 
-    <div class="modal-form-body">
+    <div class="stk-modal-body">
       <input type="hidden" id="form-id">
       <input type="hidden" id="form-papel" value="cliente">
 
-      <!-- TIPO PESSOA -->
-      <div class="form-row">
-        <div class="field">
-          <label>Tipo <span class="required">*</span></label>
-          <div class="tipo-toggle">
-            <button type="button" class="tipo-btn active" id="tipo-pf-btn" onclick="setTipoPessoa('PF')">Pessoa Física</button>
-            <button type="button" class="tipo-btn" id="tipo-pj-btn" onclick="setTipoPessoa('PJ')">Pessoa Jurídica</button>
-          </div>
-        </div>
+      <!-- Tipo pessoa: pill tabs -->
+      <div class="stk-tipo-tabs">
+        <button type="button" class="stk-tipo-tab active" id="tipo-pf-btn" onclick="setTipoPessoa('PF')">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/></svg>
+          Pessoa Física
+        </button>
+        <button type="button" class="stk-tipo-tab" id="tipo-pj-btn" onclick="setTipoPessoa('PJ')">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h.01M9 13h.01M9 17h.01M15 9h.01M15 13h.01M15 17h.01"/></svg>
+          Pessoa Jurídica
+        </button>
       </div>
 
-      <!-- NOME -->
-      <div class="form-row">
+      <!-- Identificação -->
+      <div class="stk-section-label">Identificação</div>
+      <div class="stk-grid-2-1">
         <div class="field">
-          <label>Nome <span class="required">*</span></label>
-          <input type="text" id="form-nome" placeholder="Nome completo (PF) ou nome de exibição (PJ)" oninput="onNomeChange()">
+          <label>Nome <span class="req">*</span></label>
+          <input type="text" id="form-nome" placeholder="Nome completo (PF) ou de exibição (PJ)" oninput="onNomeChange()">
         </div>
-      </div>
-
-      <!-- DOCUMENTO -->
-      <div class="form-row">
         <div class="field">
-          <label><span id="doc-label">CPF</span> <span class="required">*</span></label>
+          <label><span id="doc-label">CPF</span> <span class="req">*</span></label>
           <input type="text" id="form-documento" placeholder="000.000.000-00" oninput="aplicarMascaraDoc()">
         </div>
       </div>
 
-      <!-- PJ block -->
+      <!-- Empresa (PJ) -->
       <div id="pj-block">
-        <div class="field-divider-label">Dados da empresa (PJ)</div>
-        <div class="form-row form-row-2">
+        <div class="stk-section-label">Dados da empresa</div>
+        <div class="stk-grid-2">
           <div class="field">
             <label>Razão Social</label>
             <input type="text" id="form-razao-social" placeholder="Razão social da empresa">
@@ -496,17 +573,15 @@ input:focus,select:focus{
             <input type="text" id="form-nome-fantasia" placeholder="Nome de mercado">
           </div>
         </div>
-        <div class="form-row form-row-2">
+        <div class="stk-grid-3">
           <div class="field">
-            <label>Inscrição Estadual</label>
+            <label>Insc. Estadual</label>
             <input type="text" id="form-ie" placeholder="000.000.000.000">
           </div>
           <div class="field">
-            <label>Inscrição Municipal</label>
+            <label>Insc. Municipal</label>
             <input type="text" id="form-im" placeholder="0000000">
           </div>
-        </div>
-        <div class="form-row">
           <div class="field">
             <label>Regime Tributário</label>
             <select id="form-regime">
@@ -521,9 +596,9 @@ input:focus,select:focus{
         </div>
       </div>
 
-      <!-- CONTATO -->
-      <div class="field-divider-label">Contato</div>
-      <div class="form-row form-row-2">
+      <!-- Contato -->
+      <div class="stk-section-label">Contato</div>
+      <div class="stk-grid-2">
         <div class="field">
           <label>Telefone</label>
           <input type="text" id="form-telefone" placeholder="(11) 90000-0000">
@@ -534,14 +609,16 @@ input:focus,select:focus{
         </div>
       </div>
 
-      <!-- ENDEREÇO -->
-      <div class="field-divider-label">Endereço</div>
-      <div class="form-row form-row-2">
+      <!-- Endereço -->
+      <div class="stk-section-label">Endereço</div>
+      <div class="stk-grid-2-cep">
         <div class="field">
           <label>CEP</label>
           <div class="cep-wrap">
             <input type="text" id="form-cep" placeholder="00000-000" oninput="aplicarMascaraCEP()" onblur="buscarCEP()">
-            <button type="button" onclick="buscarCEP()">🔍</button>
+            <button type="button" onclick="buscarCEP()" title="Buscar via CEP">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </button>
           </div>
         </div>
         <div class="field">
@@ -549,7 +626,7 @@ input:focus,select:focus{
           <input type="text" id="form-uf" placeholder="SP" maxlength="2" style="text-transform:uppercase">
         </div>
       </div>
-      <div class="form-row form-row-c">
+      <div class="stk-grid-2-1">
         <div class="field">
           <label>Logradouro</label>
           <input type="text" id="form-logradouro" placeholder="Rua, Av., Travessa…">
@@ -559,7 +636,7 @@ input:focus,select:focus{
           <input type="text" id="form-numero" placeholder="123">
         </div>
       </div>
-      <div class="form-row form-row-2">
+      <div class="stk-grid-2">
         <div class="field">
           <label>Complemento</label>
           <input type="text" id="form-complemento" placeholder="Sala, andar (opcional)">
@@ -569,7 +646,7 @@ input:focus,select:focus{
           <input type="text" id="form-bairro" placeholder="Centro">
         </div>
       </div>
-      <div class="form-row form-row-2">
+      <div class="stk-grid-2">
         <div class="field">
           <label>Cidade</label>
           <input type="text" id="form-cidade" placeholder="São Paulo">
@@ -581,9 +658,9 @@ input:focus,select:focus{
       </div>
     </div>
 
-    <div class="rx-modal-actions">
-      <button class="rx-modal-btn" onclick="fecharModal()">Cancelar</button>
-      <button class="rx-modal-btn primary" id="btn-salvar" onclick="submitForm()">Salvar</button>
+    <div class="stk-modal-foot">
+      <button class="stk-foot-btn" onclick="fecharModal()">Cancelar</button>
+      <button class="stk-foot-btn primary" id="btn-salvar" onclick="submitForm()">Salvar</button>
     </div>
   </div>
 </div>
@@ -592,11 +669,11 @@ input:focus,select:focus{
 <script src="../compras-config.js"></script>
 <script>
 /* ============================================================================
-   Modais customizados (mesmos de compras.html)
+   Modais customizados rxAlert / rxConfirm (mesmos de compras)
    ============================================================================ */
 (function(){
   var ICONS  = { info:'i', success:'✓', warning:'!', error:'⨯', confirm:'?', prompt:'✎' };
-  var TITLES = { info:'Aviso', success:'Sucesso', warning:'Atenção', error:'Erro', confirm:'Confirmação', prompt:'Entrada' };
+  var TITLES = { info:'Aviso', success:'Sucesso', warning:'Atenção', error:'Erro', confirm:'Confirmação' };
   function buildOverlay(html){
     var ov = document.createElement('div');
     ov.className = 'rx-modal-overlay show';
@@ -612,22 +689,16 @@ input:focus,select:focus{
   window.rxAlert = function(msg, type){
     return new Promise(function(resolve){
       type = type || 'info';
-      var title = TITLES[type] || 'Aviso';
       var ov = buildOverlay(
         '<div class="rx-modal-box">' +
           '<div class="rx-modal-header">' +
             '<div class="rx-modal-icon ' + type + '">' + (ICONS[type] || 'i') + '</div>' +
-            '<div class="rx-modal-text">' +
-              '<div class="rx-modal-title"></div>' +
-              '<div class="rx-modal-body"></div>' +
-            '</div>' +
+            '<div class="rx-modal-text"><div class="rx-modal-title"></div><div class="rx-modal-body"></div></div>' +
           '</div>' +
-          '<div class="rx-modal-actions">' +
-            '<button class="rx-modal-btn primary" data-act="ok">OK</button>' +
-          '</div>' +
+          '<div class="rx-modal-actions"><button class="rx-modal-btn primary" data-act="ok">OK</button></div>' +
         '</div>'
       );
-      ov.querySelector('.rx-modal-title').textContent = title;
+      ov.querySelector('.rx-modal-title').textContent = TITLES[type] || 'Aviso';
       ov.querySelector('.rx-modal-body').textContent = msg;
       function close(){ closeOverlay(ov, onKey); resolve(); }
       function onKey(e){ if (e.key === 'Escape' || e.key === 'Enter') close(); }
@@ -646,10 +717,7 @@ input:focus,select:focus{
         '<div class="rx-modal-box">' +
           '<div class="rx-modal-header">' +
             '<div class="rx-modal-icon ' + iconType + '">' + ICONS[iconType] + '</div>' +
-            '<div class="rx-modal-text">' +
-              '<div class="rx-modal-title"></div>' +
-              '<div class="rx-modal-body"></div>' +
-            '</div>' +
+            '<div class="rx-modal-text"><div class="rx-modal-title"></div><div class="rx-modal-body"></div></div>' +
           '</div>' +
           '<div class="rx-modal-actions">' +
             '<button class="rx-modal-btn" data-act="cancel"></button>' +
@@ -685,14 +753,17 @@ if (typeof iniciarMonitoramentoSessao === 'function') iniciarMonitoramentoSessao
 
 var TAB_ATUAL = 'clientes';
 var DB = { clientes: [], fornecedores: [] };
-var TOTAL = { clientes: 0, fornecedores: 0 };
-var debounceTimer;
+var FILTROS = {
+  clientes:     { tipo: '', mostrarInativos: false },
+  fornecedores: { tipo: '', mostrarInativos: false },
+};
 var TIPO_PESSOA_FORM = 'PF';
 var NOME_TOCADO = false;
 var RAZAO_TOCADA = false;
+var debounceTimer;
 
 /* ============================================================================
-   API helpers
+   CONFIG / FETCH HELPERS
    ============================================================================ */
 function cfg() { return window.ROMPEX_COMPRAS_CONFIG || {}; }
 function authHeaders() {
@@ -703,76 +774,70 @@ function authHeaders() {
     'Authorization': 'Bearer ' + c.SUPABASE_ANON_KEY,
   };
 }
-function urlListar(tab) {
-  return cfg()[tab === 'clientes' ? 'SUPABASE_LIST_CLI_URL' : 'SUPABASE_LIST_FORN_URL'];
-}
-function urlSalvar(tab) {
-  return cfg()[tab === 'clientes' ? 'SUPABASE_SAVE_CLI_URL' : 'SUPABASE_SAVE_FORN_URL'];
-}
-function chaveLista(tab) { return tab === 'clientes' ? 'clientes' : 'fornecedores'; }
-function chaveItem(tab)  { return tab === 'clientes' ? 'cliente'  : 'fornecedor'; }
+function urlListar(tab){ return cfg()[tab==='clientes'?'SUPABASE_LIST_CLI_URL':'SUPABASE_LIST_FORN_URL']; }
+function urlSalvar(tab){ return cfg()[tab==='clientes'?'SUPABASE_SAVE_CLI_URL':'SUPABASE_SAVE_FORN_URL']; }
+function chaveLista(tab){ return tab==='clientes'?'clientes':'fornecedores'; }
 
 /* ============================================================================
-   LISTAR (carrega do Supabase)
+   LISTAR
    ============================================================================ */
 async function listar(tab) {
   var url = urlListar(tab);
   if (!url) { console.warn('[STK] URL listar nao configurada'); return; }
-
   var search = document.getElementById('busca-' + tab).value.trim();
-  var tipo = document.getElementById('filtro-tipo-' + tab).value;
-  var inativos = document.getElementById('filtro-inativos-' + tab).checked;
+  var f = FILTROS[tab];
 
   renderSkeleton(tab);
-
   try {
     var resp = await fetch(url, {
       method: 'POST', headers: authHeaders(),
       body: JSON.stringify({
         search: search || undefined,
-        tipo_pessoa: tipo || undefined,
-        ativo: inativos ? false : true,
+        tipo_pessoa: f.tipo || undefined,
+        ativo: f.mostrarInativos ? false : true,
         limit: 200,
       }),
     });
     var data = await resp.json();
-    if (!resp.ok || !data.ok) {
-      console.warn('[STK] Falha listar:', data);
-      renderEmpty(tab, 'Erro ao carregar: ' + (data.error || 'falha de rede'));
-      return;
-    }
+    if (!resp.ok || !data.ok) { console.warn('[STK] Falha listar:', data); renderEmpty(tab, 'Erro ao carregar: ' + (data.error || 'falha de rede')); return; }
     DB[tab] = data[chaveLista(tab)] || [];
-    TOTAL[tab] = data.total || 0;
     renderTabela(tab);
   } catch (err) {
     console.warn('[STK] Erro de rede:', err);
-    renderEmpty(tab, 'Falha de rede. Verifique conexao.');
+    renderEmpty(tab, 'Falha de rede. Tente novamente.');
   }
 }
 
 function renderSkeleton(tab) {
   var wrap = document.getElementById('lista-' + tab);
-  var skel = '';
-  for (var i=0;i<5;i++) {
-    skel += '<div class="skeleton-row">';
-    skel += '<div class="skeleton-box" style="width:40px"></div>';
-    skel += '<div class="skeleton-box" style="flex:1"></div>';
-    skel += '<div class="skeleton-box" style="width:140px"></div>';
-    skel += '<div class="skeleton-box" style="width:140px"></div>';
-    skel += '<div class="skeleton-box" style="width:80px"></div>';
-    skel += '</div>';
+  var skel = '<div class="stk-card">';
+  for (var i = 0; i < 5; i++) {
+    skel += '<div class="stk-skel-row">' +
+              '<div class="stk-skel-box stk-skel-avt"></div>' +
+              '<div style="flex:1"><div class="stk-skel-box" style="width:60%;margin-bottom:6px"></div>' +
+              '<div class="stk-skel-box" style="width:40%;height:11px"></div></div>' +
+              '<div class="stk-skel-box" style="width:120px"></div>' +
+              '<div class="stk-skel-box" style="width:60px"></div>' +
+            '</div>';
   }
-  wrap.innerHTML = '<div class="tabela-wrap">' + skel + '</div>';
+  skel += '</div>';
+  wrap.innerHTML = skel;
 }
 
 function renderEmpty(tab, msg) {
   var wrap = document.getElementById('lista-' + tab);
   var rotulo = tab === 'clientes' ? 'cliente' : 'fornecedor';
   wrap.innerHTML =
-    '<div class="empty-stk">' +
-      '<div class="ico">👥</div>' +
-      '<p>' + (msg || 'Nenhum ' + rotulo + ' cadastrado ainda') + '</p>' +
-      '<button onclick="abrirModalNovo()">+ Cadastrar primeiro ' + rotulo + '</button>' +
+    '<div class="stk-empty">' +
+      '<div class="stk-empty-icon">' +
+        '<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>' +
+      '</div>' +
+      '<h3>' + (msg ? 'Nada encontrado' : 'Nenhum ' + rotulo + ' cadastrado') + '</h3>' +
+      '<p>' + (msg || 'Cadastre o primeiro ' + rotulo + ' pra começar a usar nas compras.') + '</p>' +
+      '<button onclick="abrirModalNovo()">' +
+        '<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>' +
+        'Cadastrar ' + rotulo +
+      '</button>' +
     '</div>';
 }
 
@@ -781,55 +846,80 @@ function renderTabela(tab) {
   var rows = DB[tab];
   if (!rows.length) { renderEmpty(tab); return; }
 
-  var html = '<div class="tabela-wrap"><table class="stk-table"><thead><tr>';
-  html += '<th>Tipo</th><th>Nome</th><th>Documento</th><th>Cidade/UF</th><th>Contato</th><th style="text-align:right">Ações</th>';
+  var html = '<div class="stk-card"><table class="stk-table"><thead><tr>';
+  html += '<th>Nome</th>';
+  html += '<th class="col-doc">Documento</th>';
+  html += '<th class="col-meta">Localização</th>';
+  html += '<th class="col-meta">Contato</th>';
+  html += '<th class="right">Ações</th>';
   html += '</tr></thead><tbody>';
 
   rows.forEach(function(r) {
     var cls = r.ativo ? '' : 'inativo';
-    var nomeDisplay = (r.tipo_pessoa === 'PJ' && r.nome_fantasia && r.nome_fantasia !== r.nome)
-      ? r.nome + ' <small style="color:var(--ink-3)">(' + escHtml(r.nome_fantasia) + ')</small>'
-      : escHtml(r.nome);
-    if (!r.ativo) nomeDisplay += ' <span class="badge-inativo">inativo</span>';
-
+    var ini = (r.nome || '??').trim().split(/\s+/).slice(0,2).map(function(p){return p[0]||'';}).join('').toUpperCase().substring(0,2);
+    var nomeAlt = (r.tipo_pessoa === 'PJ' && r.nome_fantasia && r.nome_fantasia !== r.nome) ? r.nome_fantasia : '';
     var doc = formatarDoc(r.documento, r.tipo_pessoa);
-    var local = '';
-    if (r.cidade && r.uf) local = escHtml(r.cidade) + '/' + escHtml(r.uf);
-    else if (r.cidade) local = escHtml(r.cidade);
-    else if (r.uf) local = escHtml(r.uf);
-    else local = '<span style="color:var(--ink-4)">—</span>';
-
-    var contato = r.telefone || r.email || '<span style="color:var(--ink-4)">—</span>';
-    if (contato !== r.telefone && contato !== r.email) {} else { contato = escHtml(contato); }
+    var localBits = [];
+    if (r.cidade) localBits.push(r.cidade);
+    if (r.uf) localBits.push(r.uf);
+    var local = localBits.length ? escHtml(localBits.join('/')) : '<span class="stk-meta-empty">—</span>';
+    var contato = r.telefone || r.email || '';
+    var contatoCell = contato ? escHtml(contato) : '<span class="stk-meta-empty">—</span>';
+    var subInfo = r.tipo_pessoa + ' · ' + doc;
 
     html += '<tr class="' + cls + '">';
-    html += '<td><span class="badge-tipo ' + r.tipo_pessoa + '">' + r.tipo_pessoa + '</span></td>';
-    html += '<td><b>' + nomeDisplay + '</b></td>';
-    html += '<td style="font-variant-numeric:tabular-nums">' + doc + '</td>';
-    html += '<td>' + local + '</td>';
-    html += '<td>' + contato + '</td>';
-    html += '<td><div class="acoes">';
-    html += '<button class="btn-acao" onclick="editar(\'' + tab + '\',\'' + r.id + '\')">Editar</button>';
+    html +=   '<td><div class="stk-nome-cell">';
+    html +=     '<div class="stk-avatar ' + r.tipo_pessoa + '" title="' + r.tipo_pessoa + '">' + escHtml(ini) + '</div>';
+    html +=     '<div class="stk-nome-info">';
+    html +=       '<strong>' + escHtml(r.nome) + (nomeAlt ? ' <small style="font-weight:500;color:var(--text-muted);font-size:12px"> · ' + escHtml(nomeAlt) + '</small>' : '') + (!r.ativo ? ' <span style="color:var(--text-muted);font-size:11px;font-weight:500">(inativo)</span>' : '') + '</strong>';
+    html +=       '<small>' + subInfo + '</small>';
+    html +=     '</div>';
+    html +=   '</div></td>';
+    html +=   '<td class="col-doc stk-meta" style="font-variant-numeric:tabular-nums">' + doc + '</td>';
+    html +=   '<td class="col-meta stk-meta">' + local + '</td>';
+    html +=   '<td class="col-meta stk-meta">' + contatoCell + '</td>';
+    html +=   '<td><div class="stk-acoes">';
+    html +=     '<button class="stk-acao-btn" onclick="editar(\'' + tab + '\',\'' + r.id + '\')" title="Editar">';
+    html +=       '<svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
+    html +=     '</button>';
     if (r.ativo) {
-      html += '<button class="btn-acao danger" onclick="desativar(\'' + tab + '\',\'' + r.id + '\')">Desativar</button>';
+      html += '<button class="stk-acao-btn danger" onclick="desativar(\'' + tab + '\',\'' + r.id + '\')" title="Desativar">';
+      html +=   '<svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>';
+      html += '</button>';
     } else {
-      html += '<button class="btn-acao" onclick="reativar(\'' + tab + '\',\'' + r.id + '\')">Reativar</button>';
+      html += '<button class="stk-acao-btn" onclick="reativar(\'' + tab + '\',\'' + r.id + '\')" title="Reativar">';
+      html +=   '<svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/></svg>';
+      html += '</button>';
     }
-    html += '</div></td></tr>';
+    html +=   '</div></td>';
+    html += '</tr>';
   });
-
   html += '</tbody></table></div>';
   wrap.innerHTML = html;
 }
 
 /* ============================================================================
-   FILTRO / BUSCA com debounce
+   BUSCA + CHIPS DE FILTRO
    ============================================================================ */
 function onBusca(tab) {
   clearTimeout(debounceTimer);
   debounceTimer = setTimeout(function(){ listar(tab); }, 300);
 }
-function filtrar(tab) { listar(tab); }
+function setChipTipo(tab, value) {
+  FILTROS[tab].tipo = value;
+  var grupo = document.querySelector('.stk-chips[data-tab="'+tab+'"][data-group="tipo"]');
+  if (grupo) {
+    grupo.querySelectorAll('.stk-chip').forEach(function(c){
+      c.classList.toggle('active', c.dataset.tipo === value);
+    });
+  }
+  listar(tab);
+}
+function toggleInativos(tab) {
+  FILTROS[tab].mostrarInativos = !FILTROS[tab].mostrarInativos;
+  document.getElementById('chip-inativos-' + tab).classList.toggle('active', FILTROS[tab].mostrarInativos);
+  listar(tab);
+}
 
 /* ============================================================================
    TABS
@@ -844,14 +934,14 @@ function switchTab(tab, btn) {
 }
 
 /* ============================================================================
-   MODAL: abrir/fechar/popular
+   MODAL: abrir / fechar / popular
    ============================================================================ */
 function abrirModalNovo() {
   var papel = TAB_ATUAL === 'clientes' ? 'cliente' : 'fornecedor';
   document.getElementById('form-papel').value = papel;
   document.getElementById('form-id').value = '';
   document.getElementById('modal-title').textContent = 'Novo ' + papel;
-  document.getElementById('modal-icon').textContent = '+';
+  document.getElementById('modal-sub').textContent = 'Apenas nome e CPF/CNPJ são obrigatórios.';
   resetForm();
   setTipoPessoa('PF');
   document.getElementById('modal-stakeholder').classList.add('show');
@@ -866,7 +956,7 @@ function editar(tab, id) {
   document.getElementById('form-papel').value = papel;
   document.getElementById('form-id').value = id;
   document.getElementById('modal-title').textContent = 'Editar ' + papel;
-  document.getElementById('modal-icon').textContent = '✎';
+  document.getElementById('modal-sub').textContent = 'Ajuste os dados de ' + (r.nome || papel) + '.';
 
   document.getElementById('form-nome').value = r.nome || '';
   document.getElementById('form-documento').value = formatarDoc(r.documento, r.tipo_pessoa);
@@ -887,7 +977,7 @@ function editar(tab, id) {
   document.getElementById('form-pais').value = r.pais || 'BR';
 
   setTipoPessoa(r.tipo_pessoa);
-  NOME_TOCADO = true; // ao editar, não auto-mirror
+  NOME_TOCADO = true;
   RAZAO_TOCADA = true;
 
   document.getElementById('modal-stakeholder').classList.add('show');
@@ -919,9 +1009,7 @@ function setTipoPessoa(tipo) {
   aplicarMascaraDoc();
 }
 
-/* ============================================================================
-   AUTO-MIRROR nome -> razao_social (só PJ, só enquanto razão não foi editada)
-   ============================================================================ */
+/* nome -> razao social (só PJ, não sobrescreve se você editou razão) */
 function onNomeChange() {
   NOME_TOCADO = true;
   if (TIPO_PESSOA_FORM === 'PJ' && !RAZAO_TOCADA) {
@@ -950,23 +1038,17 @@ function aplicarMascaraDoc() {
   }
   el.value = v;
 }
-
 function aplicarMascaraCEP() {
   var el = document.getElementById('form-cep');
   var v = el.value.replace(/\D/g,'').substring(0,8);
   if (v.length > 5) v = v.replace(/(\d{5})(\d{1,3})/, '$1-$2');
   el.value = v;
 }
-
 function formatarDoc(doc, tipo) {
   if (!doc) return '—';
   var d = String(doc).replace(/\D/g,'');
-  if (tipo === 'PF' && d.length === 11) {
-    return d.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-  }
-  if (tipo === 'PJ' && d.length === 14) {
-    return d.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
-  }
+  if (tipo === 'PF' && d.length === 11) return d.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+  if (tipo === 'PJ' && d.length === 14) return d.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
   return d;
 }
 function formatarCEP(cep) {
@@ -983,8 +1065,8 @@ async function buscarCEP() {
   try {
     var resp = await fetch('https://viacep.com.br/ws/' + cep + '/json/');
     var data = await resp.json();
-    if (data.erro) { console.warn('[CEP] não encontrado:', cep); return; }
-    var setIf = function(id, val) {
+    if (data.erro) return;
+    var setIf = function(id, val){
       var el = document.getElementById(id);
       if (el && !el.value) el.value = val || '';
     };
@@ -992,13 +1074,11 @@ async function buscarCEP() {
     setIf('form-bairro',     data.bairro);
     setIf('form-cidade',     data.localidade);
     setIf('form-uf',         data.uf);
-  } catch (err) {
-    console.warn('[CEP] falha viacep:', err);
-  }
+  } catch (err) { console.warn('[CEP] falha:', err); }
 }
 
 /* ============================================================================
-   SUBMIT (insert/update)
+   SUBMIT
    ============================================================================ */
 async function submitForm() {
   var btn = document.getElementById('btn-salvar');
@@ -1009,21 +1089,11 @@ async function submitForm() {
   var id = document.getElementById('form-id').value || null;
 
   var nome = document.getElementById('form-nome').value.trim();
-  var docMasked = document.getElementById('form-documento').value;
-  var documento = docMasked.replace(/\D/g,'');
+  var documento = document.getElementById('form-documento').value.replace(/\D/g,'');
 
-  if (!nome || nome.length < 2) {
-    await rxAlert('Nome é obrigatório (mínimo 2 caracteres).', 'warning');
-    return;
-  }
-  if (TIPO_PESSOA_FORM === 'PF' && documento.length !== 11) {
-    await rxAlert('CPF inválido. Precisa ter 11 dígitos.', 'warning');
-    return;
-  }
-  if (TIPO_PESSOA_FORM === 'PJ' && documento.length !== 14) {
-    await rxAlert('CNPJ inválido. Precisa ter 14 dígitos.', 'warning');
-    return;
-  }
+  if (!nome || nome.length < 2) { await rxAlert('Nome obrigatório (mín 2 caracteres).', 'warning'); return; }
+  if (TIPO_PESSOA_FORM === 'PF' && documento.length !== 11) { await rxAlert('CPF inválido. Precisa ter 11 dígitos.', 'warning'); return; }
+  if (TIPO_PESSOA_FORM === 'PJ' && documento.length !== 14) { await rxAlert('CNPJ inválido. Precisa ter 14 dígitos.', 'warning'); return; }
 
   btn.dataset.salvando = '1';
   btn.disabled = true;
@@ -1052,9 +1122,7 @@ async function submitForm() {
   if (id) payload.id = id;
 
   try {
-    var resp = await fetch(urlSalvar(tab), {
-      method: 'POST', headers: authHeaders(), body: JSON.stringify(payload),
-    });
+    var resp = await fetch(urlSalvar(tab), { method: 'POST', headers: authHeaders(), body: JSON.stringify(payload) });
     var data = await resp.json();
     if (!resp.ok || !data.ok) {
       await rxAlert('Falha ao salvar:\n\n' + (data.error || ('HTTP ' + resp.status)), 'error');
@@ -1078,34 +1146,27 @@ async function submitForm() {
 async function desativar(tab, id) {
   var rotulo = tab === 'clientes' ? 'cliente' : 'fornecedor';
   var ok = await rxConfirm(
-    'Vai esconder esse ' + rotulo + ' das listas ativas. Você pode reativar depois mostrando inativos.',
+    'Vai esconder esse ' + rotulo + ' das listas ativas. Você pode reativar mostrando inativos.',
     { title: 'Desativar ' + rotulo + '?', okText: 'Desativar', dangerous: true }
   );
   if (!ok) return;
   await atualizarAtivo(tab, id, false);
 }
-
 async function reativar(tab, id) {
   await atualizarAtivo(tab, id, true);
 }
-
 async function atualizarAtivo(tab, id, ativo) {
+  var r = DB[tab].find(function(x){ return x.id === id; }) || {};
   try {
     var resp = await fetch(urlSalvar(tab), {
       method: 'POST', headers: authHeaders(),
-      body: JSON.stringify({ id: id, ativo: ativo,
-        // O backend exige tipo_pessoa+nome+documento mesmo em update.
-        // Aqui usamos do cache.
-        tipo_pessoa: (DB[tab].find(function(x){return x.id===id;}) || {}).tipo_pessoa,
-        nome: (DB[tab].find(function(x){return x.id===id;}) || {}).nome,
-        documento: (DB[tab].find(function(x){return x.id===id;}) || {}).documento,
+      body: JSON.stringify({
+        id: id, ativo: ativo,
+        tipo_pessoa: r.tipo_pessoa, nome: r.nome, documento: r.documento
       }),
     });
     var data = await resp.json();
-    if (!resp.ok || !data.ok) {
-      await rxAlert('Falha: ' + (data.error || ''), 'error');
-      return;
-    }
+    if (!resp.ok || !data.ok) { await rxAlert('Falha: ' + (data.error || ''), 'error'); return; }
     listar(tab);
   } catch (err) {
     await rxAlert('Falha de rede: ' + err.message, 'error');
@@ -1121,11 +1182,9 @@ function escHtml(s) {
     .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
-/* ============================================================================
-   INIT
-   ============================================================================ */
+/* INIT */
 listar('clientes');
-listar('fornecedores'); // preload pra trocar de aba já tem carregado
+listar('fornecedores');
 </script>
 <script src="../theme.js"></script>
 <script src="../responsive.js"></script>
