@@ -1436,12 +1436,6 @@ input.auto,input[readonly]{
       </div>
     </header>
 
-    <!-- Status bar Google Sheets (escondido se conectado) -->
-    <div class="sheets-bar" id="sheets-bar">
-      <span class="sheets-dot"></span>
-      <span>Conectado ao Google Sheets</span>
-      <a id="sheets-link" href="#" target="_blank">Abrir planilha ↗</a>
-    </div>
 
     <main>
       <div id="panel-online" class="panel active">
@@ -1455,7 +1449,7 @@ input.auto,input[readonly]{
             <!-- Seçao 1: Identificacao -->
             <div class="form-row form-row-2">
               <div class="field">
-                <label for="online-mes">Mês</label>
+                <label for="online-mes">Mês <span class="required">*</span></label>
                 <select id="online-mes">
                   <option>Janeiro</option><option>Fevereiro</option><option>Março</option>
                   <option>Abril</option><option selected>Maio</option><option>Junho</option>
@@ -1489,7 +1483,7 @@ input.auto,input[readonly]{
 
             <div class="form-row">
               <div class="field">
-                <label for="online-descricao">Descrição <span class="optional">(opcional)</span></label>
+                <label for="online-descricao">Descrição <span class="required">*</span></label>
                 <input type="text" id="online-descricao" placeholder="Detalhes adicionais">
               </div>
             </div>
@@ -1510,11 +1504,11 @@ input.auto,input[readonly]{
 
             <div class="form-row form-row-2">
               <div class="field">
-                <label for="online-vpago">Valor pago (R$)</label>
+                <label for="online-vpago">Valor pago (R$) <span class="required">*</span></label>
                 <input type="number" id="online-vpago" step="0.01" placeholder="0,00" oninput="calcVtotal('online')">
               </div>
               <div class="field">
-                <label for="online-formapgto">Forma de pagamento</label>
+                <label for="online-formapgto">Forma de pagamento <span class="required">*</span></label>
                 <select id="online-formapgto" onchange="toggleParcelas('online')">
                   <option value="">Selecione…</option>
                   <option value="cartao">Cartão corporativo</option>
@@ -1905,27 +1899,36 @@ function updateBanners() {
 
 function buildEntry(cat) {
   if (cat !== 'online') { alert('Apenas categoria Online implementada nesta versão'); return null; }
-  
+
   var mes = g('online-mes');
   var item = g('online-item');
-  var solicitante = g('online-solicitante');
-  var qtd = parseFloat(g('online-qtd') || 1);
-  var vmedio = parseFloat(g('online-vmedio') || 0);
+  var descricao = g('online-descricao');
   var vpago = parseFloat(g('online-vpago') || 0);
-  var vtotal = qtd * vpago;
-  var economia = qtd * (vmedio - vpago);
-  
-  if (!mes || !item || !solicitante || !vmedio || !vpago) {
-    alert('⚠️ Preencha todos os campos obrigatórios!');
+  var formaPgto = g('online-formapgto');
+
+  // Validacao: apenas 5 campos obrigatorios (com asterisco no form)
+  var faltam = [];
+  if (!mes)              faltam.push('Mês');
+  if (!item)             faltam.push('Item');
+  if (!descricao)        faltam.push('Descrição');
+  if (!vpago || vpago<=0) faltam.push('Valor pago');
+  if (!formaPgto)        faltam.push('Forma de pagamento');
+  if (faltam.length) {
+    alert('⚠️ Preencha os campos obrigatórios:\n• ' + faltam.join('\n• '));
     return null;
   }
-  
-  var e = {
+
+  var qtd = parseFloat(g('online-qtd') || 1);
+  var vmedio = parseFloat(g('online-vmedio') || 0);
+  var vtotal = qtd * vpago;
+  var economia = qtd * (vmedio - vpago);
+
+  return {
     cat: 'online',
     mes: mes,
     item: item,
-    solicitante: solicitante,
-    descricao: g('online-descricao'),
+    solicitante: g('online-solicitante'),
+    descricao: descricao,
     qtd: qtd,
     vmedio: vmedio,
     vpago: vpago,
@@ -1933,32 +1936,50 @@ function buildEntry(cat) {
     economia: economia,
     fornecedor: g('online-fornecedor'),
     data: g('online-data'),
-    formaPagamento: g('online-formapgto'),
+    formaPagamento: formaPgto,
     ultimosDigitos: g('online-ultimos-digitos'),
     parcelas: g('online-parcelas'),
     comprovante: comprovanteAtual || null,
     timestamp: new Date().toISOString(),
     synced: false
   };
-
-  return e;
 }
 
 async function saveEntry(cat) {
+  // Anti-double-click: trava o botao enquanto processa
+  var btn = document.querySelector('.btn-save');
+  if (btn && btn.dataset.salvando === '1') return;
+
   var entry = buildEntry(cat);
   if (!entry) return;
 
-  if (!entry.formaPagamento) {
-    alert('⚠️ Por favor, selecione a forma de pagamento!');
-    return;
-  }
-  if (entry.formaPagamento === 'cartao') {
-    if (!entry.ultimosDigitos || entry.ultimosDigitos.length !== 4) {
-      alert('⚠️ Por favor, informe os 4 últimos dígitos do cartão!');
-      return;
-    }
+  // Trava botao + feedback visual
+  if (btn) {
+    btn.dataset.salvando = '1';
+    btn.dataset.labelOriginal = btn.innerHTML;
+    btn.disabled = true;
+    btn.style.opacity = '0.7';
+    btn.style.cursor = 'wait';
+    btn.innerHTML = '<svg viewBox="0 0 24 24" style="animation:rxSpin 0.7s linear infinite"><circle cx="12" cy="12" r="10" stroke-dasharray="40 60" stroke-linecap="round"/></svg> Salvando…';
   }
 
+  function liberarBotao() {
+    if (!btn) return;
+    btn.dataset.salvando = '';
+    btn.disabled = false;
+    btn.style.opacity = '';
+    btn.style.cursor = '';
+    btn.innerHTML = btn.dataset.labelOriginal || btn.innerHTML;
+  }
+
+  try {
+    await _saveEntryImpl(cat, entry);
+  } finally {
+    liberarBotao();
+  }
+}
+
+async function _saveEntryImpl(cat, entry) {
   var cfg = window.ROMPEX_COMPRAS_CONFIG || {};
   if (!cfg.SUPABASE_SAVE_URL || !cfg.SUPABASE_ANON_KEY) {
     // Sem Supabase configurado: salva so localmente (modo offline).
@@ -2079,23 +2100,26 @@ function clearForm(cat) {
 }
 
 function renderTable(cat) {
-  var wrap = document.getElementById('table-' + cat); 
+  var wrap = document.getElementById('table-' + cat);
   if (!wrap) return;
   var rows = db.filter(function(e) { return e.cat === cat; });
-  if (!rows.length) { 
-    wrap.innerHTML = '<p class="empty">Nenhum lançamento ainda.</p>'; 
-    return; 
+  if (!rows.length) {
+    wrap.innerHTML = '<p class="empty">Nenhum lançamento ainda.</p>';
+    return;
   }
-  
-  var h = '<div class="tbl-wrap" style="margin-top:1rem"><table><thead><tr><th></th><th>Mês</th><th>Item</th><th>Qtd</th><th>V.Total</th><th>Economia</th><th>Pagamento</th><th>Cartão</th><th>Parcelas</th><th>📎</th></tr></thead><tbody>';
+
+  var h = '<div class="tbl-wrap" style="margin-top:1rem"><table><thead><tr>' +
+          '<th></th><th>Mês</th><th>Item</th><th>Qtd</th><th>V.Total</th><th>Economia</th>' +
+          '<th>Pagamento</th><th>Cartão</th><th>Parcelas</th><th>📎</th><th></th>' +
+          '</tr></thead><tbody>';
 
   rows.slice().reverse().forEach(function(r) {
-    var dot = r.synced ? '<span class="sync-dot"></span>' : '<span class="sync-dot pending"></span>';
-    var ec  = ecoColor(r.economia);
-    var pgto = r.formaPagamento === 'cartao' ? '💳 Cartão' : r.formaPagamento === 'boleto' ? '📄 Boleto' : '--';
-    var cartao = r.formaPagamento === 'cartao' && r.ultimosDigitos ? '****' + r.ultimosDigitos : '--';
-    var parc = r.parcelas || '--';
-    // Clipe + link do comprovante (quando há URL pública do Drive).
+    var cancelado = !!r.cancelado_em;
+    var dot   = r.synced ? '<span class="sync-dot"></span>' : '<span class="sync-dot pending"></span>';
+    var ec    = ecoColor(r.economia);
+    var pgto  = r.formaPagamento === 'cartao' ? '💳 Cartão' : r.formaPagamento === 'boleto' ? '📄 Boleto' : '--';
+    var cartao= r.formaPagamento === 'cartao' && r.ultimosDigitos ? '****' + r.ultimosDigitos : '--';
+    var parc  = r.parcelas || '--';
     var anexo = '--';
     if (r.comprovante) {
       var nome = (r.comprovante.nome || 'arquivo').replace(/"/g, '&quot;');
@@ -2104,20 +2128,86 @@ function renderTable(cat) {
         : '<span title="' + nome + ' (somente local)" style="color:#F59E0B">📎</span>';
     }
 
-    h += '<tr><td>' + dot + '</td>';
-    h += '<td>' + r.mes + '</td>';
-    h += '<td>' + (r.item||'') + '</td>';
-    h += '<td>' + (r.qtd||1) + '</td>';
-    h += '<td>' + fmtVal(r.vtotal||0) + '</td>';
-    h += '<td style="color:' + ec + ';font-weight:500">' + fmtVal(r.economia||0) + '</td>';
-    h += '<td>' + pgto + '</td>';
-    h += '<td>' + cartao + '</td>';
-    h += '<td style="font-size:11px">' + parc + '</td>';
-    h += '<td style="text-align:center">' + anexo + '</td>';
-    h += '</tr>';
+    var itemCell = cancelado
+      ? '<span style="text-decoration:line-through">' + escapeHtml(r.item||'') + '</span>' +
+        '<br><small style="color:#EF4444;font-size:10.5px">cancelado por <b>' + escapeHtml(r.cancelado_por||'?') + '</b>' +
+        (r.cancelado_motivo ? ' · "' + escapeHtml(r.cancelado_motivo) + '"' : '') + '</small>'
+      : escapeHtml(r.item||'');
+
+    var acoes = (r.supabaseId && !cancelado)
+      ? '<button onclick="cancelarCompra(\'' + r.supabaseId + '\')" title="Cancelar lançamento" ' +
+        'style="background:transparent;border:1px solid #FCA5A5;color:#EF4444;cursor:pointer;font-size:11px;padding:4px 10px;border-radius:6px;font-weight:600">✕ Cancelar</button>'
+      : (cancelado ? '<span style="color:#9CA3AF;font-size:11px">cancelado</span>' : '--');
+
+    var rowStyle = cancelado ? 'background:rgba(239,68,68,0.04);opacity:0.75' : '';
+
+    h += '<tr style="' + rowStyle + '">'
+      +  '<td>' + dot + '</td>'
+      +  '<td>' + r.mes + '</td>'
+      +  '<td>' + itemCell + '</td>'
+      +  '<td>' + (r.qtd||1) + '</td>'
+      +  '<td>' + fmtVal(r.vtotal||0) + '</td>'
+      +  '<td style="color:' + ec + ';font-weight:500">' + fmtVal(r.economia||0) + '</td>'
+      +  '<td>' + pgto + '</td>'
+      +  '<td>' + cartao + '</td>'
+      +  '<td style="font-size:11px">' + parc + '</td>'
+      +  '<td style="text-align:center">' + anexo + '</td>'
+      +  '<td>' + acoes + '</td>'
+      +  '</tr>';
   });
-  
+
   wrap.innerHTML = h + '</tbody></table></div>';
+}
+
+/* Cancela um lancamento ja salvo no Supabase. Registra quem (sessao) e motivo. */
+async function cancelarCompra(supabaseId) {
+  if (!supabaseId) return;
+
+  var sessao = (typeof verificarAutenticacao === 'function') ? verificarAutenticacao() : null;
+  var quem = (sessao && sessao.nome) || 'Anonimo';
+
+  if (!confirm('Cancelar este lançamento?\n\nVai ficar registrado como cancelado por ' + quem + '.')) return;
+  var motivo = prompt('Motivo (opcional):', '') || '';
+
+  var cfg = window.ROMPEX_COMPRAS_CONFIG || {};
+  if (!cfg.SUPABASE_CANCEL_URL || !cfg.SUPABASE_ANON_KEY) {
+    alert('⚠️ Cancelamento não configurado.\n\nEdite no Table Editor do Supabase manualmente:\nseta cancelado_em, cancelado_por, cancelado_motivo.');
+    return;
+  }
+
+  try {
+    var resp = await fetch(cfg.SUPABASE_CANCEL_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': cfg.SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY,
+      },
+      body: JSON.stringify({
+        id: supabaseId,
+        cancelado_por: quem,
+        cancelado_motivo: motivo || null,
+      }),
+    });
+
+    var data = await resp.json();
+    if (!resp.ok || !data.ok) {
+      alert('⚠️ Falha ao cancelar:\n' + (data.error || ('HTTP ' + resp.status)) + (data.detail ? '\n\n' + data.detail : ''));
+      return;
+    }
+
+    // Atualiza cache local
+    var idx = db.findIndex(function(e) { return e.supabaseId === supabaseId; });
+    if (idx >= 0) {
+      db[idx].cancelado_em = data.compra.cancelado_em;
+      db[idx].cancelado_por = data.compra.cancelado_por;
+      db[idx].cancelado_motivo = data.compra.cancelado_motivo;
+      saveDB();
+      renderTable('online');
+    }
+  } catch (err) {
+    alert('⚠️ Falha de rede ao cancelar.\n\n' + (err.message || err));
+  }
 }
 
 function renderAllTables() { 
