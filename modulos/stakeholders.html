@@ -30,6 +30,42 @@
 main{padding:0!important;background:transparent!important}
 .panel{display:none;padding:0 28px 40px}
 .panel.active{display:block}
+
+/* views: lista vs form */
+.view-lista{display:none}
+.view-lista.active{display:block}
+.view-form{display:none;padding:18px 28px 40px;max-width:880px;margin:0 auto}
+.view-form.active{display:block}
+
+/* botoes de acao no form-card (Cancelar + Salvar lado a lado) */
+.view-form .form-actions{
+  display:flex;justify-content:flex-end;gap:10px;
+  margin-top:24px;padding-top:18px;
+  border-top:1px solid var(--border-soft);
+}
+.view-form .form-actions .btn-clear,
+.view-form .form-actions .btn-save{
+  width:auto!important;
+  padding:11px 22px!important;
+  font-size:13.5px!important;
+}
+.view-form .form-actions .btn-clear{
+  color:var(--text-secondary)!important;
+  border:1px solid var(--border)!important;
+  background:var(--surface)!important;
+  border-radius:10px!important;
+}
+.view-form .form-actions .btn-clear:hover{
+  border-color:var(--text-muted)!important;
+  color:var(--text-primary)!important;
+}
+.view-form .form-actions .btn-save{
+  border-radius:10px!important;
+}
+
+@media (max-width:768px){
+  .view-form{padding:14px 16px 32px}
+}
 .topbar{
   background:transparent!important;border-bottom:none!important;
   padding:0!important;display:block!important;position:relative!important;
@@ -600,19 +636,23 @@ main{padding:0!important;background:transparent!important}
             <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           </div>
           <div class="page-head-text">
-            <h1 class="page-h1">Stakeholders</h1>
-            <p class="page-sub">Clientes e fornecedores cadastrados</p>
+            <h1 class="page-h1" id="page-h1">Stakeholders</h1>
+            <p class="page-sub" id="page-sub">Clientes e fornecedores cadastrados</p>
           </div>
         </div>
         <div class="page-head-right">
-          <button class="page-action primary" onclick="abrirModalNovo()">
+          <button id="btn-novo" class="page-action primary" onclick="showForm('novo')">
             <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Novo
+          </button>
+          <button id="btn-voltar" class="page-action" style="display:none" onclick="showLista()">
+            <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            Voltar
           </button>
         </div>
       </div>
 
-      <div class="tab-pills-wrap">
+      <div class="tab-pills-wrap" id="tab-pills-wrap">
         <nav class="nav-tabs">
           <button class="nav-tab active" data-tab="clientes" onclick="switchTab('clientes', this)">Clientes</button>
           <button class="nav-tab" data-tab="fornecedores" onclick="switchTab('fornecedores', this)">Fornecedores</button>
@@ -621,194 +661,183 @@ main{padding:0!important;background:transparent!important}
     </header>
 
     <main>
-      <!-- ============== PANEL: CLIENTES ============== -->
-      <div id="panel-clientes" class="panel active">
-        <div class="stk-toolbar">
-          <div class="stk-busca">
-            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input type="text" id="busca-clientes" placeholder="Buscar por nome, documento ou razão social…" oninput="onBusca('clientes')">
+      <!-- ============== VIEW: LISTA (default) ============== -->
+      <div id="view-lista" class="view-lista active">
+        <!-- panel clientes -->
+        <div id="panel-clientes" class="panel active">
+          <div class="stk-toolbar">
+            <div class="stk-busca">
+              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="busca-clientes" placeholder="Buscar por nome, documento ou razão social…" oninput="onBusca('clientes')">
+            </div>
+            <div class="stk-chips" data-tab="clientes" data-group="tipo">
+              <button class="stk-chip active" data-tipo="" onclick="setChipTipo('clientes','')">Todos</button>
+              <button class="stk-chip" data-tipo="PF" onclick="setChipTipo('clientes','PF')">Pessoa Física</button>
+              <button class="stk-chip" data-tipo="PJ" onclick="setChipTipo('clientes','PJ')">Pessoa Jurídica</button>
+            </div>
+            <div class="stk-chips">
+              <button class="stk-chip" id="chip-inativos-clientes" onclick="toggleInativos('clientes')">Mostrar inativos</button>
+            </div>
           </div>
-          <div class="stk-chips" data-tab="clientes" data-group="tipo">
-            <button class="stk-chip active" data-tipo="" onclick="setChipTipo('clientes','')">Todos</button>
-            <button class="stk-chip" data-tipo="PF" onclick="setChipTipo('clientes','PF')">Pessoa Física</button>
-            <button class="stk-chip" data-tipo="PJ" onclick="setChipTipo('clientes','PJ')">Pessoa Jurídica</button>
-          </div>
-          <div class="stk-chips">
-            <button class="stk-chip" id="chip-inativos-clientes" onclick="toggleInativos('clientes')">Mostrar inativos</button>
-          </div>
+          <div id="lista-clientes"></div>
         </div>
-        <div id="lista-clientes"></div>
-      </div>
 
-      <!-- ============== PANEL: FORNECEDORES ============== -->
-      <div id="panel-fornecedores" class="panel">
-        <div class="stk-toolbar">
-          <div class="stk-busca">
-            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input type="text" id="busca-fornecedores" placeholder="Buscar por nome, documento ou razão social…" oninput="onBusca('fornecedores')">
+        <!-- panel fornecedores -->
+        <div id="panel-fornecedores" class="panel">
+          <div class="stk-toolbar">
+            <div class="stk-busca">
+              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="busca-fornecedores" placeholder="Buscar por nome, documento ou razão social…" oninput="onBusca('fornecedores')">
+            </div>
+            <div class="stk-chips" data-tab="fornecedores" data-group="tipo">
+              <button class="stk-chip active" data-tipo="" onclick="setChipTipo('fornecedores','')">Todos</button>
+              <button class="stk-chip" data-tipo="PF" onclick="setChipTipo('fornecedores','PF')">Pessoa Física</button>
+              <button class="stk-chip" data-tipo="PJ" onclick="setChipTipo('fornecedores','PJ')">Pessoa Jurídica</button>
+            </div>
+            <div class="stk-chips">
+              <button class="stk-chip" id="chip-inativos-fornecedores" onclick="toggleInativos('fornecedores')">Mostrar inativos</button>
+            </div>
           </div>
-          <div class="stk-chips" data-tab="fornecedores" data-group="tipo">
-            <button class="stk-chip active" data-tipo="" onclick="setChipTipo('fornecedores','')">Todos</button>
-            <button class="stk-chip" data-tipo="PF" onclick="setChipTipo('fornecedores','PF')">Pessoa Física</button>
-            <button class="stk-chip" data-tipo="PJ" onclick="setChipTipo('fornecedores','PJ')">Pessoa Jurídica</button>
-          </div>
-          <div class="stk-chips">
-            <button class="stk-chip" id="chip-inativos-fornecedores" onclick="toggleInativos('fornecedores')">Mostrar inativos</button>
-          </div>
-        </div>
-        <div id="lista-fornecedores"></div>
-      </div>
-    </main>
-  </div>
-</div>
-
-<!-- ========= MODAL CADASTRO ========= -->
-<div id="modal-stakeholder" class="rx-modal-overlay">
-  <div class="rx-modal-box stk-modal">
-    <div class="stk-modal-head">
-      <div class="ico">
-        <svg id="modal-icon-svg" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      </div>
-      <div class="txt">
-        <h2 id="modal-title">Novo cliente</h2>
-        <p id="modal-sub">Apenas nome e CPF/CNPJ são obrigatórios.</p>
-      </div>
-      <button class="stk-modal-close" onclick="fecharModal()" aria-label="Fechar">
-        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-    </div>
-
-    <div class="stk-modal-body">
-      <input type="hidden" id="form-id">
-      <input type="hidden" id="form-papel" value="cliente">
-
-      <!-- Tipo pessoa: pill tabs -->
-      <div class="stk-tipo-tabs">
-        <button type="button" class="stk-tipo-tab active" id="tipo-pf-btn" onclick="setTipoPessoa('PF')">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/></svg>
-          Pessoa Física
-        </button>
-        <button type="button" class="stk-tipo-tab" id="tipo-pj-btn" onclick="setTipoPessoa('PJ')">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h.01M9 13h.01M9 17h.01M15 9h.01M15 13h.01M15 17h.01"/></svg>
-          Pessoa Jurídica
-        </button>
-      </div>
-
-      <!-- Identificação -->
-      <div class="stk-section-label">Identificação</div>
-      <div class="stk-grid-2-1">
-        <div class="field">
-          <label>Nome <span class="req">*</span></label>
-          <input type="text" id="form-nome" placeholder="Nome completo (PF) ou de exibição (PJ)" oninput="onNomeChange()">
-        </div>
-        <div class="field">
-          <label><span id="doc-label">CPF</span> <span class="req">*</span></label>
-          <input type="text" id="form-documento" placeholder="000.000.000-00" oninput="aplicarMascaraDoc()">
+          <div id="lista-fornecedores"></div>
         </div>
       </div>
 
-      <!-- Empresa (PJ) -->
-      <div id="pj-block">
-        <div class="stk-section-label">Dados da empresa</div>
-        <div class="stk-grid-2">
-          <div class="field">
-            <label>Razão Social</label>
-            <input type="text" id="form-razao-social" placeholder="Razão social da empresa">
-          </div>
-          <div class="field">
-            <label>Nome Fantasia</label>
-            <input type="text" id="form-nome-fantasia" placeholder="Nome de mercado">
-          </div>
-        </div>
-        <div class="stk-grid-3">
-          <div class="field">
-            <label>Insc. Estadual</label>
-            <input type="text" id="form-ie" placeholder="000.000.000.000">
-          </div>
-          <div class="field">
-            <label>Insc. Municipal</label>
-            <input type="text" id="form-im" placeholder="0000000">
-          </div>
-          <div class="field">
-            <label>Regime Tributário</label>
-            <select id="form-regime">
-              <option value="">Selecione…</option>
-              <option>MEI</option>
-              <option>Simples Nacional</option>
-              <option>Lucro Presumido</option>
-              <option>Lucro Real</option>
-              <option>Isento</option>
-            </select>
-          </div>
-        </div>
-      </div>
+      <!-- ============== VIEW: FORM (cadastro/edicao inline) ============== -->
+      <div id="view-form" class="view-form">
+        <div class="form-card">
+          <input type="hidden" id="form-id">
+          <input type="hidden" id="form-papel" value="cliente">
 
-      <!-- Contato -->
-      <div class="stk-section-label">Contato</div>
-      <div class="stk-grid-2">
-        <div class="field">
-          <label>Telefone</label>
-          <input type="text" id="form-telefone" placeholder="(11) 90000-0000">
-        </div>
-        <div class="field">
-          <label>Email</label>
-          <input type="email" id="form-email" placeholder="contato@empresa.com">
-        </div>
-      </div>
-
-      <!-- Endereço -->
-      <div class="stk-section-label">Endereço</div>
-      <div class="stk-grid-2-cep">
-        <div class="field">
-          <label>CEP</label>
-          <div class="cep-wrap">
-            <input type="text" id="form-cep" placeholder="00000-000" oninput="aplicarMascaraCEP()" onblur="buscarCEP()">
-            <button type="button" onclick="buscarCEP()" title="Buscar via CEP">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <!-- Tipo pessoa -->
+          <div class="stk-tipo-tabs">
+            <button type="button" class="stk-tipo-tab active" id="tipo-pf-btn" onclick="setTipoPessoa('PF')">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/></svg>
+              Pessoa Física
+            </button>
+            <button type="button" class="stk-tipo-tab" id="tipo-pj-btn" onclick="setTipoPessoa('PJ')">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h.01M9 13h.01M9 17h.01M15 9h.01M15 13h.01M15 17h.01"/></svg>
+              Pessoa Jurídica
             </button>
           </div>
-        </div>
-        <div class="field">
-          <label>UF</label>
-          <input type="text" id="form-uf" placeholder="SP" maxlength="2" style="text-transform:uppercase">
-        </div>
-      </div>
-      <div class="stk-grid-2-1">
-        <div class="field">
-          <label>Logradouro</label>
-          <input type="text" id="form-logradouro" placeholder="Rua, Av., Travessa…">
-        </div>
-        <div class="field">
-          <label>Número</label>
-          <input type="text" id="form-numero" placeholder="123">
-        </div>
-      </div>
-      <div class="stk-grid-2">
-        <div class="field">
-          <label>Complemento</label>
-          <input type="text" id="form-complemento" placeholder="Sala, andar (opcional)">
-        </div>
-        <div class="field">
-          <label>Bairro</label>
-          <input type="text" id="form-bairro" placeholder="Centro">
-        </div>
-      </div>
-      <div class="stk-grid-2">
-        <div class="field">
-          <label>Cidade</label>
-          <input type="text" id="form-cidade" placeholder="São Paulo">
-        </div>
-        <div class="field">
-          <label>País</label>
-          <input type="text" id="form-pais" value="BR">
-        </div>
-      </div>
-    </div>
 
-    <div class="stk-modal-foot">
-      <button class="stk-foot-btn" onclick="fecharModal()">Cancelar</button>
-      <button class="stk-foot-btn primary" id="btn-salvar" onclick="submitForm()">Salvar</button>
-    </div>
+          <!-- Identificação -->
+          <div class="stk-section-label">Identificação</div>
+          <div class="form-row" style="grid-template-columns:1.6fr 0.6fr">
+            <div class="field">
+              <label>Nome <span class="req">*</span></label>
+              <input type="text" id="form-nome" placeholder="Nome completo (PF) ou de exibição (PJ)" oninput="onNomeChange()">
+            </div>
+            <div class="field">
+              <label><span id="doc-label">CPF</span> <span class="req">*</span></label>
+              <input type="text" id="form-documento" placeholder="000.000.000-00" oninput="aplicarMascaraDoc()">
+            </div>
+          </div>
+
+          <!-- Empresa (PJ) -->
+          <div id="pj-block">
+            <div class="stk-section-label">Dados da empresa</div>
+            <div class="form-row form-row-2">
+              <div class="field">
+                <label>Razão Social</label>
+                <input type="text" id="form-razao-social" placeholder="Razão social da empresa">
+              </div>
+              <div class="field">
+                <label>Nome Fantasia</label>
+                <input type="text" id="form-nome-fantasia" placeholder="Nome de mercado">
+              </div>
+            </div>
+            <div class="form-row form-row-3">
+              <div class="field">
+                <label>Insc. Estadual</label>
+                <input type="text" id="form-ie" placeholder="000.000.000.000">
+              </div>
+              <div class="field">
+                <label>Insc. Municipal</label>
+                <input type="text" id="form-im" placeholder="0000000">
+              </div>
+              <div class="field">
+                <label>Regime Tributário</label>
+                <select id="form-regime">
+                  <option value="">Selecione…</option>
+                  <option>MEI</option>
+                  <option>Simples Nacional</option>
+                  <option>Lucro Presumido</option>
+                  <option>Lucro Real</option>
+                  <option>Isento</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contato -->
+          <div class="stk-section-label">Contato</div>
+          <div class="form-row form-row-2">
+            <div class="field">
+              <label>Telefone</label>
+              <input type="text" id="form-telefone" placeholder="(11) 90000-0000">
+            </div>
+            <div class="field">
+              <label>Email</label>
+              <input type="email" id="form-email" placeholder="contato@empresa.com">
+            </div>
+          </div>
+
+          <!-- Endereço -->
+          <div class="stk-section-label">Endereço</div>
+          <div class="form-row" style="grid-template-columns:1fr 100px">
+            <div class="field">
+              <label>CEP</label>
+              <div class="cep-wrap">
+                <input type="text" id="form-cep" placeholder="00000-000" oninput="aplicarMascaraCEP()" onblur="buscarCEP()">
+                <button type="button" onclick="buscarCEP()" title="Buscar via CEP">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="field">
+              <label>UF</label>
+              <input type="text" id="form-uf" placeholder="SP" maxlength="2" style="text-transform:uppercase">
+            </div>
+          </div>
+          <div class="form-row" style="grid-template-columns:1.6fr 0.6fr">
+            <div class="field">
+              <label>Logradouro</label>
+              <input type="text" id="form-logradouro" placeholder="Rua, Av., Travessa…">
+            </div>
+            <div class="field">
+              <label>Número</label>
+              <input type="text" id="form-numero" placeholder="123">
+            </div>
+          </div>
+          <div class="form-row form-row-2">
+            <div class="field">
+              <label>Complemento</label>
+              <input type="text" id="form-complemento" placeholder="Sala, andar (opcional)">
+            </div>
+            <div class="field">
+              <label>Bairro</label>
+              <input type="text" id="form-bairro" placeholder="Centro">
+            </div>
+          </div>
+          <div class="form-row form-row-2">
+            <div class="field">
+              <label>Cidade</label>
+              <input type="text" id="form-cidade" placeholder="São Paulo">
+            </div>
+            <div class="field">
+              <label>País</label>
+              <input type="text" id="form-pais" value="BR">
+            </div>
+          </div>
+
+          <!-- Ações no fim do form-card -->
+          <div class="form-actions">
+            <button type="button" class="btn-clear" onclick="showLista()">Cancelar</button>
+            <button type="button" class="btn-save" id="btn-salvar" onclick="submitForm()">Salvar</button>
+          </div>
+        </div>
+      </div>
+    </main>
   </div>
 </div>
 
@@ -1000,7 +1029,7 @@ function renderEmpty(tab, msg) {
       '</div>' +
       '<h3>' + (msg ? 'Nada encontrado' : 'Nenhum ' + rotulo + ' cadastrado') + '</h3>' +
       '<p>' + (msg || 'Cadastre o primeiro ' + rotulo + ' pra começar a usar nas compras.') + '</p>' +
-      '<button onclick="abrirModalNovo()">' +
+      '<button onclick="showForm(\'novo\')">' +
         '<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>' +
         'Cadastrar ' + rotulo +
       '</button>' +
@@ -1100,57 +1129,72 @@ function switchTab(tab, btn) {
 }
 
 /* ============================================================================
-   MODAL: abrir / fechar / popular
+   VIEW SWITCHING: lista <-> form inline (sem modal)
    ============================================================================ */
-function abrirModalNovo() {
+function showForm(modo, dados) {
   var papel = TAB_ATUAL === 'clientes' ? 'cliente' : 'fornecedor';
   document.getElementById('form-papel').value = papel;
-  document.getElementById('form-id').value = '';
-  document.getElementById('modal-title').textContent = 'Novo ' + papel;
-  document.getElementById('modal-sub').textContent = 'Apenas nome e CPF/CNPJ são obrigatórios.';
-  resetForm();
-  setTipoPessoa('PF');
-  document.getElementById('modal-stakeholder').classList.add('show');
-  setTimeout(function(){ document.getElementById('form-nome').focus(); }, 100);
+
+  if (modo === 'edit' && dados) {
+    document.getElementById('form-id').value = dados.id;
+    document.getElementById('page-h1').textContent = 'Editar ' + papel;
+    document.getElementById('page-sub').textContent = dados.nome || '';
+
+    document.getElementById('form-nome').value = dados.nome || '';
+    document.getElementById('form-documento').value = formatarDoc(dados.documento, dados.tipo_pessoa);
+    document.getElementById('form-razao-social').value = dados.razao_social || '';
+    document.getElementById('form-nome-fantasia').value = dados.nome_fantasia || '';
+    document.getElementById('form-ie').value = dados.inscricao_estadual || '';
+    document.getElementById('form-im').value = dados.inscricao_municipal || '';
+    document.getElementById('form-regime').value = dados.regime_tributario || '';
+    document.getElementById('form-telefone').value = dados.telefone || '';
+    document.getElementById('form-email').value = dados.email || '';
+    document.getElementById('form-cep').value = dados.cep ? formatarCEP(dados.cep) : '';
+    document.getElementById('form-logradouro').value = dados.logradouro || '';
+    document.getElementById('form-numero').value = dados.numero || '';
+    document.getElementById('form-complemento').value = dados.complemento || '';
+    document.getElementById('form-bairro').value = dados.bairro || '';
+    document.getElementById('form-uf').value = dados.uf || '';
+    document.getElementById('form-cidade').value = dados.cidade || '';
+    document.getElementById('form-pais').value = dados.pais || 'BR';
+
+    setTipoPessoa(dados.tipo_pessoa);
+    NOME_TOCADO = true;
+    RAZAO_TOCADA = true;
+  } else {
+    document.getElementById('form-id').value = '';
+    document.getElementById('page-h1').textContent = 'Novo ' + papel;
+    document.getElementById('page-sub').textContent = 'Apenas nome e CPF/CNPJ são obrigatórios.';
+    resetForm();
+    setTipoPessoa('PF');
+  }
+
+  /* alterna views */
+  document.getElementById('view-lista').classList.remove('active');
+  document.getElementById('view-form').classList.add('active');
+  document.getElementById('tab-pills-wrap').style.display = 'none';
+  document.getElementById('btn-novo').style.display = 'none';
+  document.getElementById('btn-voltar').style.display = '';
+
+  window.scrollTo({top:0, behavior:'instant'});
+  setTimeout(function(){ document.getElementById('form-nome').focus(); }, 80);
 }
 
 function editar(tab, id) {
   var r = DB[tab].find(function(x){ return x.id === id; });
   if (!r) return;
   TAB_ATUAL = tab;
-  var papel = tab === 'clientes' ? 'cliente' : 'fornecedor';
-  document.getElementById('form-papel').value = papel;
-  document.getElementById('form-id').value = id;
-  document.getElementById('modal-title').textContent = 'Editar ' + papel;
-  document.getElementById('modal-sub').textContent = 'Ajuste os dados de ' + (r.nome || papel) + '.';
-
-  document.getElementById('form-nome').value = r.nome || '';
-  document.getElementById('form-documento').value = formatarDoc(r.documento, r.tipo_pessoa);
-  document.getElementById('form-razao-social').value = r.razao_social || '';
-  document.getElementById('form-nome-fantasia').value = r.nome_fantasia || '';
-  document.getElementById('form-ie').value = r.inscricao_estadual || '';
-  document.getElementById('form-im').value = r.inscricao_municipal || '';
-  document.getElementById('form-regime').value = r.regime_tributario || '';
-  document.getElementById('form-telefone').value = r.telefone || '';
-  document.getElementById('form-email').value = r.email || '';
-  document.getElementById('form-cep').value = r.cep ? formatarCEP(r.cep) : '';
-  document.getElementById('form-logradouro').value = r.logradouro || '';
-  document.getElementById('form-numero').value = r.numero || '';
-  document.getElementById('form-complemento').value = r.complemento || '';
-  document.getElementById('form-bairro').value = r.bairro || '';
-  document.getElementById('form-uf').value = r.uf || '';
-  document.getElementById('form-cidade').value = r.cidade || '';
-  document.getElementById('form-pais').value = r.pais || 'BR';
-
-  setTipoPessoa(r.tipo_pessoa);
-  NOME_TOCADO = true;
-  RAZAO_TOCADA = true;
-
-  document.getElementById('modal-stakeholder').classList.add('show');
+  showForm('edit', r);
 }
 
-function fecharModal() {
-  document.getElementById('modal-stakeholder').classList.remove('show');
+function showLista() {
+  document.getElementById('view-form').classList.remove('active');
+  document.getElementById('view-lista').classList.add('active');
+  document.getElementById('tab-pills-wrap').style.display = '';
+  document.getElementById('btn-novo').style.display = '';
+  document.getElementById('btn-voltar').style.display = 'none';
+  document.getElementById('page-h1').textContent = 'Stakeholders';
+  document.getElementById('page-sub').textContent = 'Clientes e fornecedores cadastrados';
 }
 
 function resetForm() {
@@ -1294,7 +1338,7 @@ async function submitForm() {
       await rxAlert('Falha ao salvar:\n\n' + (data.error || ('HTTP ' + resp.status)), 'error');
       return;
     }
-    fecharModal();
+    showLista();
     await rxAlert((id ? 'Atualizado' : 'Cadastrado') + ' com sucesso!', 'success');
     listar(tab);
   } catch (err) {
