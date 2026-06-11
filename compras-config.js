@@ -30,9 +30,16 @@ window.ROMPEX_COMPRAS_CONFIG = {
   /* ===== Supabase Edge Functions =====
      Anthropic API key + Service Role key ficam em Secrets (server-side).
      URL + anon publishable key sao publicas por design — seguras no JS. */
-  SUPABASE_OCR_URL:    'https://ypbhcafpwzlyhvhfsahf.supabase.co/functions/v1/ocr-comprovante',
-  SUPABASE_SAVE_URL:   'https://ypbhcafpwzlyhvhfsahf.supabase.co/functions/v1/salvar-compra',
-  SUPABASE_CANCEL_URL: 'https://ypbhcafpwzlyhvhfsahf.supabase.co/functions/v1/cancelar-compra',
-  SUPABASE_LIST_URL:   'https://ypbhcafpwzlyhvhfsahf.supabase.co/functions/v1/listar-compras',
-  SUPABASE_ANON_KEY:   'sb_publishable_pxn3pLSs_T-d01xiehiwOg_FIa-URLC',
+  SUPABASE_OCR_URL:         'https://ypbhcafpwzlyhvhfsahf.supabase.co/functions/v1/ocr-comprovante',
+  SUPABASE_SAVE_URL:        'https://ypbhcafpwzlyhvhfsahf.supabase.co/functions/v1/salvar-compra',
+  SUPABASE_CANCEL_URL:      'https://ypbhcafpwzlyhvhfsahf.supabase.co/functions/v1/cancelar-compra',
+  SUPABASE_LIST_URL:        'https://ypbhcafpwzlyhvhfsahf.supabase.co/functions/v1/listar-compras',
+
+  /* Stakeholders (clientes + fornecedores) */
+  SUPABASE_LIST_CLI_URL:    'https://ypbhcafpwzlyhvhfsahf.supabase.co/functions/v1/listar-clientes',
+  SUPABASE_SAVE_CLI_URL:    'https://ypbhcafpwzlyhvhfsahf.supabase.co/functions/v1/salvar-cliente',
+  SUPABASE_LIST_FORN_URL:   'https://ypbhcafpwzlyhvhfsahf.supabase.co/functions/v1/listar-fornecedores',
+  SUPABASE_SAVE_FORN_URL:   'https://ypbhcafpwzlyhvhfsahf.supabase.co/functions/v1/salvar-fornecedor',
+
+  SUPABASE_ANON_KEY:        'sb_publishable_pxn3pLSs_T-d01xiehiwOg_FIa-URLC',
 };
