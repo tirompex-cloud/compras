@@ -18,15 +18,18 @@
 
 window.ROMPEX_COMPRAS_CONFIG = {
 
-  /* URL do Apps Script publicado p/ sincronizar com a planilha Google Sheets.
-     Ex: 'https://script.google.com/macros/s/AKfycb.../exec' */
-  SHEETS_APPS_SCRIPT_URL: '1x80yzsaD7O7YivDsQnx-Q_JR6Dxzd3EejCyTl-gp2ZDBcEY7oclDic-Y',
+  /* ===== Google Sheets =====
+     URL do Apps Script publicado p/ sincronizar com a planilha Google Sheets.
+     Formato CORRETO: 'https://script.google.com/macros/s/AKfycb.../exec'
+     (atualmente vazio - configure quando publicar o Apps Script no Sheets) */
+  SHEETS_APPS_SCRIPT_URL: '',
 
-  /* URL pra abrir a planilha no navegador (botao "Abrir planilha ↗").
-     Ex: 'https://docs.google.com/spreadsheets/d/1abc.../edit' */
+  /* URL pra abrir a planilha no navegador (botao "Abrir planilha ↗"). */
   SHEETS_VIEW_URL: 'https://docs.google.com/spreadsheets/d/1hh4tUPhcDuHgC_6RUnn84ilIO3GgOCJqmayZbNA-Qtw/edit?gid=786150952#gid=786150952',
 
-  /* Chave da API da Anthropic (Claude) para leitura de comprovantes via OCR.
-     Comeca com "sk-ant-api03-..." — pegue em https://console.anthropic.com */
-  ANTHROPIC_API_KEY: '',
+  /* ===== Supabase Edge Function (OCR de comprovantes via Anthropic Claude) =====
+     A Anthropic API key fica em Supabase Secrets (server-side), NUNCA aqui.
+     URL + anon publishable key sao publicas por design — seguras no JS. */
+  SUPABASE_OCR_URL: 'https://ypbhcafpwzlyhvhfsahf.supabase.co/functions/v1/ocr-comprovante',
+  SUPABASE_ANON_KEY: 'sb_publishable_pxn3pLSs_T-d01xiehiwOg_FIa-URLC',
 };

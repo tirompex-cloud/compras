@@ -1658,6 +1658,113 @@ var CAT_LABEL = {online:'Online',obras:'Obras',geral:'Geral',passagens:'Passagen
    Estrutura: { id, nome, url, urlDownload, tamanho, data } — vazia quando nada anexado. */
 var comprovanteAtual = null;
 
+/* ============================================================================
+   OCR via Supabase Edge Function (proxy seguro pra Anthropic Claude).
+   Le o comprovante (imagem), extrai item/fornecedor/valor/data/etc, e preenche
+   o form. A chave Anthropic vive em Supabase Secrets (server-side); aqui so a
+   URL publica e a anon key (ambas publicaveis, criadas pra isso).
+   ============================================================================ */
+async function executarOCR(file) {
+  var cfg = window.ROMPEX_COMPRAS_CONFIG || {};
+  if (!cfg.SUPABASE_OCR_URL || !cfg.SUPABASE_ANON_KEY) {
+    console.warn('[OCR] Supabase nao configurado em compras-config.js, pulando OCR.');
+    return;
+  }
+  if (!file) return;
+  if (!/^image\//.test(file.type)) {
+    console.warn('[OCR] Tipo nao suportado para OCR:', file.type);
+    return;
+  }
+
+  var statusEl = document.getElementById('comprovante-status');
+  var ocrBadge = '<span data-ocr style="color:#0EA5E9">🤖 lendo o comprovante…</span>';
+  if (statusEl) statusEl.innerHTML += '<br>' + ocrBadge;
+
+  function replaceOcr(html){
+    if (!statusEl) return;
+    statusEl.innerHTML = statusEl.innerHTML.replace(/<span data-ocr[^>]*>.*?<\/span>/, html);
+  }
+
+  try {
+    // Le como base64 (remove o prefixo "data:image/...;base64,")
+    var base64 = await new Promise(function(resolve, reject) {
+      var r = new FileReader();
+      r.onload = function() {
+        var s = r.result || '';
+        var i = s.indexOf(',');
+        resolve(i >= 0 ? s.substring(i+1) : s);
+      };
+      r.onerror = function() { reject(new Error('Falha ao ler arquivo.')); };
+      r.readAsDataURL(file);
+    });
+
+    var resp = await fetch(cfg.SUPABASE_OCR_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': cfg.SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY,
+      },
+      body: JSON.stringify({ image_base64: base64, mime_type: file.type }),
+    });
+
+    var data = await resp.json();
+    if (!resp.ok || !data.ok) {
+      console.warn('[OCR] Falha:', data);
+      replaceOcr('<span style="color:#F59E0B">⚠️ não consegui ler o comprovante</span>');
+      return;
+    }
+
+    var e = data.extracted || {};
+    preencherCampo('online-item',            e.item);
+    preencherCampo('online-fornecedor',      e.fornecedor);
+    preencherCampo('online-data',            e.data);
+    preencherCampo('online-vpago',           e.valor_pago);
+    preencherCampo('online-vmedio',          e.valor_medio);
+    preencherCampo('online-qtd',             e.quantidade);
+    preencherCampo('online-formapgto',       e.forma_pagamento);
+    preencherCampo('online-ultimos-digitos', e.ultimos_digitos);
+    // Parcelas pode vir como "1x", "3x sem juros" — tenta achar option compatível
+    if (e.parcelas) {
+      var sel = document.getElementById('online-parcelas');
+      if (sel) {
+        var alvo = String(e.parcelas).toLowerCase().replace(/\s+/g,'');
+        for (var i = 0; i < sel.options.length; i++) {
+          if (sel.options[i].text.toLowerCase().replace(/\s+/g,'').indexOf(alvo) >= 0) {
+            sel.selectedIndex = i; break;
+          }
+        }
+      }
+    }
+
+    // Mês a partir da data ISO YYYY-MM-DD
+    if (e.data && /^\d{4}-\d{2}-\d{2}$/.test(e.data)) {
+      var meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+      var idx = parseInt(e.data.split('-')[1], 10) - 1;
+      if (idx >= 0 && idx < 12) preencherCampo('online-mes', meses[idx]);
+    }
+
+    // Dispara handlers do form para mostrar campos condicionais e recalcular total
+    if (typeof toggleParcelas === 'function') toggleParcelas('online');
+    if (typeof calcVtotal === 'function') calcVtotal('online');
+
+    replaceOcr('<span style="color:var(--accent)">✨ campos preenchidos pela IA</span>');
+  } catch (err) {
+    console.warn('[OCR] Erro:', err);
+    replaceOcr('<span style="color:#F59E0B">⚠️ erro ao processar com IA</span>');
+  }
+}
+
+/* Preenche o valor de um input por id e dispara eventos pra outros handlers reagirem. */
+function preencherCampo(id, valor) {
+  if (valor === null || valor === undefined || valor === '') return;
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.value = valor;
+  el.dispatchEvent(new Event('input',  { bubbles: true }));
+  el.dispatchEvent(new Event('change', { bubbles: true }));
+}
+
 /* Faz upload do comprovante para a subpasta "Compras" no Drive.
    Mantém referência em comprovanteAtual; ao salvar a compra, o link vai pro registro. */
 async function anexarComprovante(files) {
@@ -1670,6 +1777,10 @@ async function anexarComprovante(files) {
     document.getElementById('online-comprovante-input').value = '';
     return;
   }
+
+  // OCR roda em paralelo com o upload pro Drive (independentes).
+  // Preenche o form com os dados extraidos da nota assim que a IA responde.
+  executarOCR(file);
 
   // Sem URL da API → fallback: guarda só o nome localmente (sem link clicável).
   if (!window.ROMPEX_DRIVE_API_URL) {
