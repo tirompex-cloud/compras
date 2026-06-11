@@ -1778,40 +1778,34 @@ async function anexarComprovante(files) {
     return;
   }
 
-  // OCR roda em paralelo com o upload pro Drive (independentes).
-  // Preenche o form com os dados extraidos da nota assim que a IA responde.
+  // OCR roda em paralelo (preenche o form com os dados extraidos).
   executarOCR(file);
 
-  // Sem URL da API → fallback: guarda só o nome localmente (sem link clicável).
-  if (!window.ROMPEX_DRIVE_API_URL) {
-    comprovanteAtual = { id: 'local-' + Date.now(), nome: file.name, url: '', urlDownload: '', tamanho: file.size, data: new Date().toISOString() };
-    statusEl.innerHTML = '📎 <b>' + file.name + '</b> anexado localmente (Drive não configurado)';
-    statusEl.style.color = '#FCD34D';
-    return;
-  }
+  // Guarda referencia ao File. O upload pro Storage acontece junto com o
+  // saveEntry — uma chamada so na Edge Function salvar-compra (Supabase).
+  comprovanteAtual = {
+    file: file,
+    nome: file.name,
+    tipo: file.type,
+    tamanho: file.size,
+    data: new Date().toISOString(),
+  };
+  statusEl.innerHTML = '📎 <b>' + file.name + '</b> pronto pra salvar';
+  statusEl.style.color = 'var(--accent)';
+}
 
-  statusEl.textContent = '⏳ Enviando comprovante para o Drive...';
-  statusEl.style.color = 'var(--text-muted)';
-  try {
-    var res = await uploadArquivo(file, file.name, file.type, 'Compras');
-    comprovanteAtual = {
-      id: res.id,
-      nome: res.nome || file.name,
-      url: res.url || '',
-      urlDownload: res.urlDownload || res.url || '',
-      tamanho: res.tamanho || file.size,
-      data: res.data || new Date().toISOString()
+/* Le um File como base64 puro (sem o prefixo "data:...;base64,"). */
+function fileToBase64(file) {
+  return new Promise(function(resolve, reject) {
+    var r = new FileReader();
+    r.onload = function() {
+      var s = r.result || '';
+      var i = s.indexOf(',');
+      resolve(i >= 0 ? s.substring(i+1) : s);
     };
-    statusEl.innerHTML = '📎 <b>' + comprovanteAtual.nome + '</b> anexado ✅ ' +
-      (comprovanteAtual.url ? '<a href="' + comprovanteAtual.url + '" target="_blank" style="color:var(--accent)">[abrir]</a>' : '');
-    statusEl.style.color = 'var(--accent)';
-  } catch (err) {
-    // Falha no Drive: mantém referência local sem URL, para não bloquear o lançamento.
-    comprovanteAtual = { id: 'local-' + Date.now(), nome: file.name, url: '', urlDownload: '', tamanho: file.size, data: new Date().toISOString() };
-    statusEl.innerHTML = '⚠️ Anexado localmente (Drive offline): <b>' + file.name + '</b>';
-    statusEl.style.color = '#FCD34D';
-    console.warn('[Drive] Falha no upload do comprovante:', err);
-  }
+    r.onerror = function() { reject(new Error('Falha lendo arquivo.')); };
+    r.readAsDataURL(file);
+  });
 }
 
 function limparComprovante() {
@@ -1951,32 +1945,124 @@ function buildEntry(cat) {
 }
 
 async function saveEntry(cat) {
-  var entry = buildEntry(cat); 
+  var entry = buildEntry(cat);
   if (!entry) return;
-  
+
   if (!entry.formaPagamento) {
     alert('⚠️ Por favor, selecione a forma de pagamento!');
     return;
   }
-  
   if (entry.formaPagamento === 'cartao') {
     if (!entry.ultimosDigitos || entry.ultimosDigitos.length !== 4) {
       alert('⚠️ Por favor, informe os 4 últimos dígitos do cartão!');
       return;
     }
   }
-  
-  db.push(entry);
-  saveDB();
-  clearForm(cat);
-  limparComprovante();
-  renderTable(cat);
 
-  alert('✅ Compra salva com sucesso!\n\n' +
-        'Item: ' + (entry.item || 'Compra') + '\n' +
-        'Valor Total: ' + fmtVal(entry.vtotal) + '\n' +
-        (entry.formaPagamento === 'cartao' ? 'Cartão: ****' + entry.ultimosDigitos : 'Boleto') +
-        (entry.comprovante ? '\nComprovante: ' + entry.comprovante.nome : ''));
+  var cfg = window.ROMPEX_COMPRAS_CONFIG || {};
+  if (!cfg.SUPABASE_SAVE_URL || !cfg.SUPABASE_ANON_KEY) {
+    // Sem Supabase configurado: salva so localmente (modo offline).
+    db.push(entry); saveDB(); clearForm(cat); limparComprovante(); renderTable(cat);
+    alert('✅ Compra salva localmente (Supabase não configurado).');
+    return;
+  }
+
+  // Le o comprovante como base64, se anexado
+  var compB64 = null, compMime = null, compNome = null;
+  if (comprovanteAtual && comprovanteAtual.file) {
+    try {
+      compB64 = await fileToBase64(comprovanteAtual.file);
+      compMime = comprovanteAtual.tipo;
+      compNome = comprovanteAtual.nome;
+    } catch (err) {
+      console.warn('[Compras] Falha lendo comprovante:', err);
+    }
+  }
+
+  // Monta payload da Edge Function salvar-compra
+  var payload = {
+    categoria: entry.cat || 'online',
+    mes: entry.mes,
+    data_compra: entry.data || null,
+    item: entry.item,
+    solicitante: entry.solicitante || null,
+    descricao: entry.descricao || null,
+    fornecedor: entry.fornecedor || null,
+    quantidade: parseInt(entry.qtd, 10) || 1,
+    valor_medio: parseFloat(entry.vmedio) || null,
+    valor_pago: parseFloat(entry.vpago) || null,
+    forma_pagamento: entry.formaPagamento || null,
+    ultimos_digitos: entry.ultimosDigitos || null,
+    parcelas: entry.parcelas || null,
+    comprovante_base64: compB64,
+    comprovante_mime: compMime,
+    comprovante_nome: compNome,
+  };
+
+  // Feedback visual (substitui o botao salvar temporariamente seria ideal,
+  // mas pra nao quebrar layout usamos alert + console)
+  console.log('[Compras] Enviando pra Supabase…', { item: payload.item, valor_pago: payload.valor_pago });
+
+  try {
+    var resp = await fetch(cfg.SUPABASE_SAVE_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': cfg.SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    var data = await resp.json();
+    if (!resp.ok || !data.ok) {
+      console.warn('[Compras] Supabase rejeitou:', data);
+      alert('⚠️ Erro ao salvar no Supabase\n\n' + (data.error || ('HTTP ' + resp.status)) + (data.detail ? '\n\nDetalhe: ' + data.detail : ''));
+      return;
+    }
+
+    // Sucesso — adiciona ao cache local pra aparecer em "Lançamentos recentes"
+    var s = data.compra;
+    var displayEntry = {
+      cat: s.categoria,
+      mes: s.mes,
+      item: s.item,
+      solicitante: s.solicitante,
+      descricao: s.descricao,
+      qtd: s.quantidade,
+      vpago: parseFloat(s.valor_pago) || 0,
+      vmedio: parseFloat(s.valor_medio) || 0,
+      vtotal: parseFloat(s.valor_total) || 0,
+      economia: parseFloat(s.economia) || 0,
+      fornecedor: s.fornecedor,
+      data: s.data_compra,
+      formaPagamento: s.forma_pagamento,
+      ultimosDigitos: s.ultimos_digitos,
+      parcelas: s.parcelas,
+      comprovante: s.comprovante_url ? {
+        id: s.id, nome: s.comprovante_nome,
+        url: s.comprovante_url, urlDownload: s.comprovante_url,
+        tamanho: s.comprovante_tamanho,
+      } : null,
+      timestamp: s.created_at,
+      synced: true,
+      supabaseId: s.id,
+    };
+    db.push(displayEntry);
+    saveDB();
+    clearForm(cat);
+    limparComprovante();
+    renderTable(cat);
+
+    alert('✅ Compra salva no Supabase!\n\n' +
+          'Item: ' + (s.item || '') + '\n' +
+          'Valor Total: ' + fmtVal(s.valor_total) + '\n' +
+          (s.forma_pagamento === 'cartao' ? 'Cartão: ****' + s.ultimos_digitos : 'Boleto') +
+          (s.comprovante_url ? '\nComprovante: ' + s.comprovante_nome : ''));
+  } catch (err) {
+    console.warn('[Compras] Falha de rede:', err);
+    alert('⚠️ Falha de rede ao salvar no Supabase.\n\n' + (err.message || err) + '\n\nSeus dados ficaram no formulário — pode tentar de novo.');
+  }
 }
 
 function clearForm(cat) {

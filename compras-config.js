@@ -27,9 +27,10 @@ window.ROMPEX_COMPRAS_CONFIG = {
   /* URL pra abrir a planilha no navegador (botao "Abrir planilha ↗"). */
   SHEETS_VIEW_URL: 'https://docs.google.com/spreadsheets/d/1hh4tUPhcDuHgC_6RUnn84ilIO3GgOCJqmayZbNA-Qtw/edit?gid=786150952#gid=786150952',
 
-  /* ===== Supabase Edge Function (OCR de comprovantes via Anthropic Claude) =====
-     A Anthropic API key fica em Supabase Secrets (server-side), NUNCA aqui.
+  /* ===== Supabase Edge Functions =====
+     Anthropic API key + Service Role key ficam em Secrets (server-side).
      URL + anon publishable key sao publicas por design — seguras no JS. */
-  SUPABASE_OCR_URL: 'https://ypbhcafpwzlyhvhfsahf.supabase.co/functions/v1/ocr-comprovante',
+  SUPABASE_OCR_URL:  'https://ypbhcafpwzlyhvhfsahf.supabase.co/functions/v1/ocr-comprovante',
+  SUPABASE_SAVE_URL: 'https://ypbhcafpwzlyhvhfsahf.supabase.co/functions/v1/salvar-compra',
   SUPABASE_ANON_KEY: 'sb_publishable_pxn3pLSs_T-d01xiehiwOg_FIa-URLC',
 };
