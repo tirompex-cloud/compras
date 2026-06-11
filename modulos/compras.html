@@ -2651,13 +2651,81 @@ function toggleSubmenu(id, event) {
   }
 }
 
+/* ============================================================================
+   Sincroniza cache local com Supabase. Roda em init() e sempre que precisar
+   atualizar. Substitui entradas com supabaseId pelas que existem no banco;
+   preserva entradas pre-migracao (sem supabaseId) que so estao em localStorage.
+   ============================================================================ */
+async function sincronizarDoSupabase() {
+  var cfg = window.ROMPEX_COMPRAS_CONFIG || {};
+  if (!cfg.SUPABASE_LIST_URL || !cfg.SUPABASE_ANON_KEY) return;
+
+  try {
+    var resp = await fetch(cfg.SUPABASE_LIST_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': cfg.SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY,
+      },
+      body: JSON.stringify({ categoria: 'online', limit: 200 }),
+    });
+    var data = await resp.json();
+    if (!resp.ok || !data.ok) { console.warn('[Sync] Falha:', data); return; }
+
+    var preMigracao = db.filter(function(e) { return !e.supabaseId; });
+    var doSupabase = (data.compras || []).map(function(s) {
+      return {
+        cat: s.categoria || 'online',
+        mes: s.mes,
+        item: s.item,
+        solicitante: s.solicitante,
+        descricao: s.descricao,
+        qtd: s.quantidade,
+        vpago: parseFloat(s.valor_pago) || 0,
+        vmedio: parseFloat(s.valor_medio) || 0,
+        vtotal: parseFloat(s.valor_total) || 0,
+        economia: parseFloat(s.economia) || 0,
+        fornecedor: s.fornecedor,
+        data: s.data_compra,
+        formaPagamento: s.forma_pagamento,
+        ultimosDigitos: s.ultimos_digitos,
+        parcelas: s.parcelas,
+        comprovante: s.comprovante_url ? {
+          id: s.id, nome: s.comprovante_nome,
+          url: s.comprovante_url, urlDownload: s.comprovante_url,
+          tamanho: s.comprovante_tamanho,
+        } : null,
+        timestamp: s.created_at,
+        synced: true,
+        supabaseId: s.id,
+        cancelado_em: s.cancelado_em,
+        cancelado_por: s.cancelado_por,
+        cancelado_motivo: s.cancelado_motivo,
+      };
+    });
+
+    // Pre-migracao primeiro (mais antigas), depois Supabase em ordem desc
+    db = preMigracao.concat(doSupabase);
+    saveDB();
+    renderTable('online');
+    renderRelatorio();
+    console.log('[Sync] ' + doSupabase.length + ' lancamentos carregados do Supabase');
+  } catch (err) {
+    console.warn('[Sync] Erro de rede:', err);
+  }
+}
+
 function init(){
-  loadDB(); 
-  renderAllTables(); 
-  renderRelatorio(); 
+  loadDB();
+  renderAllTables();
+  renderRelatorio();
   updateBanners();
   var dateEl = document.getElementById('online-data');
   if (dateEl) dateEl.valueAsDate = new Date();
+
+  // Sincroniza com o Supabase em background (nao bloqueia o paint inicial)
+  sincronizarDoSupabase();
 }
 init();
 </script>

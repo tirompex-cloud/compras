@@ -33,5 +33,6 @@ window.ROMPEX_COMPRAS_CONFIG = {
   SUPABASE_OCR_URL:    'https://ypbhcafpwzlyhvhfsahf.supabase.co/functions/v1/ocr-comprovante',
   SUPABASE_SAVE_URL:   'https://ypbhcafpwzlyhvhfsahf.supabase.co/functions/v1/salvar-compra',
   SUPABASE_CANCEL_URL: 'https://ypbhcafpwzlyhvhfsahf.supabase.co/functions/v1/cancelar-compra',
+  SUPABASE_LIST_URL:   'https://ypbhcafpwzlyhvhfsahf.supabase.co/functions/v1/listar-compras',
   SUPABASE_ANON_KEY:   'sb_publishable_pxn3pLSs_T-d01xiehiwOg_FIa-URLC',
 };
