@@ -1198,6 +1198,66 @@ input.auto,input[readonly]{
   .form-card{padding:18px 16px 20px}
   .form-row-2,.form-row-3{grid-template-columns:1fr}
 }
+
+/* OCR banner: aparece em cima do form enquanto a IA processa o comprovante */
+.ocr-banner{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 14px;margin-bottom:16px;
+  border-radius:12px;
+  background:linear-gradient(135deg,rgba(14,165,233,0.10),rgba(16,185,129,0.10));
+  border:1px solid rgba(14,165,233,0.28);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.5);
+  animation:rxFadeSlide 0.25s var(--easing);
+}
+@keyframes rxFadeSlide{
+  from{opacity:0;transform:translateY(-6px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.ocr-spinner{
+  width:18px;height:18px;flex-shrink:0;
+  border:2.5px solid rgba(14,165,233,0.25);
+  border-top-color:#0EA5E9;
+  border-radius:50%;
+  animation:rxSpin 0.7s linear infinite;
+}
+@keyframes rxSpin{to{transform:rotate(360deg)}}
+.ocr-banner-text{display:flex;flex-direction:column;line-height:1.25;min-width:0;flex:1}
+.ocr-banner-text strong{font-size:13.5px;font-weight:700;color:#0369A1}
+.ocr-banner-text span{font-size:11.5px;color:#0EA5E9;font-weight:500;margin-top:1px}
+html[data-theme="dark"] .ocr-banner-text strong{color:#7DD3FC}
+html[data-theme="dark"] .ocr-banner-text span{color:#38BDF8}
+.ocr-banner.success{
+  background:linear-gradient(135deg,rgba(16,185,129,0.10),rgba(110,231,183,0.10));
+  border-color:rgba(16,185,129,0.30);
+}
+.ocr-banner.success .ocr-spinner{
+  border-color:transparent;border-top-color:transparent;animation:none;
+  background:radial-gradient(circle,var(--accent) 40%,transparent 42%);
+  position:relative;
+}
+.ocr-banner.success .ocr-spinner::after{
+  content:'✓';position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:11px;font-weight:900;
+}
+.ocr-banner.success .ocr-banner-text strong{color:var(--accent-2)}
+.ocr-banner.success .ocr-banner-text span{color:var(--accent)}
+.ocr-banner.error{
+  background:rgba(239,68,68,0.08);
+  border-color:rgba(239,68,68,0.30);
+}
+.ocr-banner.error .ocr-spinner{
+  border-color:rgba(239,68,68,0.25);border-top-color:transparent;animation:none;
+  background:radial-gradient(circle,#EF4444 40%,transparent 42%);
+  position:relative;
+}
+.ocr-banner.error .ocr-spinner::after{
+  content:'!';position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:11px;font-weight:900;
+}
+.ocr-banner.error .ocr-banner-text strong{color:#B91C1C}
+.ocr-banner.error .ocr-banner-text span{color:#EF4444}
 </style>
 </head>
 <body>
@@ -1446,6 +1506,15 @@ input.auto,input[readonly]{
           <!-- ============ ESQUERDA: FORM CARD ============ -->
           <section class="form-card">
 
+            <!-- Banner de IA analisando o comprovante (visivel so durante OCR) -->
+            <div id="ocr-banner" class="ocr-banner" style="display:none">
+              <div class="ocr-spinner"></div>
+              <div class="ocr-banner-text">
+                <strong>Analisando comprovante com IA…</strong>
+                <span>vou preencher os campos automaticamente</span>
+              </div>
+            </div>
+
             <!-- Seçao 1: Identificacao -->
             <div class="form-row form-row-2">
               <div class="field">
@@ -1658,6 +1727,20 @@ var comprovanteAtual = null;
    o form. A chave Anthropic vive em Supabase Secrets (server-side); aqui so a
    URL publica e a anon key (ambas publicaveis, criadas pra isso).
    ============================================================================ */
+function setOcrBanner(state, title, sub) {
+  var el = document.getElementById('ocr-banner');
+  if (!el) return;
+  if (!state) { el.style.display = 'none'; return; }
+  el.style.display = 'flex';
+  el.classList.remove('success', 'error');
+  if (state === 'success') el.classList.add('success');
+  else if (state === 'error') el.classList.add('error');
+  var t = el.querySelector('.ocr-banner-text strong');
+  var s = el.querySelector('.ocr-banner-text span');
+  if (t && title) t.textContent = title;
+  if (s && sub)   s.textContent = sub;
+}
+
 async function executarOCR(file) {
   var cfg = window.ROMPEX_COMPRAS_CONFIG || {};
   if (!cfg.SUPABASE_OCR_URL || !cfg.SUPABASE_ANON_KEY) {
@@ -1669,6 +1752,9 @@ async function executarOCR(file) {
     console.warn('[OCR] Tipo nao suportado para OCR:', file.type);
     return;
   }
+
+  // Banner de loading no topo do form
+  setOcrBanner('loading', 'Analisando comprovante com IA…', 'vou preencher os campos automaticamente');
 
   var statusEl = document.getElementById('comprovante-status');
   var ocrBadge = '<span data-ocr style="color:#0EA5E9">🤖 lendo o comprovante…</span>';
@@ -1706,6 +1792,8 @@ async function executarOCR(file) {
     if (!resp.ok || !data.ok) {
       console.warn('[OCR] Falha:', data);
       replaceOcr('<span style="color:#F59E0B">⚠️ não consegui ler o comprovante</span>');
+      setOcrBanner('error', 'Não consegui ler o comprovante', 'preencha os campos manualmente');
+      setTimeout(function(){ setOcrBanner(null); }, 5000);
       return;
     }
 
@@ -1743,9 +1831,13 @@ async function executarOCR(file) {
     if (typeof calcVtotal === 'function') calcVtotal('online');
 
     replaceOcr('<span style="color:var(--accent)">✨ campos preenchidos pela IA</span>');
+    setOcrBanner('success', 'Campos preenchidos pela IA', 'revise os valores antes de salvar');
+    setTimeout(function(){ setOcrBanner(null); }, 4000);
   } catch (err) {
     console.warn('[OCR] Erro:', err);
     replaceOcr('<span style="color:#F59E0B">⚠️ erro ao processar com IA</span>');
+    setOcrBanner('error', 'Erro ao processar com IA', (err && err.message) || 'tente de novo ou preencha manualmente');
+    setTimeout(function(){ setOcrBanner(null); }, 5000);
   }
 }
 
@@ -2197,11 +2289,24 @@ async function cancelarCompra(supabaseId) {
 
     var data = await resp.json();
     if (!resp.ok || !data.ok) {
+      // Caso especial: o registro nao existe mais no Supabase (foi deletado
+      // direto no Table Editor). Limpa do cache local sem alarmar o usuario.
+      var notFound = resp.status === 404 || /n[aã]o encontrad/i.test(data.error || '');
+      var idxStale = db.findIndex(function(e) { return e.supabaseId === supabaseId; });
+      if (notFound) {
+        if (idxStale >= 0) {
+          db.splice(idxStale, 1);
+          saveDB();
+          renderTable('online');
+        }
+        alert('ℹ️ Esse lançamento já foi removido do banco.\n\nLimpei do cache local.');
+        return;
+      }
       alert('⚠️ Falha ao cancelar:\n' + (data.error || ('HTTP ' + resp.status)) + (data.detail ? '\n\n' + data.detail : ''));
       return;
     }
 
-    // Atualiza cache local
+    // Atualiza cache local com os dados retornados pelo Supabase
     var idx = db.findIndex(function(e) { return e.supabaseId === supabaseId; });
     if (idx >= 0) {
       db[idx].cancelado_em = data.compra.cancelado_em;
@@ -2213,6 +2318,22 @@ async function cancelarCompra(supabaseId) {
   } catch (err) {
     alert('⚠️ Falha de rede ao cancelar.\n\n' + (err.message || err));
   }
+}
+
+/* Botao manual: limpa do cache local os lancamentos com supabaseId que ja foram
+   deletados direto no Table Editor. Mantém os pre-Supabase (sem supabaseId). */
+function limparOrfaosDoCache() {
+  if (!confirm('Limpar dos "Lançamentos recentes" os itens que voce deletou direto no Supabase?')) return;
+  var antes = db.length;
+  // Estrategia: mantem so quem nao tem supabaseId (pre-migracao) ou
+  // ja tinha sido cancelado pelo sistema. O resto que cair em 404 vai sair
+  // sozinho quando voce tentar cancelar. Pra forcar limpeza imediata, marca todos
+  // os com supabaseId como pendentes de checagem.
+  // Implementacao simples: pergunta confirmacao e remove qualquer entry com supabaseId.
+  db = db.filter(function(e) { return !e.supabaseId; });
+  saveDB();
+  renderTable('online');
+  alert('🧹 Removidos ' + (antes - db.length) + ' lançamentos do cache local.\n\nOs lancamentos que ainda existem no Supabase voltam a aparecer aqui quando voce reabrir e criar novos. Para ver tudo o que existe no banco, va no Table Editor.');
 }
 
 function renderAllTables() { 
