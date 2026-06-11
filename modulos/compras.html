@@ -2546,12 +2546,15 @@ async function cancelarCompra(supabaseId) {
       return;
     }
 
-    // Atualiza cache local com os dados retornados pelo Supabase
+    // A row foi DELETADA do Supabase. Marca cancelamento so localmente (audit
+    // trail no localStorage); a tabela do Supabase fica limpa, so com compras
+    // ativas. O sync preserva esse registro local porque tem cancelado_em.
     var idx = db.findIndex(function(e) { return e.supabaseId === supabaseId; });
     if (idx >= 0) {
-      db[idx].cancelado_em = data.compra.cancelado_em;
-      db[idx].cancelado_por = data.compra.cancelado_por;
-      db[idx].cancelado_motivo = data.compra.cancelado_motivo;
+      db[idx].cancelado_em = new Date().toISOString();
+      db[idx].cancelado_por = quem;
+      db[idx].cancelado_motivo = motivo || null;
+      db[idx].comprovante = null; // arquivo foi apagado do Storage tambem
       saveDB();
       renderTable('online');
     }
@@ -2674,6 +2677,13 @@ async function sincronizarDoSupabase() {
     if (!resp.ok || !data.ok) { console.warn('[Sync] Falha:', data); return; }
 
     var preMigracao = db.filter(function(e) { return !e.supabaseId; });
+    var supabaseIds = {};
+    (data.compras || []).forEach(function(c){ supabaseIds[c.id] = true; });
+    // Lancamentos cancelados localmente (foram deletados do Supabase mas
+    // o cache mantem como audit trail) — preserva se nao voltaram do server.
+    var localCancelados = db.filter(function(e) {
+      return e.supabaseId && !supabaseIds[e.supabaseId] && e.cancelado_em;
+    });
     var doSupabase = (data.compras || []).map(function(s) {
       return {
         cat: s.categoria || 'online',
@@ -2705,8 +2715,8 @@ async function sincronizarDoSupabase() {
       };
     });
 
-    // Pre-migracao primeiro (mais antigas), depois Supabase em ordem desc
-    db = preMigracao.concat(doSupabase);
+    // Ordem: pre-migracao (antigas) + canceladas locais (audit trail) + ativas no Supabase
+    db = preMigracao.concat(localCancelados).concat(doSupabase);
     saveDB();
     renderTable('online');
     renderRelatorio();
