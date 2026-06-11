@@ -1813,6 +1813,11 @@ function limparComprovante() {
 function g(id) { return (document.getElementById(id) || {}).value || ''; }
 function fmtVal(n) { return 'R$ ' + parseFloat(n || 0).toFixed(2).replace('.', ','); }
 function ecoColor(e) { return parseFloat(e || 0) > 0 ? '#10B981' : '#6B7280'; }
+function escapeHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
 function makeDL(url) { return url ? '<a href="' + url + '" target="_blank" style="color:#10B981">🔗</a>' : ''; }
 /* Getters: leem PRIMEIRO de compras-config.js (fixo), depois localStorage (modal),
    senao vazio. Isso permite fixar no codigo sem precisar reconfigurar a cada login. */
