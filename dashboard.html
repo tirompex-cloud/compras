@@ -601,14 +601,6 @@ html[data-theme="light"] .logo-icon img{filter:brightness(0)}
       </div>
 
       <div class="nav-section">
-        <div class="nav-section-title">Cadastros</div>
-        <a href="modulos/stakeholders.html" class="nav-item">
-          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          <span>Stakeholders</span>
-        </a>
-      </div>
-
-      <div class="nav-section">
         <div class="nav-section-title">Módulos</div>
         <div class="nav-item" onclick="toggleSubmenu('modulos',event)">
           <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
@@ -616,6 +608,11 @@ html[data-theme="light"] .logo-icon img{filter:brightness(0)}
           <svg class="nav-expand-icon" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
         <div class="nav-submenu" id="submenu-modulos">
+          <a href="#stakeholders" class="nav-item" data-module-link="stakeholders">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span>Stakeholders</span>
+          </a>
+
           <div class="nav-item" onclick="toggleSubmenu('compras',event)">
             <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
             <span>Compras</span>
@@ -707,6 +704,17 @@ html[data-theme="light"] .logo-icon img{filter:brightness(0)}
   </aside>
 
   <div class="main-content">
+
+    <!-- =================================================================
+         SHELL VIEWS (Etapa 2 — Opcao C):
+           #view-home    : conteudo da dashboard (greeting + metrics + ...)
+           #module-host  : alvo do router.js — recebe fragments dos modulos
+         CSS .view{display:none}.view.active{display:block} (definido abaixo).
+         O router.js (commit 2) intercepta hashchange e troca o que esta active.
+         ================================================================= -->
+    <div id="module-host" class="view" data-view="module"></div>
+
+    <div id="view-home" class="view active" data-view="home">
     <header class="topbar">
       <div class="topbar-info">
         <div class="topbar-eyebrow"><span class="dot"></span>Sistema operacional · <span id="topbar-date"></span></div>
@@ -777,7 +785,7 @@ html[data-theme="light"] .logo-icon img{filter:brightness(0)}
             </div>
             <div class="quick-action-label">Nova Compra</div>
           </a>
-          <a href="modulos/stakeholders.html" class="quick-action">
+          <a href="#stakeholders" class="quick-action" data-module-link="stakeholders">
             <div class="quick-action-icon">
               <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             </div>
@@ -828,8 +836,10 @@ html[data-theme="light"] .logo-icon img{filter:brightness(0)}
       </section>
 
     </main>
-  </div>
-</div>
+    </div><!-- /#view-home -->
+
+  </div><!-- /.main-content -->
+</div><!-- /.layout -->
 
 <!-- Modal de aviso -->
 <div class="modal-overlay" id="modal-aviso-overlay" onclick="fecharModalAviso(event)">
@@ -847,7 +857,13 @@ html[data-theme="light"] .logo-icon img{filter:brightness(0)}
   </div>
 </div>
 
+<style>
+/* SHELL views (Etapa 2 — Opcao C): alterna entre dashboard home e modulo carregado */
+.view{display:none}
+.view.active{display:block}
+</style>
 <script src="auth.js"></script>
+<script src="compras-config.js"></script>
 <script>
 const VERSAO_SISTEMA='3.1.0';
 console.log('🚀 ROMPEX Intranet v'+VERSAO_SISTEMA);
