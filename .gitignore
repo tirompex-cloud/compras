@@ -1,0 +1,10 @@
+# Node — instalado localmente como devDependency (supabase CLI)
+node_modules/
+npm-debug.log*
+
+# Supabase CLI local state
+.supabase/
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
