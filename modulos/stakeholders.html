@@ -1,29 +1,40 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<!--
+   ROMPEX • Stakeholders — fragment
+
+   Este arquivo NAO eh mais uma pagina standalone. Eh um fragment de modulo,
+   carregado por router.js dentro do shell (dashboard.html).
+
+   Quando alguem acessa este arquivo DIRETO pela URL do navegador (bookmark
+   antigo, refresh em /modulos/stakeholders.html), o script de guard logo
+   abaixo detecta a ausencia do shell (sem <aside class="sidebar"> no document)
+   e redireciona pra dashboard.html#stakeholders.
+
+   Quando o router puxa via fetch + DOMParser e re-injeta os <script> via
+   createElement, o documento HOSPEDEIRO ja eh o shell, logo a sidebar existe,
+   logo o guard nao redireciona.
+
+   TODO o JS deste modulo vive dentro de UMA IIFE pra que const/let/class
+   nao colidam na re-execucao (visitar #stakeholders, sair, voltar). O que
+   precisa estar acessivel pros onclick=/oninput= inline a gente expoe via
+   Object.assign(window, publics) e limpa via __moduleCleanup que o proprio
+   modulo registra.
+-->
+
 <script>
-(function(){try{
-  if(localStorage.getItem('rompex_v3')!=='1'){localStorage.setItem('theme','light');localStorage.setItem('rompex_v3','1');}
-  var t=localStorage.getItem('theme')||'light';
-  document.documentElement.setAttribute('data-theme',t);
-}catch(e){}})();
+/* ============ SPA guard ============
+   Se este arquivo for aberto direto no navegador (sem o shell), redireciona
+   pra dashboard.html#stakeholders. No contexto do shell, a sidebar ja existe
+   e a condicao eh falsa → no-op. */
+(function(){
+  if (!document.querySelector('aside.sidebar')) {
+    location.replace('../dashboard.html#stakeholders');
+  }
+})();
 </script>
-<title>ROMPEX • Stakeholders</title>
-<link rel="icon" type="image/png" href="../Rompex_Favicon_Transparente.png">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
-
-<link rel="stylesheet" href="../responsive.css">
-<link rel="stylesheet" href="../rompex-modules.css">
 
 <style>
 /* ============================================================================
-   Stakeholders — só o necessário pra este módulo
+   Stakeholders — so o necessario pra este modulo
    Tokens base, sidebar, page-head, form-card, btn-save vem de rompex-modules.css
    ============================================================================ */
 
@@ -71,7 +82,7 @@ main{padding:0!important;background:transparent!important}
   padding:0!important;display:block!important;position:relative!important;
 }
 
-/* TAB PILLS — mesmo padrão do compras */
+/* TAB PILLS — mesmo padrao do compras */
 .tab-pills-wrap{
   background:var(--bg-primary);
   padding:14px 28px 0;display:flex;gap:8px;
@@ -255,42 +266,7 @@ main{padding:0!important;background:transparent!important}
 .stk-skel-avt{width:36px;height:36px;border-radius:10px;flex-shrink:0}
 @keyframes stkSkel{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
-/* MODAL FORM */
-.stk-modal{
-  max-width:720px!important;
-  max-height:90vh;
-  display:flex;flex-direction:column;
-  padding:0!important;
-}
-.stk-modal-head{
-  padding:18px 22px 16px;
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;gap:14px;
-  flex-shrink:0;
-}
-.stk-modal-head .ico{
-  width:42px;height:42px;border-radius:12px;
-  background:linear-gradient(135deg,var(--accent),var(--accent-hover));
-  color:#fff;
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 6px 14px -4px var(--accent-glow),inset 0 1px 0 rgba(255,255,255,0.25);
-}
-.stk-modal-head .ico svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2}
-.stk-modal-head .txt{flex:1;line-height:1.3;min-width:0}
-.stk-modal-head h2{font-size:17px;font-weight:700;color:var(--text-primary);margin:0;letter-spacing:-0.01em}
-.stk-modal-head p{font-size:12.5px;color:var(--text-muted);margin:2px 0 0}
-.stk-modal-close{
-  width:32px;height:32px;border-radius:8px;
-  background:transparent;border:none;cursor:pointer;
-  color:var(--text-muted);
-  display:flex;align-items:center;justify-content:center;
-  transition:all 0.15s;
-}
-.stk-modal-close:hover{background:var(--surface-2);color:var(--text-primary)}
-.stk-modal-close svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.5}
-
-.stk-modal-body{padding:18px 22px;overflow-y:auto;flex:1}
-
+/* PF/PJ pill tabs (cabecalho do form) */
 .stk-tipo-tabs{
   display:flex;gap:6px;
   background:var(--surface-2);border-radius:11px;padding:4px;
@@ -324,31 +300,6 @@ main{padding:0!important;background:transparent!important}
 #pj-block{display:none}
 #pj-block.show{display:block}
 
-/* Form fields override */
-.stk-modal input[type="text"],
-.stk-modal input[type="email"],
-.stk-modal select{
-  background:var(--surface)!important;
-  color:var(--text-primary)!important;
-  border:1px solid var(--border)!important;
-  border-radius:10px!important;padding:10px 12px!important;
-  font-size:13.5px!important;font-family:inherit;width:100%;
-  transition:border-color .15s,box-shadow .15s!important;
-  box-shadow:none!important;
-}
-.stk-modal input:focus,.stk-modal select:focus{
-  outline:none;border-color:var(--accent)!important;
-  box-shadow:0 0 0 3px var(--accent-tint)!important;
-}
-.stk-modal .field{margin-bottom:0!important}
-.stk-modal .field label{
-  display:block;margin-bottom:6px;
-  font-size:10.5px;font-weight:700;
-  color:var(--text-muted)!important;
-  text-transform:uppercase;letter-spacing:0.14em;
-}
-.stk-modal .field label .req{color:var(--accent);margin-left:2px}
-
 .cep-wrap{display:flex;gap:6px}
 .cep-wrap input{flex:1}
 .cep-wrap button{
@@ -360,34 +311,6 @@ main{padding:0!important;background:transparent!important}
 }
 .cep-wrap button:hover{border-color:var(--accent);color:var(--accent)}
 
-.stk-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
-.stk-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
-.stk-grid-2-1{display:grid;grid-template-columns:1.6fr 0.6fr;gap:14px;margin-bottom:14px}
-.stk-grid-2-cep{display:grid;grid-template-columns:1fr 100px;gap:14px;margin-bottom:14px}
-
-.stk-modal-foot{
-  display:flex;justify-content:flex-end;gap:10px;align-items:center;
-  padding:14px 22px;
-  border-top:1px solid var(--border);
-  flex-shrink:0;
-  background:var(--surface);
-}
-.stk-foot-btn{
-  padding:10px 18px;border-radius:10px;
-  font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;
-  border:1px solid var(--border);
-  background:var(--surface);color:var(--text-secondary);
-  transition:all 0.15s;
-}
-.stk-foot-btn:hover{border-color:var(--text-muted);color:var(--text-primary)}
-.stk-foot-btn.primary{
-  background:linear-gradient(135deg,var(--accent),var(--accent-hover));
-  color:#fff;border:none;
-  box-shadow:0 4px 12px -2px var(--accent-glow);
-}
-.stk-foot-btn.primary:hover{transform:translateY(-1px);box-shadow:0 8px 22px -4px var(--accent-glow);color:#fff}
-.stk-foot-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none!important}
-
 /* Mobile */
 @media (max-width:768px){
   .panel{padding:0 16px 32px}
@@ -397,459 +320,241 @@ main{padding:0!important;background:transparent!important}
   .stk-table th.col-doc,.stk-table td.col-doc,
   .stk-table th.col-meta,.stk-table td.col-meta{display:none}
   .stk-table td,.stk-table th{padding:10px 12px}
-  .stk-modal{max-width:100%!important;max-height:100vh;border-radius:14px 14px 0 0!important}
-  .stk-grid-2,.stk-grid-3,.stk-grid-2-1,.stk-grid-2-cep{grid-template-columns:1fr}
 }
 </style>
-</head>
-<body>
 
-<div class="layout">
+<header class="topbar">
+  <div class="page-head">
+    <div class="page-head-left">
+      <div class="page-icon">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <div class="page-head-text">
+        <h1 class="page-h1" id="page-h1">Stakeholders</h1>
+        <p class="page-sub" id="page-sub">Clientes e fornecedores cadastrados</p>
+      </div>
+    </div>
+    <div class="page-head-right">
+      <button id="btn-novo" class="page-action primary" onclick="showForm('novo')">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Novo
+      </button>
+      <button id="btn-voltar" class="page-action" style="display:none" onclick="showLista()">
+        <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Voltar
+      </button>
+    </div>
+  </div>
 
-  <!-- ========= SIDEBAR (igual compras.html) ========= -->
-  <aside class="sidebar">
-    <div class="sidebar-logo">
-      <a href="../dashboard.html" class="logo-icon" title="Ir para o Início">
-        <img src="../logo-rompex-white.png" alt="ROMPEX">
-      </a>
+  <div class="tab-pills-wrap" id="tab-pills-wrap">
+    <nav class="nav-tabs">
+      <button class="nav-tab active" data-tab="clientes" onclick="switchTab('clientes', this)">Clientes</button>
+      <button class="nav-tab" data-tab="fornecedores" onclick="switchTab('fornecedores', this)">Fornecedores</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- ============== VIEW: LISTA (default) ============== -->
+  <div id="view-lista" class="view-lista active">
+    <!-- panel clientes -->
+    <div id="panel-clientes" class="panel active">
+      <div class="stk-toolbar">
+        <div class="stk-busca">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="busca-clientes" placeholder="Buscar por nome, documento ou razão social…" oninput="onBusca('clientes')">
+        </div>
+        <div class="stk-chips" data-tab="clientes" data-group="tipo">
+          <button class="stk-chip active" data-tipo="" onclick="setChipTipo('clientes','')">Todos</button>
+          <button class="stk-chip" data-tipo="PF" onclick="setChipTipo('clientes','PF')">Pessoa Física</button>
+          <button class="stk-chip" data-tipo="PJ" onclick="setChipTipo('clientes','PJ')">Pessoa Jurídica</button>
+        </div>
+        <div class="stk-chips">
+          <button class="stk-chip" id="chip-inativos-clientes" onclick="toggleInativos('clientes')">Mostrar inativos</button>
+        </div>
+      </div>
+      <div id="lista-clientes"></div>
     </div>
 
-    <nav class="sidebar-nav">
-      <div class="nav-section">
-        <div class="nav-section-title">Principal</div>
-        <a href="../dashboard.html" class="nav-item">
-          <svg viewBox="0 0 24 24">
-            <rect x="3" y="3" width="7" height="9" rx="1"/>
-            <rect x="14" y="3" width="7" height="5" rx="1"/>
-            <rect x="14" y="12" width="7" height="9" rx="1"/>
-            <rect x="3" y="16" width="7" height="5" rx="1"/>
-          </svg>
-          <span>Início</span>
-        </a>
-        <a href="avisos.html" class="nav-item">
-          <svg viewBox="0 0 24 24">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-          </svg>
-          <span>Avisos</span>
-        </a>
-        <a href="documentos.html" class="nav-item">
-          <svg viewBox="0 0 24 24">
-            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
-            <polyline points="13 2 13 9 20 9"/>
-          </svg>
-          <span>Documentos</span>
-        </a>
-        <a href="lancar-avisos.html" class="nav-item">
-          <svg viewBox="0 0 24 24">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-          </svg>
-          <span>Lançar Avisos</span>
-        </a>
-      </div>
-
-      <div class="nav-section">
-        <div class="nav-section-title">Módulos</div>
-        <div class="nav-item expanded" onclick="toggleSubmenu('modulos',event)">
-          <img src="../icone-modulos.png" alt="" class="nav-icon-img">
-          <span>Módulos</span>
-          <svg class="nav-expand-icon" viewBox="0 0 24 24">
-            <polyline points="9 18 15 12 9 6"/>
-          </svg>
+    <!-- panel fornecedores -->
+    <div id="panel-fornecedores" class="panel">
+      <div class="stk-toolbar">
+        <div class="stk-busca">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="busca-fornecedores" placeholder="Buscar por nome, documento ou razão social…" oninput="onBusca('fornecedores')">
         </div>
-        <div class="nav-submenu open" id="submenu-modulos">
-
-          <div class="nav-item expanded" onclick="toggleSubmenu('cadastros',event)">
-            <svg viewBox="0 0 24 24">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-              <circle cx="9" cy="7" r="4"/>
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-            </svg>
-            <span>Cadastros</span>
-            <svg class="nav-expand-icon" viewBox="0 0 24 24">
-              <polyline points="9 18 15 12 9 6"/>
-            </svg>
-          </div>
-          <div class="nav-submenu open" id="submenu-cadastros">
-            <a href="stakeholders.html" class="nav-item active">
-              <svg viewBox="0 0 24 24">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                <circle cx="9" cy="7" r="4"/>
-              </svg>
-              <span>Stakeholders</span>
-            </a>
-          </div>
-
-          <div class="nav-item" onclick="toggleSubmenu('compras',event)">
-            <svg viewBox="0 0 24 24">
-              <circle cx="9" cy="21" r="1"/>
-              <circle cx="20" cy="21" r="1"/>
-              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-            </svg>
-            <span>Compras</span>
-            <svg class="nav-expand-icon" viewBox="0 0 24 24">
-              <polyline points="9 18 15 12 9 6"/>
-            </svg>
-          </div>
-          <div class="nav-submenu" id="submenu-compras">
-            <a href="compras.html" class="nav-item">
-              <svg viewBox="0 0 24 24">
-                <line x1="12" y1="5" x2="12" y2="19"/>
-                <line x1="5" y1="12" x2="19" y2="12"/>
-              </svg>
-              <span>Lançamento de Compras</span>
-            </a>
-          </div>
-
-          <div class="nav-item" onclick="toggleSubmenu('financeiro',event)">
-            <svg viewBox="0 0 24 24">
-              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-            </svg>
-            <span>Financeiro</span>
-            <svg class="nav-expand-icon" viewBox="0 0 24 24">
-              <polyline points="9 18 15 12 9 6"/>
-            </svg>
-          </div>
-          <div class="nav-submenu" id="submenu-financeiro">
-            <a href="relacao-compras.html" class="nav-item">
-              <svg viewBox="0 0 24 24">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
-                <line x1="16" y1="13" x2="8" y2="13"/>
-                <line x1="16" y1="17" x2="8" y2="17"/>
-              </svg>
-              <span>Relação de Compras</span>
-            </a>
-            <a href="financeiro.html" class="nav-item">
-              <svg viewBox="0 0 24 24">
-                <line x1="12" y1="1" x2="12" y2="23"/>
-                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-              </svg>
-              <span>Dashboard</span>
-            </a>
-          </div>
-
-          <div class="nav-item" onclick="toggleSubmenu('fiscal',event)">
-            <svg viewBox="0 0 24 24">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-              <polyline points="14 2 14 8 20 8"/>
-              <polyline points="9 15 11 17 15 13"/>
-            </svg>
-            <span>Fiscal</span>
-            <svg class="nav-expand-icon" viewBox="0 0 24 24">
-              <polyline points="9 18 15 12 9 6"/>
-            </svg>
-          </div>
-          <div class="nav-submenu" id="submenu-fiscal">
-            <a href="fiscal.html" class="nav-item">
-              <svg viewBox="0 0 24 24">
-                <line x1="12" y1="5" x2="12" y2="19"/>
-                <line x1="5" y1="12" x2="19" y2="12"/>
-              </svg>
-              <span>NFS-e</span>
-            </a>
-          </div>
-
-          <div class="nav-item" onclick="toggleSubmenu('tecnicos',event)">
-            <svg viewBox="0 0 24 24">
-              <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
-            </svg>
-            <span>Técnicos</span>
-            <svg class="nav-expand-icon" viewBox="0 0 24 24">
-              <polyline points="9 18 15 12 9 6"/>
-            </svg>
-          </div>
-          <div class="nav-submenu" id="submenu-tecnicos">
-            <a href="certificados.html" class="nav-item">
-              <svg viewBox="0 0 24 24">
-                <line x1="12" y1="5" x2="12" y2="19"/>
-                <line x1="5" y1="12" x2="19" y2="12"/>
-              </svg>
-              <span>Certificados</span>
-            </a>
-          </div>
+        <div class="stk-chips" data-tab="fornecedores" data-group="tipo">
+          <button class="stk-chip active" data-tipo="" onclick="setChipTipo('fornecedores','')">Todos</button>
+          <button class="stk-chip" data-tipo="PF" onclick="setChipTipo('fornecedores','PF')">Pessoa Física</button>
+          <button class="stk-chip" data-tipo="PJ" onclick="setChipTipo('fornecedores','PJ')">Pessoa Jurídica</button>
+        </div>
+        <div class="stk-chips">
+          <button class="stk-chip" id="chip-inativos-fornecedores" onclick="toggleInativos('fornecedores')">Mostrar inativos</button>
         </div>
       </div>
-
-      <div class="nav-section">
-        <div class="nav-section-title">Sistema</div>
-        <div class="nav-item" onclick="toggleSubmenu('configuracoes', event)">
-          <svg viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="3"/>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-          </svg>
-          <span>Configurações</span>
-          <svg class="nav-expand-icon" viewBox="0 0 24 24">
-            <polyline points="9 18 15 12 9 6"/>
-          </svg>
-        </div>
-        <div class="nav-submenu" id="submenu-configuracoes">
-          <a href="meu-perfil.html" class="nav-item">
-            <svg viewBox="0 0 24 24">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-              <circle cx="12" cy="7" r="4"/>
-            </svg>
-            <span>Meu Perfil</span>
-          </a>
-          <a href="usuarios.html" class="nav-item">
-            <svg viewBox="0 0 24 24">
-              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-              <circle cx="8.5" cy="7" r="4"/>
-              <line x1="20" y1="8" x2="20" y2="14"/>
-              <line x1="23" y1="11" x2="17" y2="11"/>
-            </svg>
-            <span>Usuários</span>
-          </a>
-          <a href="atualizacoes.html" class="nav-item">
-            <svg viewBox="0 0 24 24">
-              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-            </svg>
-            <span>Atualizações</span>
-          </a>
-        </div>
-      </div>
-    </nav>
-
-    <a href="meu-perfil.html" class="sidebar-user" title="Meu Perfil">
-      <div class="user-avatar" id="user-avatar">AD</div>
-      <div class="user-info">
-        <div class="user-name" id="user-name">Admin</div>
-        <div class="user-role" id="user-role">Administrador</div>
-      </div>
-      <div class="user-menu" onclick="event.preventDefault(); event.stopPropagation(); fazerLogout()" title="Sair">
-        <svg viewBox="0 0 24 24">
-          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-          <polyline points="16 17 21 12 16 7"/>
-          <line x1="21" y1="12" x2="9" y2="12"/>
-        </svg>
-      </div>
-    </a>
-  </aside>
-
-  <div class="main-content">
-    <header class="topbar">
-      <div class="page-head">
-        <div class="page-head-left">
-          <div class="page-icon">
-            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          </div>
-          <div class="page-head-text">
-            <h1 class="page-h1" id="page-h1">Stakeholders</h1>
-            <p class="page-sub" id="page-sub">Clientes e fornecedores cadastrados</p>
-          </div>
-        </div>
-        <div class="page-head-right">
-          <button id="btn-novo" class="page-action primary" onclick="showForm('novo')">
-            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Novo
-          </button>
-          <button id="btn-voltar" class="page-action" style="display:none" onclick="showLista()">
-            <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-            Voltar
-          </button>
-        </div>
-      </div>
-
-      <div class="tab-pills-wrap" id="tab-pills-wrap">
-        <nav class="nav-tabs">
-          <button class="nav-tab active" data-tab="clientes" onclick="switchTab('clientes', this)">Clientes</button>
-          <button class="nav-tab" data-tab="fornecedores" onclick="switchTab('fornecedores', this)">Fornecedores</button>
-        </nav>
-      </div>
-    </header>
-
-    <main>
-      <!-- ============== VIEW: LISTA (default) ============== -->
-      <div id="view-lista" class="view-lista active">
-        <!-- panel clientes -->
-        <div id="panel-clientes" class="panel active">
-          <div class="stk-toolbar">
-            <div class="stk-busca">
-              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              <input type="text" id="busca-clientes" placeholder="Buscar por nome, documento ou razão social…" oninput="onBusca('clientes')">
-            </div>
-            <div class="stk-chips" data-tab="clientes" data-group="tipo">
-              <button class="stk-chip active" data-tipo="" onclick="setChipTipo('clientes','')">Todos</button>
-              <button class="stk-chip" data-tipo="PF" onclick="setChipTipo('clientes','PF')">Pessoa Física</button>
-              <button class="stk-chip" data-tipo="PJ" onclick="setChipTipo('clientes','PJ')">Pessoa Jurídica</button>
-            </div>
-            <div class="stk-chips">
-              <button class="stk-chip" id="chip-inativos-clientes" onclick="toggleInativos('clientes')">Mostrar inativos</button>
-            </div>
-          </div>
-          <div id="lista-clientes"></div>
-        </div>
-
-        <!-- panel fornecedores -->
-        <div id="panel-fornecedores" class="panel">
-          <div class="stk-toolbar">
-            <div class="stk-busca">
-              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              <input type="text" id="busca-fornecedores" placeholder="Buscar por nome, documento ou razão social…" oninput="onBusca('fornecedores')">
-            </div>
-            <div class="stk-chips" data-tab="fornecedores" data-group="tipo">
-              <button class="stk-chip active" data-tipo="" onclick="setChipTipo('fornecedores','')">Todos</button>
-              <button class="stk-chip" data-tipo="PF" onclick="setChipTipo('fornecedores','PF')">Pessoa Física</button>
-              <button class="stk-chip" data-tipo="PJ" onclick="setChipTipo('fornecedores','PJ')">Pessoa Jurídica</button>
-            </div>
-            <div class="stk-chips">
-              <button class="stk-chip" id="chip-inativos-fornecedores" onclick="toggleInativos('fornecedores')">Mostrar inativos</button>
-            </div>
-          </div>
-          <div id="lista-fornecedores"></div>
-        </div>
-      </div>
-
-      <!-- ============== VIEW: FORM (cadastro/edicao inline) ============== -->
-      <div id="view-form" class="view-form">
-        <div class="form-card">
-          <input type="hidden" id="form-id">
-          <input type="hidden" id="form-papel" value="cliente">
-
-          <!-- Tipo pessoa -->
-          <div class="stk-tipo-tabs">
-            <button type="button" class="stk-tipo-tab active" id="tipo-pf-btn" onclick="setTipoPessoa('PF')">
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/></svg>
-              Pessoa Física
-            </button>
-            <button type="button" class="stk-tipo-tab" id="tipo-pj-btn" onclick="setTipoPessoa('PJ')">
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h.01M9 13h.01M9 17h.01M15 9h.01M15 13h.01M15 17h.01"/></svg>
-              Pessoa Jurídica
-            </button>
-          </div>
-
-          <!-- Identificação -->
-          <div class="stk-section-label">Identificação</div>
-          <div class="form-row" style="grid-template-columns:1.6fr 0.6fr">
-            <div class="field">
-              <label>Nome <span class="req">*</span></label>
-              <input type="text" id="form-nome" placeholder="Nome completo (PF) ou de exibição (PJ)" oninput="onNomeChange()">
-            </div>
-            <div class="field">
-              <label><span id="doc-label">CPF</span> <span class="req">*</span></label>
-              <input type="text" id="form-documento" placeholder="000.000.000-00" oninput="aplicarMascaraDoc()">
-            </div>
-          </div>
-
-          <!-- Empresa (PJ) -->
-          <div id="pj-block">
-            <div class="stk-section-label">Dados da empresa</div>
-            <div class="form-row form-row-2">
-              <div class="field">
-                <label>Razão Social</label>
-                <input type="text" id="form-razao-social" placeholder="Razão social da empresa">
-              </div>
-              <div class="field">
-                <label>Nome Fantasia</label>
-                <input type="text" id="form-nome-fantasia" placeholder="Nome de mercado">
-              </div>
-            </div>
-            <div class="form-row form-row-3">
-              <div class="field">
-                <label>Insc. Estadual</label>
-                <input type="text" id="form-ie" placeholder="000.000.000.000">
-              </div>
-              <div class="field">
-                <label>Insc. Municipal</label>
-                <input type="text" id="form-im" placeholder="0000000">
-              </div>
-              <div class="field">
-                <label>Regime Tributário</label>
-                <select id="form-regime">
-                  <option value="">Selecione…</option>
-                  <option>MEI</option>
-                  <option>Simples Nacional</option>
-                  <option>Lucro Presumido</option>
-                  <option>Lucro Real</option>
-                  <option>Isento</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <!-- Contato -->
-          <div class="stk-section-label">Contato</div>
-          <div class="form-row form-row-2">
-            <div class="field">
-              <label>Telefone</label>
-              <input type="text" id="form-telefone" placeholder="(11) 90000-0000">
-            </div>
-            <div class="field">
-              <label>Email</label>
-              <input type="email" id="form-email" placeholder="contato@empresa.com">
-            </div>
-          </div>
-
-          <!-- Endereço -->
-          <div class="stk-section-label">Endereço</div>
-          <div class="form-row" style="grid-template-columns:1fr 100px">
-            <div class="field">
-              <label>CEP</label>
-              <div class="cep-wrap">
-                <input type="text" id="form-cep" placeholder="00000-000" oninput="aplicarMascaraCEP()" onblur="buscarCEP()">
-                <button type="button" onclick="buscarCEP()" title="Buscar via CEP">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                </button>
-              </div>
-            </div>
-            <div class="field">
-              <label>UF</label>
-              <input type="text" id="form-uf" placeholder="SP" maxlength="2" style="text-transform:uppercase">
-            </div>
-          </div>
-          <div class="form-row" style="grid-template-columns:1.6fr 0.6fr">
-            <div class="field">
-              <label>Logradouro</label>
-              <input type="text" id="form-logradouro" placeholder="Rua, Av., Travessa…">
-            </div>
-            <div class="field">
-              <label>Número</label>
-              <input type="text" id="form-numero" placeholder="123">
-            </div>
-          </div>
-          <div class="form-row form-row-2">
-            <div class="field">
-              <label>Complemento</label>
-              <input type="text" id="form-complemento" placeholder="Sala, andar (opcional)">
-            </div>
-            <div class="field">
-              <label>Bairro</label>
-              <input type="text" id="form-bairro" placeholder="Centro">
-            </div>
-          </div>
-          <div class="form-row form-row-2">
-            <div class="field">
-              <label>Cidade</label>
-              <input type="text" id="form-cidade" placeholder="São Paulo">
-            </div>
-            <div class="field">
-              <label>País</label>
-              <input type="text" id="form-pais" value="BR">
-            </div>
-          </div>
-
-          <!-- Ações no fim do form-card -->
-          <div class="form-actions">
-            <button type="button" class="btn-clear" onclick="showLista()">Cancelar</button>
-            <button type="button" class="btn-save" id="btn-salvar" onclick="submitForm()">Salvar</button>
-          </div>
-        </div>
-      </div>
-    </main>
+      <div id="lista-fornecedores"></div>
+    </div>
   </div>
-</div>
 
-<script src="../auth.js"></script>
-<script src="../compras-config.js"></script>
+  <!-- ============== VIEW: FORM (cadastro/edicao inline) ============== -->
+  <div id="view-form" class="view-form">
+    <div class="form-card">
+      <input type="hidden" id="form-id">
+      <input type="hidden" id="form-papel" value="cliente">
+
+      <!-- Tipo pessoa -->
+      <div class="stk-tipo-tabs">
+        <button type="button" class="stk-tipo-tab active" id="tipo-pf-btn" onclick="setTipoPessoa('PF')">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/></svg>
+          Pessoa Física
+        </button>
+        <button type="button" class="stk-tipo-tab" id="tipo-pj-btn" onclick="setTipoPessoa('PJ')">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h.01M9 13h.01M9 17h.01M15 9h.01M15 13h.01M15 17h.01"/></svg>
+          Pessoa Jurídica
+        </button>
+      </div>
+
+      <!-- Identificacao -->
+      <div class="stk-section-label">Identificação</div>
+      <div class="form-row" style="grid-template-columns:1.6fr 0.6fr">
+        <div class="field">
+          <label>Nome <span class="req">*</span></label>
+          <input type="text" id="form-nome" placeholder="Nome completo (PF) ou de exibição (PJ)" oninput="onNomeChange()">
+        </div>
+        <div class="field">
+          <label><span id="doc-label">CPF</span> <span class="req">*</span></label>
+          <input type="text" id="form-documento" placeholder="000.000.000-00" oninput="aplicarMascaraDoc()">
+        </div>
+      </div>
+
+      <!-- Empresa (PJ) -->
+      <div id="pj-block">
+        <div class="stk-section-label">Dados da empresa</div>
+        <div class="form-row form-row-2">
+          <div class="field">
+            <label>Razão Social</label>
+            <input type="text" id="form-razao-social" placeholder="Razão social da empresa">
+          </div>
+          <div class="field">
+            <label>Nome Fantasia</label>
+            <input type="text" id="form-nome-fantasia" placeholder="Nome de mercado">
+          </div>
+        </div>
+        <div class="form-row form-row-3">
+          <div class="field">
+            <label>Insc. Estadual</label>
+            <input type="text" id="form-ie" placeholder="000.000.000.000">
+          </div>
+          <div class="field">
+            <label>Insc. Municipal</label>
+            <input type="text" id="form-im" placeholder="0000000">
+          </div>
+          <div class="field">
+            <label>Regime Tributário</label>
+            <select id="form-regime">
+              <option value="">Selecione…</option>
+              <option>MEI</option>
+              <option>Simples Nacional</option>
+              <option>Lucro Presumido</option>
+              <option>Lucro Real</option>
+              <option>Isento</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contato -->
+      <div class="stk-section-label">Contato</div>
+      <div class="form-row form-row-2">
+        <div class="field">
+          <label>Telefone</label>
+          <input type="text" id="form-telefone" placeholder="(11) 90000-0000">
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="form-email" placeholder="contato@empresa.com">
+        </div>
+      </div>
+
+      <!-- Endereco -->
+      <div class="stk-section-label">Endereço</div>
+      <div class="form-row" style="grid-template-columns:1fr 100px">
+        <div class="field">
+          <label>CEP</label>
+          <div class="cep-wrap">
+            <input type="text" id="form-cep" placeholder="00000-000" oninput="aplicarMascaraCEP()" onblur="buscarCEP()">
+            <button type="button" onclick="buscarCEP()" title="Buscar via CEP">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="field">
+          <label>UF</label>
+          <input type="text" id="form-uf" placeholder="SP" maxlength="2" style="text-transform:uppercase">
+        </div>
+      </div>
+      <div class="form-row" style="grid-template-columns:1.6fr 0.6fr">
+        <div class="field">
+          <label>Logradouro</label>
+          <input type="text" id="form-logradouro" placeholder="Rua, Av., Travessa…">
+        </div>
+        <div class="field">
+          <label>Número</label>
+          <input type="text" id="form-numero" placeholder="123">
+        </div>
+      </div>
+      <div class="form-row form-row-2">
+        <div class="field">
+          <label>Complemento</label>
+          <input type="text" id="form-complemento" placeholder="Sala, andar (opcional)">
+        </div>
+        <div class="field">
+          <label>Bairro</label>
+          <input type="text" id="form-bairro" placeholder="Centro">
+        </div>
+      </div>
+      <div class="form-row form-row-2">
+        <div class="field">
+          <label>Cidade</label>
+          <input type="text" id="form-cidade" placeholder="São Paulo">
+        </div>
+        <div class="field">
+          <label>País</label>
+          <input type="text" id="form-pais" value="BR">
+        </div>
+      </div>
+
+      <!-- Acoes no fim do form-card -->
+      <div class="form-actions">
+        <button type="button" class="btn-clear" onclick="showLista()">Cancelar</button>
+        <button type="button" class="btn-save" id="btn-salvar" onclick="submitForm()">Salvar</button>
+      </div>
+    </div>
+  </div>
+</main>
+
 <script>
 /* ============================================================================
-   Modais customizados rxAlert / rxConfirm (mesmos de compras)
+   Stakeholders — modulo SPA. TODO o codigo dentro de IIFE.
+   Const/let/class ficam no closure → nada estoura "Identifier already
+   declared" na 2a visita.
+
+   Publics expostos em window pros onclick=/oninput= inline encontrarem.
+   Cleanup registrado em window.__moduleCleanup pro router executar antes
+   de carregar o proximo modulo (deleta os publics, limpa timers).
+
+   toggleSubmenu / fazerLogout / verificarAutenticacao etc vem do SHELL
+   (dashboard.html / auth.js) — nao redefinimos aqui.
    ============================================================================ */
 (function(){
+  'use strict';
+
+  /* ============ Modais locais rxAlert / rxConfirm ============
+     Mantidos dentro do closure pra nao poluir window. Sao chamados so do JS
+     do modulo, nunca de onclick= inline. */
   var ICONS  = { info:'i', success:'✓', warning:'!', error:'⨯', confirm:'?', prompt:'✎' };
-  var TITLES = { info:'Aviso', success:'Sucesso', warning:'Atenção', error:'Erro', confirm:'Confirmação' };
+  var TITLES = { info:'Aviso', success:'Sucesso', warning:'Atencao', error:'Erro', confirm:'Confirmacao' };
+
   function buildOverlay(html){
     var ov = document.createElement('div');
     ov.className = 'rx-modal-overlay show';
@@ -862,7 +567,7 @@ main{padding:0!important;background:transparent!important}
     ov.style.animation = 'rxOvIn 0.15s reverse';
     setTimeout(function(){ if (ov.parentNode) ov.remove(); }, 140);
   }
-  window.rxAlert = function(msg, type){
+  function rxAlert(msg, type){
     return new Promise(function(resolve){
       type = type || 'info';
       var ov = buildOverlay(
@@ -883,8 +588,8 @@ main{padding:0!important;background:transparent!important}
       document.addEventListener('keydown', onKey);
       setTimeout(function(){ ov.querySelector('[data-act=ok]').focus(); }, 50);
     });
-  };
-  window.rxConfirm = function(msg, opts){
+  }
+  function rxConfirm(msg, opts){
     return new Promise(function(resolve){
       opts = opts || {};
       var iconType = opts.dangerous ? 'warning' : 'confirm';
@@ -913,490 +618,506 @@ main{padding:0!important;background:transparent!important}
       document.addEventListener('keydown', onKey);
       setTimeout(function(){ ov.querySelector('[data-act=ok]').focus(); }, 50);
     });
+  }
+
+  /* ============ State ============ */
+  var TAB_ATUAL = 'clientes';
+  var DB = { clientes: [], fornecedores: [] };
+  var FILTROS = {
+    clientes:     { tipo: '', mostrarInativos: false },
+    fornecedores: { tipo: '', mostrarInativos: false },
   };
-})();
+  var TIPO_PESSOA_FORM = 'PF';
+  var NOME_TOCADO = false;
+  var RAZAO_TOCADA = false;
+  var debounceTimer = null;
 
-/* ============================================================================
-   toggleSubmenu — abre/fecha submenus da sidebar (mesmo padrao do compras)
-   ============================================================================ */
-function toggleSubmenu(id, event) {
-  if (event) event.stopPropagation();
-  var submenu = document.getElementById('submenu-' + id);
-  var item = event ? event.currentTarget : document.querySelector('[onclick*="' + id + '"]');
-  if (submenu) {
-    var isOpen = submenu.classList.contains('open');
-    if (isOpen) {
-      submenu.classList.remove('open');
-      if (item) item.classList.remove('expanded');
-    } else {
-      submenu.classList.add('open');
-      if (item) item.classList.add('expanded');
-    }
-  }
-}
-
-/* ============================================================================
-   ESTADO + AUTH
-   ============================================================================ */
-var sessao = (typeof verificarAutenticacao === 'function') ? verificarAutenticacao() : null;
-if (sessao) {
-  document.getElementById('user-name').textContent = sessao.nome;
-  document.getElementById('user-role').textContent = sessao.perfil;
-  document.getElementById('user-avatar').textContent = sessao.nome.substring(0,2).toUpperCase();
-}
-if (typeof iniciarMonitoramentoSessao === 'function') iniciarMonitoramentoSessao();
-
-var TAB_ATUAL = 'clientes';
-var DB = { clientes: [], fornecedores: [] };
-var FILTROS = {
-  clientes:     { tipo: '', mostrarInativos: false },
-  fornecedores: { tipo: '', mostrarInativos: false },
-};
-var TIPO_PESSOA_FORM = 'PF';
-var NOME_TOCADO = false;
-var RAZAO_TOCADA = false;
-var debounceTimer;
-
-/* ============================================================================
-   CONFIG / FETCH HELPERS
-   ============================================================================ */
-function cfg() { return window.ROMPEX_COMPRAS_CONFIG || {}; }
-function authHeaders() {
-  var c = cfg();
-  return {
-    'Content-Type': 'application/json',
-    'apikey': c.SUPABASE_ANON_KEY,
-    'Authorization': 'Bearer ' + c.SUPABASE_ANON_KEY,
-  };
-}
-function urlListar(tab){ return cfg()[tab==='clientes'?'SUPABASE_LIST_CLI_URL':'SUPABASE_LIST_FORN_URL']; }
-function urlSalvar(tab){ return cfg()[tab==='clientes'?'SUPABASE_SAVE_CLI_URL':'SUPABASE_SAVE_FORN_URL']; }
-function chaveLista(tab){ return tab==='clientes'?'clientes':'fornecedores'; }
-
-/* ============================================================================
-   LISTAR
-   ============================================================================ */
-async function listar(tab) {
-  var url = urlListar(tab);
-  if (!url) { console.warn('[STK] URL listar nao configurada'); return; }
-  var search = document.getElementById('busca-' + tab).value.trim();
-  var f = FILTROS[tab];
-
-  renderSkeleton(tab);
-  try {
-    var resp = await fetch(url, {
-      method: 'POST', headers: authHeaders(),
-      body: JSON.stringify({
-        search: search || undefined,
-        tipo_pessoa: f.tipo || undefined,
-        ativo: f.mostrarInativos ? false : true,
-        limit: 200,
-      }),
-    });
-    var data = await resp.json();
-    if (!resp.ok || !data.ok) { console.warn('[STK] Falha listar:', data); renderEmpty(tab, 'Erro ao carregar: ' + (data.error || 'falha de rede')); return; }
-    DB[tab] = data[chaveLista(tab)] || [];
-    renderTabela(tab);
-  } catch (err) {
-    console.warn('[STK] Erro de rede:', err);
-    renderEmpty(tab, 'Falha de rede. Tente novamente.');
-  }
-}
-
-function renderSkeleton(tab) {
-  var wrap = document.getElementById('lista-' + tab);
-  var skel = '<div class="stk-card">';
-  for (var i = 0; i < 5; i++) {
-    skel += '<div class="stk-skel-row">' +
-              '<div class="stk-skel-box stk-skel-avt"></div>' +
-              '<div style="flex:1"><div class="stk-skel-box" style="width:60%;margin-bottom:6px"></div>' +
-              '<div class="stk-skel-box" style="width:40%;height:11px"></div></div>' +
-              '<div class="stk-skel-box" style="width:120px"></div>' +
-              '<div class="stk-skel-box" style="width:60px"></div>' +
-            '</div>';
-  }
-  skel += '</div>';
-  wrap.innerHTML = skel;
-}
-
-function renderEmpty(tab, msg) {
-  var wrap = document.getElementById('lista-' + tab);
-  var rotulo = tab === 'clientes' ? 'cliente' : 'fornecedor';
-  wrap.innerHTML =
-    '<div class="stk-empty">' +
-      '<div class="stk-empty-icon">' +
-        '<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>' +
-      '</div>' +
-      '<h3>' + (msg ? 'Nada encontrado' : 'Nenhum ' + rotulo + ' cadastrado') + '</h3>' +
-      '<p>' + (msg || 'Cadastre o primeiro ' + rotulo + ' pra começar a usar nas compras.') + '</p>' +
-      '<button onclick="showForm(\'novo\')">' +
-        '<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>' +
-        'Cadastrar ' + rotulo +
-      '</button>' +
-    '</div>';
-}
-
-function renderTabela(tab) {
-  var wrap = document.getElementById('lista-' + tab);
-  var rows = DB[tab];
-  if (!rows.length) { renderEmpty(tab); return; }
-
-  var html = '<div class="stk-card"><table class="stk-table"><thead><tr>';
-  html += '<th>Nome</th>';
-  html += '<th class="col-doc">Documento</th>';
-  html += '<th class="col-meta">Localização</th>';
-  html += '<th class="col-meta">Contato</th>';
-  html += '<th class="right">Ações</th>';
-  html += '</tr></thead><tbody>';
-
-  rows.forEach(function(r) {
-    var cls = r.ativo ? '' : 'inativo';
-    var ini = (r.nome || '??').trim().split(/\s+/).slice(0,2).map(function(p){return p[0]||'';}).join('').toUpperCase().substring(0,2);
-    var nomeAlt = (r.tipo_pessoa === 'PJ' && r.nome_fantasia && r.nome_fantasia !== r.nome) ? r.nome_fantasia : '';
-    var doc = formatarDoc(r.documento, r.tipo_pessoa);
-    var localBits = [];
-    if (r.cidade) localBits.push(r.cidade);
-    if (r.uf) localBits.push(r.uf);
-    var local = localBits.length ? escHtml(localBits.join('/')) : '<span class="stk-meta-empty">—</span>';
-    var contato = r.telefone || r.email || '';
-    var contatoCell = contato ? escHtml(contato) : '<span class="stk-meta-empty">—</span>';
-    var subInfo = r.tipo_pessoa + ' · ' + doc;
-
-    html += '<tr class="' + cls + '">';
-    html +=   '<td><div class="stk-nome-cell">';
-    html +=     '<div class="stk-avatar ' + r.tipo_pessoa + '" title="' + r.tipo_pessoa + '">' + escHtml(ini) + '</div>';
-    html +=     '<div class="stk-nome-info">';
-    html +=       '<strong>' + escHtml(r.nome) + (nomeAlt ? ' <small style="font-weight:500;color:var(--text-muted);font-size:12px"> · ' + escHtml(nomeAlt) + '</small>' : '') + (!r.ativo ? ' <span style="color:var(--text-muted);font-size:11px;font-weight:500">(inativo)</span>' : '') + '</strong>';
-    html +=       '<small>' + subInfo + '</small>';
-    html +=     '</div>';
-    html +=   '</div></td>';
-    html +=   '<td class="col-doc stk-meta" style="font-variant-numeric:tabular-nums">' + doc + '</td>';
-    html +=   '<td class="col-meta stk-meta">' + local + '</td>';
-    html +=   '<td class="col-meta stk-meta">' + contatoCell + '</td>';
-    html +=   '<td><div class="stk-acoes">';
-    html +=     '<button class="stk-acao-btn" onclick="editar(\'' + tab + '\',\'' + r.id + '\')" title="Editar">';
-    html +=       '<svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
-    html +=     '</button>';
-    if (r.ativo) {
-      html += '<button class="stk-acao-btn danger" onclick="desativar(\'' + tab + '\',\'' + r.id + '\')" title="Desativar">';
-      html +=   '<svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>';
-      html += '</button>';
-    } else {
-      html += '<button class="stk-acao-btn" onclick="reativar(\'' + tab + '\',\'' + r.id + '\')" title="Reativar">';
-      html +=   '<svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/></svg>';
-      html += '</button>';
-    }
-    html +=   '</div></td>';
-    html += '</tr>';
-  });
-  html += '</tbody></table></div>';
-  wrap.innerHTML = html;
-}
-
-/* ============================================================================
-   BUSCA + CHIPS DE FILTRO
-   ============================================================================ */
-function onBusca(tab) {
-  clearTimeout(debounceTimer);
-  debounceTimer = setTimeout(function(){ listar(tab); }, 300);
-}
-function setChipTipo(tab, value) {
-  FILTROS[tab].tipo = value;
-  var grupo = document.querySelector('.stk-chips[data-tab="'+tab+'"][data-group="tipo"]');
-  if (grupo) {
-    grupo.querySelectorAll('.stk-chip').forEach(function(c){
-      c.classList.toggle('active', c.dataset.tipo === value);
-    });
-  }
-  listar(tab);
-}
-function toggleInativos(tab) {
-  FILTROS[tab].mostrarInativos = !FILTROS[tab].mostrarInativos;
-  document.getElementById('chip-inativos-' + tab).classList.toggle('active', FILTROS[tab].mostrarInativos);
-  listar(tab);
-}
-
-/* ============================================================================
-   TABS
-   ============================================================================ */
-function switchTab(tab, btn) {
-  document.querySelectorAll('.nav-tab').forEach(function(b){ b.classList.remove('active'); });
-  if (btn) btn.classList.add('active');
-  document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
-  document.getElementById('panel-' + tab).classList.add('active');
-  TAB_ATUAL = tab;
-  if (!DB[tab].length) listar(tab);
-}
-
-/* ============================================================================
-   VIEW SWITCHING: lista <-> form inline (sem modal)
-   ============================================================================ */
-function showForm(modo, dados) {
-  var papel = TAB_ATUAL === 'clientes' ? 'cliente' : 'fornecedor';
-  document.getElementById('form-papel').value = papel;
-
-  if (modo === 'edit' && dados) {
-    document.getElementById('form-id').value = dados.id;
-    document.getElementById('page-h1').textContent = 'Editar ' + papel;
-    document.getElementById('page-sub').textContent = dados.nome || '';
-
-    document.getElementById('form-nome').value = dados.nome || '';
-    document.getElementById('form-documento').value = formatarDoc(dados.documento, dados.tipo_pessoa);
-    document.getElementById('form-razao-social').value = dados.razao_social || '';
-    document.getElementById('form-nome-fantasia').value = dados.nome_fantasia || '';
-    document.getElementById('form-ie').value = dados.inscricao_estadual || '';
-    document.getElementById('form-im').value = dados.inscricao_municipal || '';
-    document.getElementById('form-regime').value = dados.regime_tributario || '';
-    document.getElementById('form-telefone').value = dados.telefone || '';
-    document.getElementById('form-email').value = dados.email || '';
-    document.getElementById('form-cep').value = dados.cep ? formatarCEP(dados.cep) : '';
-    document.getElementById('form-logradouro').value = dados.logradouro || '';
-    document.getElementById('form-numero').value = dados.numero || '';
-    document.getElementById('form-complemento').value = dados.complemento || '';
-    document.getElementById('form-bairro').value = dados.bairro || '';
-    document.getElementById('form-uf').value = dados.uf || '';
-    document.getElementById('form-cidade').value = dados.cidade || '';
-    document.getElementById('form-pais').value = dados.pais || 'BR';
-
-    setTipoPessoa(dados.tipo_pessoa);
-    NOME_TOCADO = true;
-    RAZAO_TOCADA = true;
-  } else {
-    document.getElementById('form-id').value = '';
-    document.getElementById('page-h1').textContent = 'Novo ' + papel;
-    document.getElementById('page-sub').textContent = 'Apenas nome e CPF/CNPJ são obrigatórios.';
-    resetForm();
-    setTipoPessoa('PF');
-  }
-
-  /* alterna views */
-  document.getElementById('view-lista').classList.remove('active');
-  document.getElementById('view-form').classList.add('active');
-  document.getElementById('tab-pills-wrap').style.display = 'none';
-  document.getElementById('btn-novo').style.display = 'none';
-  document.getElementById('btn-voltar').style.display = '';
-
-  window.scrollTo({top:0, behavior:'instant'});
-  setTimeout(function(){ document.getElementById('form-nome').focus(); }, 80);
-}
-
-function editar(tab, id) {
-  var r = DB[tab].find(function(x){ return x.id === id; });
-  if (!r) return;
-  TAB_ATUAL = tab;
-  showForm('edit', r);
-}
-
-function showLista() {
-  document.getElementById('view-form').classList.remove('active');
-  document.getElementById('view-lista').classList.add('active');
-  document.getElementById('tab-pills-wrap').style.display = '';
-  document.getElementById('btn-novo').style.display = '';
-  document.getElementById('btn-voltar').style.display = 'none';
-  document.getElementById('page-h1').textContent = 'Stakeholders';
-  document.getElementById('page-sub').textContent = 'Clientes e fornecedores cadastrados';
-}
-
-function resetForm() {
-  ['form-nome','form-documento','form-razao-social','form-nome-fantasia','form-ie','form-im',
-   'form-regime','form-telefone','form-email','form-cep','form-logradouro','form-numero',
-   'form-complemento','form-bairro','form-uf','form-cidade'].forEach(function(id){
-    var el = document.getElementById(id);
-    if (el) el.value = '';
-  });
-  document.getElementById('form-pais').value = 'BR';
-  NOME_TOCADO = false;
-  RAZAO_TOCADA = false;
-}
-
-function setTipoPessoa(tipo) {
-  TIPO_PESSOA_FORM = tipo;
-  document.getElementById('tipo-pf-btn').classList.toggle('active', tipo === 'PF');
-  document.getElementById('tipo-pj-btn').classList.toggle('active', tipo === 'PJ');
-  document.getElementById('pj-block').classList.toggle('show', tipo === 'PJ');
-  document.getElementById('doc-label').textContent = tipo === 'PF' ? 'CPF' : 'CNPJ';
-  document.getElementById('form-documento').placeholder = tipo === 'PF' ? '000.000.000-00' : '00.000.000/0000-00';
-  aplicarMascaraDoc();
-}
-
-/* nome -> razao social (só PJ, não sobrescreve se você editou razão) */
-function onNomeChange() {
-  NOME_TOCADO = true;
-  if (TIPO_PESSOA_FORM === 'PJ' && !RAZAO_TOCADA) {
-    document.getElementById('form-razao-social').value = document.getElementById('form-nome').value;
-  }
-}
-document.getElementById('form-razao-social').addEventListener('input', function(){ RAZAO_TOCADA = true; });
-
-/* ============================================================================
-   MÁSCARAS
-   ============================================================================ */
-function aplicarMascaraDoc() {
-  var el = document.getElementById('form-documento');
-  var v = el.value.replace(/\D/g,'');
-  if (TIPO_PESSOA_FORM === 'PF') {
-    v = v.substring(0,11);
-    if (v.length > 9) v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
-    else if (v.length > 6) v = v.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
-    else if (v.length > 3) v = v.replace(/(\d{3})(\d{1,3})/, '$1.$2');
-  } else {
-    v = v.substring(0,14);
-    if (v.length > 12) v = v.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{1,2})/, '$1.$2.$3/$4-$5');
-    else if (v.length > 8) v = v.replace(/(\d{2})(\d{3})(\d{3})(\d{1,4})/, '$1.$2.$3/$4');
-    else if (v.length > 5) v = v.replace(/(\d{2})(\d{3})(\d{1,3})/, '$1.$2.$3');
-    else if (v.length > 2) v = v.replace(/(\d{2})(\d{1,3})/, '$1.$2');
-  }
-  el.value = v;
-}
-function aplicarMascaraCEP() {
-  var el = document.getElementById('form-cep');
-  var v = el.value.replace(/\D/g,'').substring(0,8);
-  if (v.length > 5) v = v.replace(/(\d{5})(\d{1,3})/, '$1-$2');
-  el.value = v;
-}
-function formatarDoc(doc, tipo) {
-  if (!doc) return '—';
-  var d = String(doc).replace(/\D/g,'');
-  if (tipo === 'PF' && d.length === 11) return d.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-  if (tipo === 'PJ' && d.length === 14) return d.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
-  return d;
-}
-function formatarCEP(cep) {
-  var d = String(cep).replace(/\D/g,'');
-  return d.length === 8 ? d.replace(/(\d{5})(\d{3})/, '$1-$2') : d;
-}
-
-/* ============================================================================
-   VIACEP
-   ============================================================================ */
-async function buscarCEP() {
-  var cep = document.getElementById('form-cep').value.replace(/\D/g,'');
-  if (cep.length !== 8) return;
-  try {
-    var resp = await fetch('https://viacep.com.br/ws/' + cep + '/json/');
-    var data = await resp.json();
-    if (data.erro) return;
-    var setIf = function(id, val){
-      var el = document.getElementById(id);
-      if (el && !el.value) el.value = val || '';
+  /* ============ Config / fetch helpers ============ */
+  function cfg() { return window.ROMPEX_COMPRAS_CONFIG || {}; }
+  function authHeaders() {
+    var c = cfg();
+    return {
+      'Content-Type': 'application/json',
+      'apikey': c.SUPABASE_ANON_KEY,
+      'Authorization': 'Bearer ' + c.SUPABASE_ANON_KEY,
     };
-    setIf('form-logradouro', data.logradouro);
-    setIf('form-bairro',     data.bairro);
-    setIf('form-cidade',     data.localidade);
-    setIf('form-uf',         data.uf);
-  } catch (err) { console.warn('[CEP] falha:', err); }
-}
+  }
+  function urlListar(tab){ return cfg()[tab==='clientes'?'SUPABASE_LIST_CLI_URL':'SUPABASE_LIST_FORN_URL']; }
+  function urlSalvar(tab){ return cfg()[tab==='clientes'?'SUPABASE_SAVE_CLI_URL':'SUPABASE_SAVE_FORN_URL']; }
+  function chaveLista(tab){ return tab==='clientes'?'clientes':'fornecedores'; }
 
-/* ============================================================================
-   SUBMIT
-   ============================================================================ */
-async function submitForm() {
-  var btn = document.getElementById('btn-salvar');
-  if (btn.dataset.salvando === '1') return;
+  /* ============ Guard: confirma que o host ainda eh stakeholders =========
+     Se durante um fetch o usuario sair pra outro modulo, o host trocou
+     de dataset.module. Evita renderizar em DOM que nao eh mais nosso. */
+  function stillMine() {
+    var host = document.getElementById('module-host');
+    return !host || host.getAttribute('data-module') === 'stakeholders';
+  }
 
-  var papel = document.getElementById('form-papel').value;
-  var tab = papel === 'cliente' ? 'clientes' : 'fornecedores';
-  var id = document.getElementById('form-id').value || null;
+  /* ============ LISTAR ============ */
+  async function listar(tab) {
+    var url = urlListar(tab);
+    if (!url) { console.warn('[STK] URL listar nao configurada'); return; }
+    var inputBusca = document.getElementById('busca-' + tab);
+    var search = inputBusca ? inputBusca.value.trim() : '';
+    var f = FILTROS[tab];
 
-  var nome = document.getElementById('form-nome').value.trim();
-  var documento = document.getElementById('form-documento').value.replace(/\D/g,'');
-
-  if (!nome || nome.length < 2) { await rxAlert('Nome obrigatório (mín 2 caracteres).', 'warning'); return; }
-  if (TIPO_PESSOA_FORM === 'PF' && documento.length !== 11) { await rxAlert('CPF inválido. Precisa ter 11 dígitos.', 'warning'); return; }
-  if (TIPO_PESSOA_FORM === 'PJ' && documento.length !== 14) { await rxAlert('CNPJ inválido. Precisa ter 14 dígitos.', 'warning'); return; }
-
-  btn.dataset.salvando = '1';
-  btn.disabled = true;
-  btn.textContent = 'Salvando…';
-
-  var payload = {
-    tipo_pessoa: TIPO_PESSOA_FORM,
-    nome: nome,
-    documento: documento,
-    telefone: document.getElementById('form-telefone').value.trim() || null,
-    email: document.getElementById('form-email').value.trim() || null,
-    cep: document.getElementById('form-cep').value.trim() || null,
-    logradouro: document.getElementById('form-logradouro').value.trim() || null,
-    numero: document.getElementById('form-numero').value.trim() || null,
-    complemento: document.getElementById('form-complemento').value.trim() || null,
-    bairro: document.getElementById('form-bairro').value.trim() || null,
-    cidade: document.getElementById('form-cidade').value.trim() || null,
-    uf: document.getElementById('form-uf').value.trim() || null,
-    pais: document.getElementById('form-pais').value.trim() || 'BR',
-    razao_social: TIPO_PESSOA_FORM === 'PJ' ? (document.getElementById('form-razao-social').value.trim() || null) : null,
-    nome_fantasia: TIPO_PESSOA_FORM === 'PJ' ? (document.getElementById('form-nome-fantasia').value.trim() || null) : null,
-    inscricao_estadual: TIPO_PESSOA_FORM === 'PJ' ? (document.getElementById('form-ie').value.trim() || null) : null,
-    inscricao_municipal: TIPO_PESSOA_FORM === 'PJ' ? (document.getElementById('form-im').value.trim() || null) : null,
-    regime_tributario: TIPO_PESSOA_FORM === 'PJ' ? (document.getElementById('form-regime').value || null) : null,
-  };
-  if (id) payload.id = id;
-
-  try {
-    var resp = await fetch(urlSalvar(tab), { method: 'POST', headers: authHeaders(), body: JSON.stringify(payload) });
-    var data = await resp.json();
-    if (!resp.ok || !data.ok) {
-      await rxAlert('Falha ao salvar:\n\n' + (data.error || ('HTTP ' + resp.status)), 'error');
-      return;
+    renderSkeleton(tab);
+    try {
+      var resp = await fetch(url, {
+        method: 'POST', headers: authHeaders(),
+        body: JSON.stringify({
+          search: search || undefined,
+          tipo_pessoa: f.tipo || undefined,
+          ativo: f.mostrarInativos ? false : true,
+          limit: 200,
+        }),
+      });
+      var data = await resp.json();
+      if (!stillMine()) return; /* usuario saiu do modulo */
+      if (!resp.ok || !data.ok) {
+        console.warn('[STK] Falha listar:', data);
+        renderEmpty(tab, 'Erro ao carregar: ' + (data.error || 'falha de rede'));
+        return;
+      }
+      DB[tab] = data[chaveLista(tab)] || [];
+      renderTabela(tab);
+    } catch (err) {
+      if (!stillMine()) return;
+      console.warn('[STK] Erro de rede:', err);
+      renderEmpty(tab, 'Falha de rede. Tente novamente.');
     }
-    showLista();
-    await rxAlert((id ? 'Atualizado' : 'Cadastrado') + ' com sucesso!', 'success');
-    listar(tab);
-  } catch (err) {
-    await rxAlert('Falha de rede:\n\n' + (err.message || err), 'error');
-  } finally {
-    btn.dataset.salvando = '';
-    btn.disabled = false;
-    btn.textContent = 'Salvar';
   }
-}
 
-/* ============================================================================
-   DESATIVAR / REATIVAR
-   ============================================================================ */
-async function desativar(tab, id) {
-  var rotulo = tab === 'clientes' ? 'cliente' : 'fornecedor';
-  var ok = await rxConfirm(
-    'Vai esconder esse ' + rotulo + ' das listas ativas. Você pode reativar mostrando inativos.',
-    { title: 'Desativar ' + rotulo + '?', okText: 'Desativar', dangerous: true }
-  );
-  if (!ok) return;
-  await atualizarAtivo(tab, id, false);
-}
-async function reativar(tab, id) {
-  await atualizarAtivo(tab, id, true);
-}
-async function atualizarAtivo(tab, id, ativo) {
-  var r = DB[tab].find(function(x){ return x.id === id; }) || {};
-  try {
-    var resp = await fetch(urlSalvar(tab), {
-      method: 'POST', headers: authHeaders(),
-      body: JSON.stringify({
-        id: id, ativo: ativo,
-        tipo_pessoa: r.tipo_pessoa, nome: r.nome, documento: r.documento
-      }),
+  function renderSkeleton(tab) {
+    var wrap = document.getElementById('lista-' + tab);
+    if (!wrap) return;
+    var skel = '<div class="stk-card">';
+    for (var i = 0; i < 5; i++) {
+      skel += '<div class="stk-skel-row">' +
+                '<div class="stk-skel-box stk-skel-avt"></div>' +
+                '<div style="flex:1"><div class="stk-skel-box" style="width:60%;margin-bottom:6px"></div>' +
+                '<div class="stk-skel-box" style="width:40%;height:11px"></div></div>' +
+                '<div class="stk-skel-box" style="width:120px"></div>' +
+                '<div class="stk-skel-box" style="width:60px"></div>' +
+              '</div>';
+    }
+    skel += '</div>';
+    wrap.innerHTML = skel;
+  }
+
+  function renderEmpty(tab, msg) {
+    var wrap = document.getElementById('lista-' + tab);
+    if (!wrap) return;
+    var rotulo = tab === 'clientes' ? 'cliente' : 'fornecedor';
+    wrap.innerHTML =
+      '<div class="stk-empty">' +
+        '<div class="stk-empty-icon">' +
+          '<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>' +
+        '</div>' +
+        '<h3>' + (msg ? 'Nada encontrado' : 'Nenhum ' + rotulo + ' cadastrado') + '</h3>' +
+        '<p>' + (msg || 'Cadastre o primeiro ' + rotulo + ' pra começar a usar nas compras.') + '</p>' +
+        '<button onclick="showForm(\'novo\')">' +
+          '<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>' +
+          'Cadastrar ' + rotulo +
+        '</button>' +
+      '</div>';
+  }
+
+  function renderTabela(tab) {
+    var wrap = document.getElementById('lista-' + tab);
+    if (!wrap) return;
+    var rows = DB[tab];
+    if (!rows.length) { renderEmpty(tab); return; }
+
+    var html = '<div class="stk-card"><table class="stk-table"><thead><tr>';
+    html += '<th>Nome</th>';
+    html += '<th class="col-doc">Documento</th>';
+    html += '<th class="col-meta">Localização</th>';
+    html += '<th class="col-meta">Contato</th>';
+    html += '<th class="right">Ações</th>';
+    html += '</tr></thead><tbody>';
+
+    rows.forEach(function(r) {
+      var cls = r.ativo ? '' : 'inativo';
+      var ini = (r.nome || '??').trim().split(/\s+/).slice(0,2).map(function(p){return p[0]||'';}).join('').toUpperCase().substring(0,2);
+      var nomeAlt = (r.tipo_pessoa === 'PJ' && r.nome_fantasia && r.nome_fantasia !== r.nome) ? r.nome_fantasia : '';
+      var docF = formatarDoc(r.documento, r.tipo_pessoa);
+      var localBits = [];
+      if (r.cidade) localBits.push(r.cidade);
+      if (r.uf) localBits.push(r.uf);
+      var local = localBits.length ? escHtml(localBits.join('/')) : '<span class="stk-meta-empty">—</span>';
+      var contato = r.telefone || r.email || '';
+      var contatoCell = contato ? escHtml(contato) : '<span class="stk-meta-empty">—</span>';
+      var subInfo = r.tipo_pessoa + ' · ' + docF;
+
+      html += '<tr class="' + cls + '">';
+      html +=   '<td><div class="stk-nome-cell">';
+      html +=     '<div class="stk-avatar ' + r.tipo_pessoa + '" title="' + r.tipo_pessoa + '">' + escHtml(ini) + '</div>';
+      html +=     '<div class="stk-nome-info">';
+      html +=       '<strong>' + escHtml(r.nome) + (nomeAlt ? ' <small style="font-weight:500;color:var(--text-muted);font-size:12px"> · ' + escHtml(nomeAlt) + '</small>' : '') + (!r.ativo ? ' <span style="color:var(--text-muted);font-size:11px;font-weight:500">(inativo)</span>' : '') + '</strong>';
+      html +=       '<small>' + subInfo + '</small>';
+      html +=     '</div>';
+      html +=   '</div></td>';
+      html +=   '<td class="col-doc stk-meta" style="font-variant-numeric:tabular-nums">' + docF + '</td>';
+      html +=   '<td class="col-meta stk-meta">' + local + '</td>';
+      html +=   '<td class="col-meta stk-meta">' + contatoCell + '</td>';
+      html +=   '<td><div class="stk-acoes">';
+      html +=     '<button class="stk-acao-btn" onclick="editar(\'' + tab + '\',\'' + r.id + '\')" title="Editar">';
+      html +=       '<svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
+      html +=     '</button>';
+      if (r.ativo) {
+        html += '<button class="stk-acao-btn danger" onclick="desativar(\'' + tab + '\',\'' + r.id + '\')" title="Desativar">';
+        html +=   '<svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>';
+        html += '</button>';
+      } else {
+        html += '<button class="stk-acao-btn" onclick="reativar(\'' + tab + '\',\'' + r.id + '\')" title="Reativar">';
+        html +=   '<svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/></svg>';
+        html += '</button>';
+      }
+      html +=   '</div></td>';
+      html += '</tr>';
     });
-    var data = await resp.json();
-    if (!resp.ok || !data.ok) { await rxAlert('Falha: ' + (data.error || ''), 'error'); return; }
-    listar(tab);
-  } catch (err) {
-    await rxAlert('Falha de rede: ' + err.message, 'error');
+    html += '</tbody></table></div>';
+    wrap.innerHTML = html;
   }
-}
 
-/* ============================================================================
-   UTILS
-   ============================================================================ */
-function escHtml(s) {
-  return String(s == null ? '' : s)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
+  /* ============ BUSCA + CHIPS DE FILTRO ============ */
+  function onBusca(tab) {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(function(){ listar(tab); }, 300);
+  }
+  function setChipTipo(tab, value) {
+    FILTROS[tab].tipo = value;
+    var grupo = document.querySelector('.stk-chips[data-tab="'+tab+'"][data-group="tipo"]');
+    if (grupo) {
+      grupo.querySelectorAll('.stk-chip').forEach(function(c){
+        c.classList.toggle('active', c.dataset.tipo === value);
+      });
+    }
+    listar(tab);
+  }
+  function toggleInativos(tab) {
+    FILTROS[tab].mostrarInativos = !FILTROS[tab].mostrarInativos;
+    var chip = document.getElementById('chip-inativos-' + tab);
+    if (chip) chip.classList.toggle('active', FILTROS[tab].mostrarInativos);
+    listar(tab);
+  }
 
-/* INIT */
-listar('clientes');
-listar('fornecedores');
+  /* ============ TABS ============ */
+  function switchTab(tab, btn) {
+    document.querySelectorAll('.nav-tab').forEach(function(b){ b.classList.remove('active'); });
+    if (btn) btn.classList.add('active');
+    document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+    var p = document.getElementById('panel-' + tab);
+    if (p) p.classList.add('active');
+    TAB_ATUAL = tab;
+    if (!DB[tab].length) listar(tab);
+  }
+
+  /* ============ VIEW SWITCHING: lista <-> form inline ============ */
+  function showForm(modo, dados) {
+    var papel = TAB_ATUAL === 'clientes' ? 'cliente' : 'fornecedor';
+    document.getElementById('form-papel').value = papel;
+
+    if (modo === 'edit' && dados) {
+      document.getElementById('form-id').value = dados.id;
+      document.getElementById('page-h1').textContent = 'Editar ' + papel;
+      document.getElementById('page-sub').textContent = dados.nome || '';
+
+      document.getElementById('form-nome').value = dados.nome || '';
+      document.getElementById('form-documento').value = formatarDoc(dados.documento, dados.tipo_pessoa);
+      document.getElementById('form-razao-social').value = dados.razao_social || '';
+      document.getElementById('form-nome-fantasia').value = dados.nome_fantasia || '';
+      document.getElementById('form-ie').value = dados.inscricao_estadual || '';
+      document.getElementById('form-im').value = dados.inscricao_municipal || '';
+      document.getElementById('form-regime').value = dados.regime_tributario || '';
+      document.getElementById('form-telefone').value = dados.telefone || '';
+      document.getElementById('form-email').value = dados.email || '';
+      document.getElementById('form-cep').value = dados.cep ? formatarCEP(dados.cep) : '';
+      document.getElementById('form-logradouro').value = dados.logradouro || '';
+      document.getElementById('form-numero').value = dados.numero || '';
+      document.getElementById('form-complemento').value = dados.complemento || '';
+      document.getElementById('form-bairro').value = dados.bairro || '';
+      document.getElementById('form-uf').value = dados.uf || '';
+      document.getElementById('form-cidade').value = dados.cidade || '';
+      document.getElementById('form-pais').value = dados.pais || 'BR';
+
+      setTipoPessoa(dados.tipo_pessoa);
+      NOME_TOCADO = true;
+      RAZAO_TOCADA = true;
+    } else {
+      document.getElementById('form-id').value = '';
+      document.getElementById('page-h1').textContent = 'Novo ' + papel;
+      document.getElementById('page-sub').textContent = 'Apenas nome e CPF/CNPJ são obrigatórios.';
+      resetForm();
+      setTipoPessoa('PF');
+    }
+
+    document.getElementById('view-lista').classList.remove('active');
+    document.getElementById('view-form').classList.add('active');
+    document.getElementById('tab-pills-wrap').style.display = 'none';
+    document.getElementById('btn-novo').style.display = 'none';
+    document.getElementById('btn-voltar').style.display = '';
+
+    window.scrollTo({top:0, behavior:'instant'});
+    setTimeout(function(){
+      var nm = document.getElementById('form-nome');
+      if (nm) nm.focus();
+    }, 80);
+  }
+
+  function editar(tab, id) {
+    var r = DB[tab].find(function(x){ return x.id === id; });
+    if (!r) return;
+    TAB_ATUAL = tab;
+    showForm('edit', r);
+  }
+
+  function showLista() {
+    document.getElementById('view-form').classList.remove('active');
+    document.getElementById('view-lista').classList.add('active');
+    document.getElementById('tab-pills-wrap').style.display = '';
+    document.getElementById('btn-novo').style.display = '';
+    document.getElementById('btn-voltar').style.display = 'none';
+    document.getElementById('page-h1').textContent = 'Stakeholders';
+    document.getElementById('page-sub').textContent = 'Clientes e fornecedores cadastrados';
+  }
+
+  function resetForm() {
+    ['form-nome','form-documento','form-razao-social','form-nome-fantasia','form-ie','form-im',
+     'form-regime','form-telefone','form-email','form-cep','form-logradouro','form-numero',
+     'form-complemento','form-bairro','form-uf','form-cidade'].forEach(function(id){
+      var el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    var pais = document.getElementById('form-pais');
+    if (pais) pais.value = 'BR';
+    NOME_TOCADO = false;
+    RAZAO_TOCADA = false;
+  }
+
+  function setTipoPessoa(tipo) {
+    TIPO_PESSOA_FORM = tipo;
+    document.getElementById('tipo-pf-btn').classList.toggle('active', tipo === 'PF');
+    document.getElementById('tipo-pj-btn').classList.toggle('active', tipo === 'PJ');
+    document.getElementById('pj-block').classList.toggle('show', tipo === 'PJ');
+    document.getElementById('doc-label').textContent = tipo === 'PF' ? 'CPF' : 'CNPJ';
+    document.getElementById('form-documento').placeholder = tipo === 'PF' ? '000.000.000-00' : '00.000.000/0000-00';
+    aplicarMascaraDoc();
+  }
+
+  /* nome -> razao social (so PJ, nao sobrescreve se voce editou razao) */
+  function onNomeChange() {
+    NOME_TOCADO = true;
+    if (TIPO_PESSOA_FORM === 'PJ' && !RAZAO_TOCADA) {
+      document.getElementById('form-razao-social').value = document.getElementById('form-nome').value;
+    }
+  }
+
+  /* ============ MASCARAS ============ */
+  function aplicarMascaraDoc() {
+    var el = document.getElementById('form-documento');
+    if (!el) return;
+    var v = el.value.replace(/\D/g,'');
+    if (TIPO_PESSOA_FORM === 'PF') {
+      v = v.substring(0,11);
+      if (v.length > 9) v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
+      else if (v.length > 6) v = v.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
+      else if (v.length > 3) v = v.replace(/(\d{3})(\d{1,3})/, '$1.$2');
+    } else {
+      v = v.substring(0,14);
+      if (v.length > 12) v = v.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{1,2})/, '$1.$2.$3/$4-$5');
+      else if (v.length > 8) v = v.replace(/(\d{2})(\d{3})(\d{3})(\d{1,4})/, '$1.$2.$3/$4');
+      else if (v.length > 5) v = v.replace(/(\d{2})(\d{3})(\d{1,3})/, '$1.$2.$3');
+      else if (v.length > 2) v = v.replace(/(\d{2})(\d{1,3})/, '$1.$2');
+    }
+    el.value = v;
+  }
+  function aplicarMascaraCEP() {
+    var el = document.getElementById('form-cep');
+    if (!el) return;
+    var v = el.value.replace(/\D/g,'').substring(0,8);
+    if (v.length > 5) v = v.replace(/(\d{5})(\d{1,3})/, '$1-$2');
+    el.value = v;
+  }
+  function formatarDoc(doc, tipo) {
+    if (!doc) return '—';
+    var d = String(doc).replace(/\D/g,'');
+    if (tipo === 'PF' && d.length === 11) return d.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+    if (tipo === 'PJ' && d.length === 14) return d.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+    return d;
+  }
+  function formatarCEP(cep) {
+    var d = String(cep).replace(/\D/g,'');
+    return d.length === 8 ? d.replace(/(\d{5})(\d{3})/, '$1-$2') : d;
+  }
+
+  /* ============ VIACEP ============ */
+  async function buscarCEP() {
+    var cepEl = document.getElementById('form-cep');
+    if (!cepEl) return;
+    var cep = cepEl.value.replace(/\D/g,'');
+    if (cep.length !== 8) return;
+    try {
+      var resp = await fetch('https://viacep.com.br/ws/' + cep + '/json/');
+      var data = await resp.json();
+      if (!stillMine()) return;
+      if (data.erro) return;
+      var setIf = function(id, val){
+        var el = document.getElementById(id);
+        if (el && !el.value) el.value = val || '';
+      };
+      setIf('form-logradouro', data.logradouro);
+      setIf('form-bairro',     data.bairro);
+      setIf('form-cidade',     data.localidade);
+      setIf('form-uf',         data.uf);
+    } catch (err) { console.warn('[CEP] falha:', err); }
+  }
+
+  /* ============ SUBMIT ============ */
+  async function submitForm() {
+    var btn = document.getElementById('btn-salvar');
+    if (!btn || btn.dataset.salvando === '1') return;
+
+    var papel = document.getElementById('form-papel').value;
+    var tab = papel === 'cliente' ? 'clientes' : 'fornecedores';
+    var id = document.getElementById('form-id').value || null;
+
+    var nome = document.getElementById('form-nome').value.trim();
+    var documento = document.getElementById('form-documento').value.replace(/\D/g,'');
+
+    if (!nome || nome.length < 2) { await rxAlert('Nome obrigatório (mín 2 caracteres).', 'warning'); return; }
+    if (TIPO_PESSOA_FORM === 'PF' && documento.length !== 11) { await rxAlert('CPF inválido. Precisa ter 11 dígitos.', 'warning'); return; }
+    if (TIPO_PESSOA_FORM === 'PJ' && documento.length !== 14) { await rxAlert('CNPJ inválido. Precisa ter 14 dígitos.', 'warning'); return; }
+
+    btn.dataset.salvando = '1';
+    btn.disabled = true;
+    btn.textContent = 'Salvando…';
+
+    var payload = {
+      tipo_pessoa: TIPO_PESSOA_FORM,
+      nome: nome,
+      documento: documento,
+      telefone: document.getElementById('form-telefone').value.trim() || null,
+      email: document.getElementById('form-email').value.trim() || null,
+      cep: document.getElementById('form-cep').value.trim() || null,
+      logradouro: document.getElementById('form-logradouro').value.trim() || null,
+      numero: document.getElementById('form-numero').value.trim() || null,
+      complemento: document.getElementById('form-complemento').value.trim() || null,
+      bairro: document.getElementById('form-bairro').value.trim() || null,
+      cidade: document.getElementById('form-cidade').value.trim() || null,
+      uf: document.getElementById('form-uf').value.trim() || null,
+      pais: document.getElementById('form-pais').value.trim() || 'BR',
+      razao_social: TIPO_PESSOA_FORM === 'PJ' ? (document.getElementById('form-razao-social').value.trim() || null) : null,
+      nome_fantasia: TIPO_PESSOA_FORM === 'PJ' ? (document.getElementById('form-nome-fantasia').value.trim() || null) : null,
+      inscricao_estadual: TIPO_PESSOA_FORM === 'PJ' ? (document.getElementById('form-ie').value.trim() || null) : null,
+      inscricao_municipal: TIPO_PESSOA_FORM === 'PJ' ? (document.getElementById('form-im').value.trim() || null) : null,
+      regime_tributario: TIPO_PESSOA_FORM === 'PJ' ? (document.getElementById('form-regime').value || null) : null,
+    };
+    if (id) payload.id = id;
+
+    try {
+      var resp = await fetch(urlSalvar(tab), { method: 'POST', headers: authHeaders(), body: JSON.stringify(payload) });
+      var data = await resp.json();
+      if (!stillMine()) return;
+      if (!resp.ok || !data.ok) {
+        await rxAlert('Falha ao salvar:\n\n' + (data.error || ('HTTP ' + resp.status)), 'error');
+        return;
+      }
+      showLista();
+      await rxAlert((id ? 'Atualizado' : 'Cadastrado') + ' com sucesso!', 'success');
+      listar(tab);
+    } catch (err) {
+      if (!stillMine()) return;
+      await rxAlert('Falha de rede:\n\n' + (err.message || err), 'error');
+    } finally {
+      if (btn && document.body.contains(btn)) {
+        btn.dataset.salvando = '';
+        btn.disabled = false;
+        btn.textContent = 'Salvar';
+      }
+    }
+  }
+
+  /* ============ DESATIVAR / REATIVAR ============ */
+  async function desativar(tab, id) {
+    var rotulo = tab === 'clientes' ? 'cliente' : 'fornecedor';
+    var ok = await rxConfirm(
+      'Vai esconder esse ' + rotulo + ' das listas ativas. Você pode reativar mostrando inativos.',
+      { title: 'Desativar ' + rotulo + '?', okText: 'Desativar', dangerous: true }
+    );
+    if (!ok) return;
+    await atualizarAtivo(tab, id, false);
+  }
+  async function reativar(tab, id) {
+    await atualizarAtivo(tab, id, true);
+  }
+  async function atualizarAtivo(tab, id, ativo) {
+    var r = DB[tab].find(function(x){ return x.id === id; }) || {};
+    try {
+      var resp = await fetch(urlSalvar(tab), {
+        method: 'POST', headers: authHeaders(),
+        body: JSON.stringify({
+          id: id, ativo: ativo,
+          tipo_pessoa: r.tipo_pessoa, nome: r.nome, documento: r.documento
+        }),
+      });
+      var data = await resp.json();
+      if (!stillMine()) return;
+      if (!resp.ok || !data.ok) { await rxAlert('Falha: ' + (data.error || ''), 'error'); return; }
+      listar(tab);
+    } catch (err) {
+      if (!stillMine()) return;
+      await rxAlert('Falha de rede: ' + err.message, 'error');
+    }
+  }
+
+  /* ============ UTILS ============ */
+  function escHtml(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  /* ============ LISTENER no input de razao social ============
+     Marca como "tocado" quando o usuario edita manualmente, pra parar
+     o auto-mirror nome -> razao social. O elemento esta no DOM neste
+     ponto (acabou de ser injetado). Quando o modulo desmonta, o elemento
+     sai junto e o listener vai com ele — sem leak. */
+  var razSocEl = document.getElementById('form-razao-social');
+  if (razSocEl) razSocEl.addEventListener('input', function(){ RAZAO_TOCADA = true; });
+
+  /* ============ PUBLICS (pros onclick=/oninput= inline) ============ */
+  var publics = {
+    showForm: showForm,
+    showLista: showLista,
+    editar: editar,
+    switchTab: switchTab,
+    onBusca: onBusca,
+    setChipTipo: setChipTipo,
+    toggleInativos: toggleInativos,
+    setTipoPessoa: setTipoPessoa,
+    onNomeChange: onNomeChange,
+    aplicarMascaraDoc: aplicarMascaraDoc,
+    aplicarMascaraCEP: aplicarMascaraCEP,
+    buscarCEP: buscarCEP,
+    submitForm: submitForm,
+    desativar: desativar,
+    reativar: reativar,
+  };
+  Object.assign(window, publics);
+
+  /* ============ CLEANUP: rodado pelo router antes de carregar o proximo
+     modulo. Deleta os publics e mata timers/intervalos. Listeners attachados
+     em elementos do host saem junto com o innerHTML do unmount. */
+  (window.__moduleCleanup = window.__moduleCleanup || []).push(function(){
+    Object.keys(publics).forEach(function(k){ delete window[k]; });
+    if (debounceTimer) { clearTimeout(debounceTimer); debounceTimer = null; }
+  });
+
+  /* ============ INIT ============ */
+  listar('clientes');
+  listar('fornecedores');
+})();
 </script>
-<script src="../theme.js"></script>
-<script src="../responsive.js"></script>
-</body>
-</html>
